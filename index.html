@@ -1309,18 +1309,48 @@
     .main-layout { grid-template-columns: 1fr; }
     .map-wrap, .results { height: 420px; }
 
-    /* 조석: 컴팩트하게, FIELD NOTE는 추천시간대와 중복이라 숨김 */
-    .tide-board { grid-template-columns: 1fr; min-height: auto; margin-bottom: 10px; }
-    .tide-head, .tide-slots { border-right: none; border-bottom: 1px solid var(--rule); }
-    .tide-head { padding: 8px 12px; }
-    .tide-head .v { font-size: 15px; }
-    .tide-head .sub { font-size: 9px; margin-top: 2px; }
-    .tide-slots { grid-template-columns: repeat(4, 1fr); }
-    .tide-slot { padding: 6px 3px; text-align: center; }
+    /* 조석: 모바일에서도 한 줄(가로 스크롤)로 표시 */
+    .tide-board {
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      min-height: auto;
+      margin-bottom: 10px;
+      grid-template-columns: none;
+    }
+    .tide-head {
+      flex: 0 0 auto;
+      min-width: 96px;
+      padding: 8px 12px;
+      border-right: 1px solid var(--rule);
+      border-bottom: none;
+    }
+    .tide-head .k { font-size: 13px; letter-spacing: 0.1em; }
+    .tide-head .v { font-size: 12px; font-weight: 700; }
+    .tide-head .sub { font-size: 11px; margin-top: 3px; color: var(--ink); font-weight: 600; }
+    .tide-slots {
+      display: flex;
+      flex: 0 0 auto;
+      border-right: 1px solid var(--rule);
+    }
+    .tide-slot {
+      flex: 0 0 auto;
+      min-width: 60px;
+      padding: 8px 6px;
+      text-align: center;
+      border-right: 1px dashed var(--rule-soft);
+    }
     .tide-slot .type { font-size: 8px; }
     .tide-slot .time { font-size: 13px; margin-top: 2px; }
     .tide-slot .height { font-size: 8px; }
-    .tide-tip { display: none; }
+    .tide-tip {
+      flex: 0 0 auto;
+      min-width: 240px;
+      padding: 8px 12px;
+      font-size: 10.5px;
+      line-height: 1.4;
+    }
 
     /* 오늘의 추천 시간대: 큰 비중을 줄여 한눈에 훑고 지나가게 */
     .time-suggest {
