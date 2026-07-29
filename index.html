@@ -93,6 +93,8 @@
     font-size: 14px;
     color: var(--ink-soft);
     max-width: 600px;
+    word-break: keep-all;
+    overflow-wrap: break-word;
   }
 
   .header-stamp {
@@ -417,6 +419,8 @@
     border-left: 2px solid var(--accent);
     font-style: italic;
     margin-bottom: 24px;
+    word-break: keep-all;
+    overflow-wrap: break-word;
   }
 
   /* === 메인 레이아웃 === */
@@ -1440,7 +1444,7 @@
   <div class="today-picks">
     <div class="today-picks-head">
       <span class="k">오늘의 관찰 추천종</span>
-      <span class="sub">평소엔 흔치 않지만 오늘 조건(계절·기온·습도)에서 특히 가능성이 높아진 종 위주로 골랐습니다.</span>
+      <span class="sub">평소엔 흔치 않지만 오늘 조건(계절·기온·습도)에서 가능성이 높은 종을 추천드립니다.</span>
     </div>
     <div class="today-picks-list" id="todayPicksList"></div>
   </div>
@@ -1560,18 +1564,18 @@
   <footer>
     <div>
       <h5>데이터 출처</h5>
-      <p>에코뱅크 GeoServer WFS: 자연환경조사_조류_점, 생태계정밀조사_조류_점<br>기상청 ASOS 종관기상관측<br>국립해양조사원·바다타임 조석표<br>한국천문연구원 천문력<br>새 대표 사진: Wikimedia/Wikipedia, GBIF, iNaturalist 공개 이미지</p>
+      <p>에코뱅크 GeoServer WFS: 자연환경조사_조류_점, 생태계정밀조사_조류_점<br>Open-Meteo 실시간 기온·습도<br>국립해양조사원(KHOA) 기준항 조화상수(장항, M2·S2·K1·O1) 기반 자체 조석 계산<br>브라우저 GPS 기반 내 위치·거리 정렬<br>새 대표 사진: Wikimedia/Wikipedia, GBIF, iNaturalist 공개 이미지<br><span style="opacity:0.7">※ 일몰·월출 시각은 아직 고정 참고값입니다 (실시간 계산 예정)</span></p>
     </div>
     <div>
       <h5>적합도 산출</h5>
-      <p>적합도 = 에코뱅크 과거 조사기록 빈도 × 7월 계절성 × 조석·서식환경 적합도. 0~100% 척도로 표시하며 실제 출현을 보장하지 않습니다.</p>
+      <p>적합도 = 에코뱅크 과거 조사기록 빈도 × 실제 현재월 계절성 × 조석·서식환경 적합도 × 실시간 기온·습도 보정. 0~100% 척도로 표시하며 실제 출현을 보장하지 않습니다.</p>
     </div>
     <div>
       <h5>주의</h5>
       <p>본 서비스는 과거 관찰 기록과 환경 조건을 통계적으로 결합한 예측이며, 관찰을 보장하지 않습니다. 멸종위기 보호종은 정확한 좌표를 제공하지 않습니다.</p>
     </div>
     <div class="disclaimer">
-      ─── prototype · curated reference data ─── 실제 운영 시 공공데이터 API 실시간 연동 필요 ───
+      ─── prototype · 실시간 기상·조석 계산·위치기반 정렬 적용됨 ───
     </div>
   </footer>
 
