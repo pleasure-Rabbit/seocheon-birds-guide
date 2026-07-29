@@ -1109,7 +1109,7 @@
     box-shadow: 4px 4px 0 var(--rule);
     margin-bottom: 28px;
     display: grid;
-    grid-template-columns: 220px 1fr 280px;
+    grid-template-columns: 220px 1fr;
     min-height: 126px;
   }
   .tide-head {
@@ -1117,8 +1117,7 @@
     border-right: 1px solid var(--rule);
     padding: 20px 24px;
   }
-  .tide-head .k,
-  .tide-tip .k {
+  .tide-head .k {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
     letter-spacing: 0.18em;
@@ -1142,7 +1141,6 @@
   .tide-slots {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    border-right: 1px solid var(--rule);
   }
   .tide-slot {
     padding: 18px 16px;
@@ -1170,13 +1168,6 @@
     color: var(--ink-soft);
     margin-top: 2px;
   }
-  .tide-tip {
-    padding: 18px 22px;
-    font-size: 12px;
-    line-height: 1.6;
-    color: var(--ink-soft);
-  }
-  .tide-tip strong { color: var(--accent); font-family: 'Noto Serif KR', serif; }
 
   /* 오늘의 추천 종 */
   .today-picks {
@@ -1344,13 +1335,6 @@
     .tide-slot .type { font-size: 8px; }
     .tide-slot .time { font-size: 13px; margin-top: 2px; }
     .tide-slot .height { font-size: 8px; }
-    .tide-tip {
-      flex: 0 0 auto;
-      min-width: 240px;
-      padding: 8px 12px;
-      font-size: 10.5px;
-      line-height: 1.4;
-    }
 
     /* 오늘의 추천 시간대: 큰 비중을 줄여 한눈에 훑고 지나가게 */
     .time-suggest {
@@ -1455,10 +1439,6 @@
       <div class="tide-slot low"><div class="type">LOW</div><div class="time">10:59</div><div class="height">194cm</div></div>
       <div class="tide-slot high"><div class="type">HIGH</div><div class="time">16:11</div><div class="height">588cm</div></div>
       <div class="tide-slot low"><div class="type">LOW</div><div class="time">22:44</div><div class="height">119cm</div></div>
-    </div>
-    <div class="tide-tip">
-      <span class="k">FIELD NOTE</span>
-      <strong>09:30–12:00</strong> 간조 전후에는 갯벌 먹이터 확인, <strong>17:30–19:40</strong>에는 하구·습지 귀소 이동 관찰을 우선 추천합니다.
     </div>
   </div>
   <!-- 추천 시간대 -->
