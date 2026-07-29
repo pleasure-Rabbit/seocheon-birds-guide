@@ -1286,23 +1286,24 @@
     .brand-title { font-size: 26px; }
     .brand-sub { font-size: 12px; margin-top: 6px; line-height: 1.4; }
 
-    /* 현재 조건: 컴팩트하게 + 부차 항목 숨김 */
+    /* 현재 조건: 컴팩트하게, 5개 항목 한 줄 고정 */
     .status {
       grid-template-columns: 1fr;
       gap: 4px;
       padding: 8px 12px;
       margin-bottom: 10px;
     }
-    .status-label { font-size: 8px; }
-    .status-data { gap: 8px 14px; }
+    .status-label { font-size: 8px; line-height: 1.4; }
+    .status-data {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      gap: 10px;
+    }
+    .status-item { flex: 1 1 0; min-width: 0; }
     .status-item .k { font-size: 7px; }
-    .status-item .v { font-size: 12px; }
+    .status-item .v { font-size: 12px; white-space: nowrap; }
     .status-item .v small { font-size: 9px; }
     .status-update { font-size: 7px; }
-    /* 기준항·일몰·월출은 조석 보드/타 항목과 중복 or 저우선순위라 모바일에서 숨김 */
-    .status-item:nth-child(2),
-    .status-item:nth-child(4),
-    .status-item:nth-child(5) { display: none; }
 
     .picker-bar { grid-template-columns: 1fr; gap: 12px; }
     .main-layout { grid-template-columns: 1fr; }
@@ -1400,16 +1401,13 @@
 
   <!-- 현재 조건 -->
   <div class="status">
-    <div><div class="status-label">현재 조건 · 장항읍</div></div>
+    <div><div class="status-label">현재 조건<br>장항읍</div></div>
     <div class="status-data">
       <div class="status-item"><span class="k">관찰일</span><span class="v" id="statDate">07.01</span></div>
-      <div class="status-item"><span class="k">기준항</span><span class="v">장항</span></div>
-      <div class="status-item"><span class="k">간조</span><span class="v" id="statLowTide">10:59</span></div>
-      <div class="status-item"><span class="k">일몰</span><span class="v" id="statSunset">19:54</span></div>
-      <div class="status-item"><span class="k">월출</span><span class="v">21:06</span></div>
-      <div class="status-item"><span class="k">조류</span><span class="v" id="statMonth">7월</span></div>
       <div class="status-item"><span class="k">기온</span><span class="v" id="statTemp">— <small>°C</small></span></div>
       <div class="status-item"><span class="k">습도</span><span class="v" id="statHumidity">— <small>%</small></span></div>
+      <div class="status-item"><span class="k">일출</span><span class="v" id="statSunrise">05:20</span></div>
+      <div class="status-item"><span class="k">일몰</span><span class="v" id="statSunset">19:54</span></div>
     </div>
     <div class="status-update" id="statUpdate">UPDATED 2026.07.01 · KHOA/BADATIME</div>
   </div>
@@ -24870,7 +24868,8 @@ function applySunTimesToUI() {
   const lat = 36.0069, lon = 126.6875; // 장항
   const sunrise = sunEventKst(y, m, d, lat, lon, -1);
   const sunset = sunEventKst(y, m, d, lat, lon, +1);
-  ['statSunset'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = sunset; });
+  const statSunset = document.getElementById('statSunset'); if (statSunset) statSunset.textContent = sunset;
+  const statSunrise = document.getElementById('statSunrise'); if (statSunrise) statSunrise.textContent = sunrise;
   const tsr = document.getElementById('tideSunrise'); if (tsr) tsr.textContent = sunrise;
   const tss = document.getElementById('tideSunset'); if (tss) tss.textContent = sunset;
 }
