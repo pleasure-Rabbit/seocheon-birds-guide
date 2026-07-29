@@ -26879,18 +26879,13 @@ function setTaxon(taxon) {
   if (taxon === 'insect') fillInsectSpeciesOptions();
   else fillSpeciesOptions();
 
-  // 현재 활성 탭 다시 렌더
-  const activeTab = document.querySelector('.tab.active');
-  const tabName = activeTab ? activeTab.dataset.tab : 'all';
-  if (tabName === 'all') renderAll();
-  else if (tabName === 'bylocation') {
-    const picker = document.getElementById('locationPicker');
-    renderByLocation(picker.value || locations[0]?.id);
-  } else if (tabName === 'byspecies') {
-    const picker = document.getElementById('speciesPicker');
-    const list = taxon === 'insect' ? insectSpecies : species;
-    renderBySpecies(picker.value || list[0]?.id);
-  }
+  // 보고 있지 않은 탭도 오래된 데이터로 남지 않도록 3개 패널 전부 다시 렌더
+  renderAll();
+  const locPicker = document.getElementById('locationPicker');
+  if (locPicker) renderByLocation(locPicker.value || locations[0]?.id);
+  const spPicker = document.getElementById('speciesPicker');
+  const list = taxon === 'insect' ? insectSpecies : species;
+  if (spPicker) renderBySpecies(spPicker.value || list[0]?.id);
 }
 
 function fillInsectSpeciesOptions(filter = '') {
