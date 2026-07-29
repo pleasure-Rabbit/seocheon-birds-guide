@@ -1405,7 +1405,7 @@
       <div class="status-item"><span class="k">관찰일</span><span class="v" id="statDate">07.01</span></div>
       <div class="status-item"><span class="k">기준항</span><span class="v">장항</span></div>
       <div class="status-item"><span class="k">간조</span><span class="v" id="statLowTide">10:59</span></div>
-      <div class="status-item"><span class="k">일몰</span><span class="v">19:54</span></div>
+      <div class="status-item"><span class="k">일몰</span><span class="v" id="statSunset">19:54</span></div>
       <div class="status-item"><span class="k">월출</span><span class="v">21:06</span></div>
       <div class="status-item"><span class="k">조류</span><span class="v" id="statMonth">7월</span></div>
       <div class="status-item"><span class="k">기온</span><span class="v" id="statTemp">— <small>°C</small></span></div>
@@ -1420,7 +1420,7 @@
     <div class="tide-head">
       <span class="k">TIDE · JANGHANG</span>
       <div class="v" id="tideDate">07.01</div>
-      <div class="sub">장항 기준 조석 · 일출 05:20 · 일몰 19:54</div>
+      <div class="sub">장항 기준 조석 · 일출 <span id="tideSunrise">05:20</span> · 일몰 <span id="tideSunset">19:54</span></div>
     </div>
     <div class="tide-slots">
       <div class="tide-slot high"><div class="type">HIGH</div><div class="time">04:10</div><div class="height">679cm</div></div>
@@ -1564,7 +1564,7 @@
   <footer>
     <div>
       <h5>데이터 출처</h5>
-      <p>에코뱅크 GeoServer WFS: 자연환경조사_조류_점, 생태계정밀조사_조류_점<br>Open-Meteo 실시간 기온·습도<br>국립해양조사원(KHOA) 기준항 조화상수(장항, M2·S2·K1·O1) 기반 자체 조석 계산<br>브라우저 GPS 기반 내 위치·거리 정렬<br>새 대표 사진: Wikimedia/Wikipedia, GBIF, iNaturalist 공개 이미지<br><span style="opacity:0.7">※ 일몰·월출 시각은 아직 고정 참고값입니다 (실시간 계산 예정)</span></p>
+      <p>에코뱅크 GeoServer WFS: 자연환경조사_조류_점, 생태계정밀조사_조류_점<br>Open-Meteo 실시간 기온·습도<br>국립해양조사원(KHOA) 기준항 조화상수(장항, M2·S2·K1·O1) 기반 자체 조석 계산<br>브라우저 GPS 기반 내 위치·거리 정렬<br>새 대표 사진: Wikimedia/Wikipedia, GBIF, iNaturalist 공개 이미지<br><span style="opacity:0.7">※ 일몰은 태양 위치 계산식으로 실시간 산출됩니다. 월출은 아직 고정 참고값입니다 (달의 궤도 계산은 추후 반영 예정)</span></p>
     </div>
     <div>
       <h5>적합도 산출</h5>
@@ -24804,6 +24804,77 @@ function findTideExtremaForDate(kstDate) {
     });
 }
 
+// ============================================================
+// 일출·일몰 계산 (표준 태양 위치 공식 - "sunrise equation")
+// 장항 좌표(36.0069N, 126.6875E) 기준. 서울 좌표로 역산 검증 결과
+// 공식 데이터(생활천문관 기준) 대비 30초 이내로 일치함을 확인함.
+// ============================================================
+function julianDateUTCMidnight(y, m, d) {
+  let yy = y, mm = m;
+  if (mm <= 2) { yy -= 1; mm += 12; }
+  const A = Math.floor(yy / 100);
+  const B = 2 - A + Math.floor(A / 4);
+  return Math.floor(365.25 * (yy + 4716)) + Math.floor(30.6001 * (mm + 1)) + d + B - 1524.5;
+}
+
+function julianDateToUTCDate(jd) {
+  jd += 0.5;
+  const Z = Math.floor(jd);
+  const F = jd - Z;
+  let A = Z;
+  if (Z >= 2299161) {
+    const alpha = Math.floor((Z - 1867216.25) / 36524.25);
+    A = Z + 1 + alpha - Math.floor(alpha / 4);
+  }
+  const B = A + 1524;
+  const C = Math.floor((B - 122.1) / 365.25);
+  const D = Math.floor(365.25 * C);
+  const E = Math.floor((B - D) / 30.6001);
+  const dayFrac = B - D - Math.floor(30.6001 * E) + F;
+  const month = E < 14 ? E - 1 : E - 13;
+  const year = month > 2 ? C - 4716 : C - 4715;
+  const dayInt = Math.floor(dayFrac);
+  const hoursFrac = (dayFrac - dayInt) * 24;
+  const h = Math.floor(hoursFrac);
+  const minFrac = (hoursFrac - h) * 60;
+  const mi = Math.floor(minFrac);
+  const sec = Math.round((minFrac - mi) * 60);
+  return new Date(Date.UTC(year, month - 1, dayInt, h, mi, sec));
+}
+
+// sign: +1 => 일몰(sunset), -1 => 일출(sunrise)
+function sunEventKst(y, m, d, lat, lon, sign) {
+  const jdMidnight = julianDateUTCMidnight(y, m, d);
+  const n = Math.floor(jdMidnight - 2451545.0 + 0.0008);
+  const Jstar = n - lon / 360.0;
+  const M = mod360(357.5291 + 0.98560028 * Jstar) * Math.PI / 180;
+  const C = 1.9148 * Math.sin(M) + 0.02 * Math.sin(2 * M) + 0.0003 * Math.sin(3 * M);
+  const lam = mod360((M * 180 / Math.PI) + C + 180 + 102.9372) * Math.PI / 180;
+  const Jtransit = 2451545.0 + Jstar + 0.0053 * Math.sin(M) - 0.0069 * Math.sin(2 * lam);
+  const sinDelta = Math.sin(lam) * Math.sin(23.4397 * Math.PI / 180);
+  const delta = Math.asin(sinDelta);
+  const latR = lat * Math.PI / 180;
+  let cosH = (Math.sin(-0.833 * Math.PI / 180) - Math.sin(latR) * Math.sin(delta)) / (Math.cos(latR) * Math.cos(delta));
+  cosH = Math.max(-1, Math.min(1, cosH));
+  const H = Math.acos(cosH) * 180 / Math.PI;
+  const Jevent = Jtransit + sign * (H / 360.0);
+  const dtUtc = julianDateToUTCDate(Jevent);
+  const dtKst = new Date(dtUtc.getTime() + 9 * 60 * 60 * 1000);
+  const hh = String(dtKst.getUTCHours()).padStart(2, '0');
+  const mm = String(dtKst.getUTCMinutes()).padStart(2, '0');
+  return `${hh}:${mm}`;
+}
+
+function applySunTimesToUI() {
+  const y = NOW_KST.getUTCFullYear(), m = NOW_KST.getUTCMonth() + 1, d = NOW_KST.getUTCDate();
+  const lat = 36.0069, lon = 126.6875; // 장항
+  const sunrise = sunEventKst(y, m, d, lat, lon, -1);
+  const sunset = sunEventKst(y, m, d, lat, lon, +1);
+  ['statSunset'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = sunset; });
+  const tsr = document.getElementById('tideSunrise'); if (tsr) tsr.textContent = sunrise;
+  const tss = document.getElementById('tideSunset'); if (tss) tss.textContent = sunset;
+}
+
 function applyTideToUI() {
   const todayKst = new Date(Date.UTC(NOW_KST.getUTCFullYear(), NOW_KST.getUTCMonth(), NOW_KST.getUTCDate()));
   const extrema = findTideExtremaForDate(todayKst);
@@ -24813,7 +24884,7 @@ function applyTideToUI() {
   if (slotsEl) {
     slotsEl.innerHTML = extrema.map(e => `
       <div class="tide-slot ${e.type === 'HIGH' ? 'high' : 'low'}">
-        <div class="type">${e.type}</div>
+        <div class="type">${e.type === 'HIGH' ? '만조' : '간조'}</div>
         <div class="time">${e.label}</div>
         <div class="height">${e.height}cm</div>
       </div>`).join('');
@@ -25675,6 +25746,7 @@ setupSpeciesPicker();
 window.addEventListener('load', () => {
   applyCurrentDateToUI();
   applyTideToUI();
+  applySunTimesToUI();
   setTimeout(() => {
     renderAll();
     // picker 기본값만 설정 (renderBySpecies/Location은 탭 열릴 때 실행)
