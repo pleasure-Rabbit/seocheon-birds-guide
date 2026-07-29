@@ -24875,11 +24875,11 @@ function sunEventKst(y, m, d, lat, lon, sign) {
   return `${hh}:${mm}`;
 }
 
-function applySunTimesToUI() {
+function applySunTimesToUI(lat, lon) {
   const y = NOW_KST.getUTCFullYear(), m = NOW_KST.getUTCMonth() + 1, d = NOW_KST.getUTCDate();
-  const lat = 36.0069, lon = 126.6875; // 장항
-  const sunrise = sunEventKst(y, m, d, lat, lon, -1);
-  const sunset = sunEventKst(y, m, d, lat, lon, +1);
+  const useLat = lat ?? 36.0069, useLon = lon ?? 126.6875; // 기본값: 장항
+  const sunrise = sunEventKst(y, m, d, useLat, useLon, -1);
+  const sunset = sunEventKst(y, m, d, useLat, useLon, +1);
   const statSunset = document.getElementById('statSunset'); if (statSunset) statSunset.textContent = sunset;
   const statSunrise = document.getElementById('statSunrise'); if (statSunrise) statSunrise.textContent = sunrise;
 }
@@ -24976,6 +24976,12 @@ function requestUserLocation() {
       const picker = document.getElementById('locationPicker');
       if (picker && picker.value) renderByLocation(picker.value);
 
+      // 현재 조건(기온·습도·일출·일몰)도 내 위치 기준으로 갱신
+      fetchWeather(userLocation.lat, userLocation.lon);
+      applySunTimesToUI(userLocation.lat, userLocation.lon);
+      const label = document.querySelector('.status-label');
+      if (label) label.innerHTML = '현재 조건<br>내 위치 기준';
+
       setGeoStatus(`내 위치 기준 가까운 순 정렬됨`, true);
     },
     (err) => {
@@ -25029,12 +25035,13 @@ function weatherFactorFor(sp) {
   return tempF * 0.6 + humF * 0.4;
 }
 
-async function fetchWeather() {
+async function fetchWeather(lat, lon) {
+  const useLat = lat ?? 36.0006;
+  const useLon = lon ?? 126.6883; // 기본값: 장항읍(서천군)
   try {
     // Open-Meteo: 키/가입/프록시 없이 브라우저에서 바로 호출 가능한 무료 기상 API
-    // 장항읍(서천군) 좌표 기준
     const url =
-      'https://api.open-meteo.com/v1/forecast?latitude=36.0006&longitude=126.6883&current=temperature_2m,relative_humidity_2m&timezone=Asia%2FSeoul';
+      `https://api.open-meteo.com/v1/forecast?latitude=${useLat}&longitude=${useLon}&current=temperature_2m,relative_humidity_2m&timezone=Asia%2FSeoul`;
     const res = await fetch(url);
     if (!res.ok) throw new Error('open-meteo status ' + res.status);
     const data = await res.json();
@@ -25766,7 +25773,10 @@ window.addEventListener('load', () => {
 
   // 실시간 기상 최초 조회 + 주기적 갱신
   fetchWeather();
-  setInterval(fetchWeather, WEATHER_CONFIG.refreshMs);
+  setInterval(() => {
+    fetchWeather(userLocation?.lat, userLocation?.lon);
+    applySunTimesToUI(userLocation?.lat, userLocation?.lon);
+  }, WEATHER_CONFIG.refreshMs);
 });
 
 </script>
