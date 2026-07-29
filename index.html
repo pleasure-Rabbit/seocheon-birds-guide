@@ -56,19 +56,19 @@
   }
 
   .nie-logo {
-    height: 44px;
+    height: 72px;
     width: auto;
-    opacity: 0.92;
+    display: block;
+    margin-bottom: 20px;
   }
 
   header {
     border-bottom: 1px solid var(--rule);
     padding-bottom: 32px;
     margin-bottom: 36px;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 24px;
-    align-items: end;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .brand-meta {
@@ -1288,15 +1288,13 @@
 
     /* 헤더: 대폭 축소 */
     header {
-      grid-template-columns: 1fr;
       padding-bottom: 14px;
       margin-bottom: 14px;
-      gap: 8px;
     }
     .brand-meta { font-size: 9px; margin-bottom: 4px; }
     .brand-title { font-size: 26px; }
     .brand-sub { font-size: 12px; margin-top: 6px; line-height: 1.4; }
-    .nie-logo { height: 28px; }
+    .nie-logo { height: 40px; margin-bottom: 12px; }
 
     /* 현재 조건: 컴팩트하게, 5개 항목 한 줄 고정 */
     .status {
@@ -1423,12 +1421,12 @@
 
   <!-- HEADER -->
   <header>
+    <img class="nie-logo" src="nie-logo.png" alt="국립생태원">
     <div class="brand">
       <div class="brand-meta">충남 서천 · 조류 시범 서비스 · v0.3 prototype</div>
       <h1 class="brand-title">생물관찰 <span class="accent">예측 가이드</span></h1>
       <p class="brand-sub">에코뱅크 조류 조사기록과 기상·조석 조건을 기반으로, 지금 서천에서 관찰 가능성이 높은 새를 추천합니다.</p>
     </div>
-    <img class="nie-logo" src="nie-logo.png" alt="국립생태원">
   </header>
 
   <!-- 현재 조건 -->
