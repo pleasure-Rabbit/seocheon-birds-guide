@@ -250,6 +250,30 @@
     background: var(--paper);
   }
   .picker-search::placeholder { color: var(--ink-faint); }
+  .taxon-switch {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .taxon-btn {
+    flex: 1;
+    background: var(--paper);
+    border: 2px solid var(--ink);
+    padding: 14px 20px;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .taxon-btn:hover { border-color: var(--accent); color: var(--ink); }
+  .taxon-btn.active {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+
   .geo-bar {
     display: flex;
     align-items: center;
@@ -1263,6 +1287,19 @@
     font-size: 9px;
     padding: 1px 5px;
   }
+  .result-photo.insect { display: flex; align-items: center; justify-content: center; }
+  .insect-icon {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--leaf), var(--leaf-bright));
+    color: var(--paper);
+    font-family: 'Noto Serif KR', serif;
+    font-size: 22px;
+    font-weight: 900;
+  }
   .detail-photo {
     border: 1px solid var(--ink);
     background: var(--paper-deep);
@@ -1285,6 +1322,10 @@
   }
   @media (max-width: 900px) {
     .wrap { padding: 16px 14px 32px; }
+
+    /* 분류군 선택 */
+    .taxon-switch { gap: 6px; margin-bottom: 14px; }
+    .taxon-btn { padding: 10px 8px; font-size: 13px; }
 
     /* 헤더: 대폭 축소 */
     header {
@@ -1428,6 +1469,12 @@
       <p class="brand-sub">에코뱅크 조류 조사기록과 기상·조석 조건을 기반으로, 지금 서천에서 관찰 가능성이 높은 새를 추천합니다.</p>
     </div>
   </header>
+
+  <!-- 분류군 선택 -->
+  <div class="taxon-switch">
+    <button class="taxon-btn active" data-taxon="bird" onclick="setTaxon('bird')">🐦 조류</button>
+    <button class="taxon-btn" data-taxon="insect" onclick="setTaxon('insect')">🦋 곤충</button>
+  </div>
 
   <!-- 현재 조건 -->
   <div class="status">
@@ -16434,6 +16481,1510 @@ const species = [
   }
 ];
 // 관찰지점 (12곳) - 서천 주요 조류 관찰 거점
+// 곤충 데이터: 에코뱅크 자연환경조사_곤충_점(mv_map_ntee_insect_point), 서천 권역, 기록빈도 상위 60종
+const insectSpecies = [
+  {
+    "id": "ins-001",
+    "name": "끝검은말매미충",
+    "sci": "Bothrogonia ferruginea",
+    "recordCount": 28,
+    "individualCount": 19,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      1,
+      3,
+      8,
+      5,
+      4,
+      6,
+      1,
+      0,
+      0
+    ],
+    "locId": "eco-loc-06",
+    "locName": "서천읍·습지권 06",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-002",
+    "name": "호리꽃등에",
+    "sci": "Episyrphus balteatus",
+    "recordCount": 24,
+    "individualCount": 30,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      4,
+      8,
+      2,
+      6,
+      3,
+      1,
+      0,
+      0
+    ],
+    "locId": "eco-loc-07",
+    "locName": "서천읍·습지권 07",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-003",
+    "name": "양봉꿀벌",
+    "sci": "Apis mellifera",
+    "recordCount": 23,
+    "individualCount": 45,
+    "activeMonths": [
+      0,
+      0,
+      2,
+      1,
+      2,
+      7,
+      4,
+      5,
+      1,
+      1,
+      0,
+      0
+    ],
+    "locId": "eco-loc-07",
+    "locName": "서천읍·습지권 07",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-004",
+    "name": "꼬마꽃등에",
+    "sci": "Sphaerophoria menthastri",
+    "recordCount": 20,
+    "individualCount": 8,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      5,
+      4,
+      2,
+      7,
+      1,
+      1,
+      0,
+      0
+    ],
+    "locId": "eco-loc-07",
+    "locName": "서천읍·습지권 07",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-005",
+    "name": "무당벌레",
+    "sci": "Harmonia axyridis",
+    "recordCount": 19,
+    "individualCount": 25,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      3,
+      3,
+      3,
+      4,
+      3,
+      2,
+      1,
+      0,
+      0
+    ],
+    "locId": "eco-loc-07",
+    "locName": "서천읍·습지권 07",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-006",
+    "name": "네발나비",
+    "sci": "Polygonia c-aureum",
+    "recordCount": 18,
+    "individualCount": 21,
+    "activeMonths": [
+      0,
+      0,
+      2,
+      0,
+      1,
+      4,
+      3,
+      6,
+      1,
+      1,
+      0,
+      0
+    ],
+    "locId": "eco-loc-40",
+    "locName": "장항·금강하구권 40",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-007",
+    "name": "꼬마남생이무당벌레",
+    "sci": "Propylea japonica",
+    "recordCount": 16,
+    "individualCount": 18,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      4,
+      3,
+      2,
+      4,
+      1,
+      1,
+      1,
+      0,
+      0
+    ],
+    "locId": "eco-loc-14",
+    "locName": "장항·금강하구권 14",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-008",
+    "name": "수중다리꽃등에",
+    "sci": "Helophilus virgatus",
+    "recordCount": 15,
+    "individualCount": 12,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      2,
+      2,
+      2,
+      1,
+      6,
+      1,
+      1,
+      0,
+      0
+    ],
+    "locId": "eco-loc-07",
+    "locName": "서천읍·습지권 07",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-009",
+    "name": "배짧은꽃등에",
+    "sci": "Eristalis cerealis",
+    "recordCount": 15,
+    "individualCount": 6,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      4,
+      4,
+      0,
+      5,
+      1,
+      1,
+      0,
+      0
+    ],
+    "locId": "eco-loc-07",
+    "locName": "서천읍·습지권 07",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-010",
+    "name": "배추흰나비",
+    "sci": "Pieris rapae",
+    "recordCount": 13,
+    "individualCount": 60,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      4,
+      3,
+      3,
+      2,
+      1,
+      0,
+      0
+    ],
+    "locId": "eco-loc-24",
+    "locName": "서천읍·습지권 24",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-011",
+    "name": "밀잠자리",
+    "sci": "Orthetrum albistylum",
+    "recordCount": 13,
+    "individualCount": 14,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      4,
+      4,
+      3,
+      2,
+      0,
+      0,
+      0
+    ],
+    "locId": "eco-loc-24",
+    "locName": "서천읍·습지권 24",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-012",
+    "name": "남색초원하늘소",
+    "sci": "Agapanthia (Epoptes) amurensis",
+    "recordCount": 12,
+    "individualCount": 8,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      6,
+      4,
+      2,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "locId": "eco-loc-40",
+    "locName": "장항·금강하구권 40",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-013",
+    "name": "애긴노린재",
+    "sci": "Nysius plebejus",
+    "recordCount": 12,
+    "individualCount": 20,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      3,
+      1,
+      3,
+      1,
+      2,
+      2,
+      0,
+      0,
+      0
+    ],
+    "locId": "eco-loc-40",
+    "locName": "장항·금강하구권 40",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-014",
+    "name": "칠성무당벌레",
+    "sci": "Coccinella (Coccinella) septempunctata",
+    "recordCount": 12,
+    "individualCount": 20,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      3,
+      2,
+      4,
+      1,
+      0,
+      1,
+      1,
+      0,
+      0
+    ],
+    "locId": "eco-loc-24",
+    "locName": "서천읍·습지권 24",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-015",
+    "name": "고마로브집게벌레",
+    "sci": "Timomenus komarowi",
+    "recordCount": 11,
+    "individualCount": 12,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      1,
+      1,
+      4,
+      1,
+      0,
+      3,
+      1,
+      0,
+      0
+    ],
+    "locId": "eco-loc-24",
+    "locName": "서천읍·습지권 24",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-016",
+    "name": "다리무늬침노린재",
+    "sci": "Sphedanolestes (Sphedanolestes) impressicollis",
+    "recordCount": 11,
+    "individualCount": 4,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      1,
+      0,
+      4,
+      1,
+      1,
+      3,
+      1,
+      0,
+      0
+    ],
+    "locId": "eco-loc-07",
+    "locName": "서천읍·습지권 07",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-017",
+    "name": "알통다리꽃등에",
+    "sci": "Syritta pipiens",
+    "recordCount": 11,
+    "individualCount": 1,
+    "activeMonths": [
+      0,
+      0,
+      1,
+      0,
+      2,
+      2,
+      1,
+      5,
+      0,
+      0,
+      0,
+      0
+    ],
+    "locId": "eco-loc-06",
+    "locName": "서천읍·습지권 06",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-018",
+    "name": "호랑나비",
+    "sci": "Papilio xuthus",
+    "recordCount": 11,
+    "individualCount": 9,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      3,
+      5,
+      2,
+      0,
+      1,
+      0,
+      0
+    ],
+    "locId": "eco-loc-24",
+    "locName": "서천읍·습지권 24",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-019",
+    "name": "큰딱부리긴노린재",
+    "sci": "Geocoris (Piocoris) varius",
+    "recordCount": 11,
+    "individualCount": 10,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      5,
+      1,
+      2,
+      2,
+      1,
+      0,
+      0
+    ],
+    "locId": "eco-loc-24",
+    "locName": "서천읍·습지권 24",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-020",
+    "name": "산바퀴",
+    "sci": "Blattella nipponica",
+    "recordCount": 10,
+    "individualCount": 18,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      1,
+      0,
+      2,
+      3,
+      0,
+      3,
+      1,
+      0,
+      0
+    ],
+    "locId": "eco-loc-14",
+    "locName": "장항·금강하구권 14",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-021",
+    "name": "일본왕개미",
+    "sci": "Camponotus japonicus",
+    "recordCount": 10,
+    "individualCount": 24,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      1,
+      3,
+      3,
+      1,
+      1,
+      1,
+      0,
+      0
+    ],
+    "locId": "eco-loc-21",
+    "locName": "장항·금강하구권 21",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-022",
+    "name": "큰뱀허물쌍살벌",
+    "sci": "Parapolybia indica",
+    "recordCount": 10,
+    "individualCount": 28,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      1,
+      3,
+      2,
+      2,
+      2,
+      0,
+      0,
+      0
+    ],
+    "locId": "eco-loc-24",
+    "locName": "서천읍·습지권 24",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-023",
+    "name": "그물등개미",
+    "sci": "Pristomyrmex punctatus",
+    "recordCount": 10,
+    "individualCount": 8,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      5,
+      2,
+      3,
+      0,
+      0,
+      0
+    ],
+    "locId": "eco-loc-07",
+    "locName": "서천읍·습지권 07",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-024",
+    "name": "어리호박벌",
+    "sci": "Xylocopa appendiculata circumvolans",
+    "recordCount": 9,
+    "individualCount": 3,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      4,
+      2,
+      0,
+      1,
+      1,
+      1,
+      0,
+      0
+    ],
+    "locId": "eco-loc-40",
+    "locName": "장항·금강하구권 40",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-025",
+    "name": "꽃등에",
+    "sci": "Eristalis tenax",
+    "recordCount": 9,
+    "individualCount": 1,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      1,
+      5,
+      0,
+      1,
+      0,
+      0
+    ],
+    "locId": "eco-loc-06",
+    "locName": "서천읍·습지권 06",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-026",
+    "name": "곰개미",
+    "sci": "Formica japonica",
+    "recordCount": 9,
+    "individualCount": 26,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      1,
+      2,
+      0,
+      3,
+      1,
+      1,
+      1,
+      0,
+      0
+    ],
+    "locId": "eco-loc-21",
+    "locName": "장항·금강하구권 21",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-027",
+    "name": "더듬이긴노린재",
+    "sci": "Pachygrontha antennata",
+    "recordCount": 9,
+    "individualCount": 15,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      5,
+      0,
+      1,
+      2,
+      1,
+      0,
+      0
+    ],
+    "locId": "eco-loc-07",
+    "locName": "서천읍·습지권 07",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-028",
+    "name": "톱다리개미허리노린재",
+    "sci": "Riptortus clavatus",
+    "recordCount": 8,
+    "individualCount": 8,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      1,
+      0,
+      2,
+      1,
+      0,
+      4,
+      0,
+      0,
+      0
+    ],
+    "locId": "eco-loc-44",
+    "locName": "서천읍·습지권 44",
+    "habitat": "forest",
+    "habitatName": "산림·구릉"
+  },
+  {
+    "id": "ins-029",
+    "name": "푸른부전나비",
+    "sci": "Celastrina argiolus",
+    "recordCount": 8,
+    "individualCount": 14,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      3,
+      2,
+      1,
+      1,
+      1,
+      0,
+      0
+    ],
+    "locId": "eco-loc-07",
+    "locName": "서천읍·습지권 07",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-030",
+    "name": "장수말벌",
+    "sci": "Vespa mandarinia",
+    "recordCount": 8,
+    "individualCount": 4,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      3,
+      1,
+      3,
+      1,
+      0,
+      0,
+      0
+    ],
+    "locId": "eco-loc-24",
+    "locName": "서천읍·습지권 24",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-031",
+    "name": "왕자팔랑나비",
+    "sci": "Daimio tethys",
+    "recordCount": 8,
+    "individualCount": 5,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      4,
+      2,
+      2,
+      0,
+      0,
+      0,
+      0
+    ],
+    "locId": "eco-loc-07",
+    "locName": "서천읍·습지권 07",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-032",
+    "name": "넉점박이송장벌레",
+    "sci": "Nicrophorus quadripunctatus",
+    "recordCount": 8,
+    "individualCount": 22,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      2,
+      2,
+      3,
+      0,
+      0,
+      0
+    ],
+    "locId": "eco-loc-24",
+    "locName": "서천읍·습지권 24",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-033",
+    "name": "고려꽃등에",
+    "sci": "Paragus haemorrhous",
+    "recordCount": 8,
+    "individualCount": 0,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      2,
+      1,
+      1,
+      4,
+      0,
+      0,
+      0,
+      0
+    ],
+    "locId": "eco-loc-07",
+    "locName": "서천읍·습지권 07",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-034",
+    "name": "알린콩알락파리",
+    "sci": "Rivellia alini",
+    "recordCount": 8,
+    "individualCount": 0,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      5,
+      0,
+      0,
+      0,
+      0
+    ],
+    "locId": "eco-loc-06",
+    "locName": "서천읍·습지권 06",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-035",
+    "name": "가시노린재",
+    "sci": "Carbula putoni",
+    "recordCount": 7,
+    "individualCount": 5,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0,
+      4,
+      1,
+      0,
+      0
+    ],
+    "locId": "eco-loc-24",
+    "locName": "서천읍·습지권 24",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-036",
+    "name": "북쪽비단노린재",
+    "sci": "Eurydema gebleri gebleri",
+    "recordCount": 7,
+    "individualCount": 8,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      1,
+      2,
+      2,
+      0,
+      1,
+      1,
+      0,
+      0,
+      0
+    ],
+    "locId": "eco-loc-21",
+    "locName": "장항·금강하구권 21",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-037",
+    "name": "갈색날개노린재",
+    "sci": "Plautia stali",
+    "recordCount": 7,
+    "individualCount": 10,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      2,
+      3,
+      0,
+      0,
+      0,
+      0
+    ],
+    "locId": "eco-loc-07",
+    "locName": "서천읍·습지권 07",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-038",
+    "name": "모메뚜기",
+    "sci": "Tetrix japonica",
+    "recordCount": 7,
+    "individualCount": 9,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      3,
+      0,
+      0,
+      3,
+      1,
+      0,
+      0
+    ],
+    "locId": "eco-loc-24",
+    "locName": "서천읍·습지권 24",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-039",
+    "name": "얼룩장다리파리",
+    "sci": "Condylostylus nebulosus",
+    "recordCount": 7,
+    "individualCount": 6,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      2,
+      3,
+      0,
+      0,
+      0,
+      0
+    ],
+    "locId": "eco-loc-14",
+    "locName": "장항·금강하구권 14",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-040",
+    "name": "뿔나비",
+    "sci": "Libythea lepita",
+    "recordCount": 7,
+    "individualCount": 13,
+    "activeMonths": [
+      0,
+      0,
+      1,
+      0,
+      0,
+      1,
+      2,
+      2,
+      0,
+      1,
+      0,
+      0
+    ],
+    "locId": "eco-loc-07",
+    "locName": "서천읍·습지권 07",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-041",
+    "name": "암먹부전나비",
+    "sci": "Cupido argiades",
+    "recordCount": 7,
+    "individualCount": 16,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      1,
+      2,
+      1,
+      1,
+      0,
+      0
+    ],
+    "locId": "eco-loc-24",
+    "locName": "서천읍·습지권 24",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-042",
+    "name": "일본침개미",
+    "sci": "Ectomomyrmex javana",
+    "recordCount": 7,
+    "individualCount": 80,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      2,
+      3,
+      0,
+      0,
+      0
+    ],
+    "locId": "eco-loc-07",
+    "locName": "서천읍·습지권 07",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-043",
+    "name": "동애등에",
+    "sci": "Ptecticus tenebrifer",
+    "recordCount": 7,
+    "individualCount": 8,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      4,
+      1,
+      1,
+      0,
+      0,
+      0
+    ],
+    "locId": "eco-loc-13",
+    "locName": "장항·금강하구권 13",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-044",
+    "name": "뱀허물쌍살벌",
+    "sci": "Parapolybia varia",
+    "recordCount": 7,
+    "individualCount": 5,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      3,
+      0,
+      1,
+      2,
+      1,
+      0,
+      0
+    ],
+    "locId": "eco-loc-40",
+    "locName": "장항·금강하구권 40",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-045",
+    "name": "포도들명나방",
+    "sci": "Herpetogramma luctuosalis",
+    "recordCount": 7,
+    "individualCount": 6,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      4,
+      0,
+      1,
+      0,
+      0
+    ],
+    "locId": "eco-loc-07",
+    "locName": "서천읍·습지권 07",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-046",
+    "name": "두줄가지나방",
+    "sci": "Rikiosatoa grisea",
+    "recordCount": 7,
+    "individualCount": 11,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      4,
+      2,
+      1,
+      0,
+      0,
+      0,
+      0
+    ],
+    "locId": "eco-loc-44",
+    "locName": "서천읍·습지권 44",
+    "habitat": "forest",
+    "habitatName": "산림·구릉"
+  },
+  {
+    "id": "ins-047",
+    "name": "노랑나비",
+    "sci": "Colias erate",
+    "recordCount": 7,
+    "individualCount": 14,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      3,
+      2,
+      0,
+      1,
+      1,
+      0,
+      0
+    ],
+    "locId": "eco-loc-24",
+    "locName": "서천읍·습지권 24",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-048",
+    "name": "광붙이꽃등에",
+    "sci": "Melanostoma mellinum",
+    "recordCount": 7,
+    "individualCount": 6,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      1,
+      2,
+      0,
+      3,
+      0,
+      1,
+      0,
+      0
+    ],
+    "locId": "eco-loc-14",
+    "locName": "장항·금강하구권 14",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-049",
+    "name": "참나무갈고리나방",
+    "sci": "Agnidra scabiosa fixseni",
+    "recordCount": 7,
+    "individualCount": 16,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      2,
+      2,
+      1,
+      0,
+      0,
+      0
+    ],
+    "locId": "eco-loc-44",
+    "locName": "서천읍·습지권 44",
+    "habitat": "forest",
+    "habitatName": "산림·구릉"
+  },
+  {
+    "id": "ins-050",
+    "name": "털뿔가지나방",
+    "sci": "Alcis angulifera",
+    "recordCount": 7,
+    "individualCount": 31,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      3,
+      1,
+      0,
+      2,
+      1,
+      0,
+      0
+    ],
+    "locId": "eco-loc-24",
+    "locName": "서천읍·습지권 24",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-051",
+    "name": "스미스개미",
+    "sci": "Nylanderia flavipes",
+    "recordCount": 7,
+    "individualCount": 3,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      5,
+      1,
+      1,
+      0,
+      0,
+      0
+    ],
+    "locId": "eco-loc-14",
+    "locName": "장항·금강하구권 14",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-052",
+    "name": "흰줄태극나방",
+    "sci": "Metopta rectifasciata",
+    "recordCount": 7,
+    "individualCount": 9,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      5,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0
+    ],
+    "locId": "eco-loc-44",
+    "locName": "서천읍·습지권 44",
+    "habitat": "forest",
+    "habitatName": "산림·구릉"
+  },
+  {
+    "id": "ins-053",
+    "name": "점날개잎벌레",
+    "sci": "",
+    "recordCount": 7,
+    "individualCount": 5,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      2,
+      0,
+      1,
+      4,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "locId": "eco-loc-24",
+    "locName": "서천읍·습지권 24",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-054",
+    "name": "말벌",
+    "sci": "Vespa crabro flavofasciata",
+    "recordCount": 7,
+    "individualCount": 1,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      1,
+      3,
+      2,
+      0,
+      0,
+      0
+    ],
+    "locId": "eco-loc-24",
+    "locName": "서천읍·습지권 24",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-055",
+    "name": "고들빼기과실파리",
+    "sci": "Trupanea gratiosa",
+    "recordCount": 7,
+    "individualCount": 0,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      6,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0
+    ],
+    "locId": "eco-loc-02",
+    "locName": "문산·판교 산림권 02",
+    "habitat": "sand",
+    "habitatName": "하구·갯벌·해안"
+  },
+  {
+    "id": "ins-056",
+    "name": "달라스긴노린재",
+    "sci": "Neolethaeus dallasi",
+    "recordCount": 7,
+    "individualCount": 15,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      1,
+      0,
+      2,
+      1,
+      2,
+      1,
+      0,
+      0,
+      0
+    ],
+    "locId": "eco-loc-24",
+    "locName": "서천읍·습지권 24",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-057",
+    "name": "갈색날개매미충",
+    "sci": "Pochazia shantungensis",
+    "recordCount": 7,
+    "individualCount": 32,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      1,
+      2,
+      2,
+      0,
+      0,
+      0
+    ],
+    "locId": "eco-loc-44",
+    "locName": "서천읍·습지권 44",
+    "habitat": "forest",
+    "habitatName": "산림·구릉"
+  },
+  {
+    "id": "ins-058",
+    "name": "섬서구메뚜기",
+    "sci": "Atractomorpha lata",
+    "recordCount": 6,
+    "individualCount": 3,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      3,
+      1,
+      0,
+      0
+    ],
+    "locId": "eco-loc-40",
+    "locName": "장항·금강하구권 40",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  },
+  {
+    "id": "ins-059",
+    "name": "사마귀",
+    "sci": "Tenodera angustipennis",
+    "recordCount": 6,
+    "individualCount": 1,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      2,
+      1,
+      2,
+      0,
+      1,
+      0,
+      0,
+      0
+    ],
+    "locId": "eco-loc-47",
+    "locName": "장항·금강하구권 47",
+    "habitat": "sand",
+    "habitatName": "하구·갯벌·해안"
+  },
+  {
+    "id": "ins-060",
+    "name": "적갈색긴가슴잎벌레",
+    "sci": "Lema (Lema) diversa",
+    "recordCount": 6,
+    "individualCount": 2,
+    "activeMonths": [
+      0,
+      0,
+      0,
+      0,
+      1,
+      2,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "locId": "eco-loc-07",
+    "locName": "서천읍·습지권 07",
+    "habitat": "wetland",
+    "habitatName": "습지·하천"
+  }
+];
+
 const locations = [
   {
     "id": "eco-loc-01",
@@ -25291,7 +26842,225 @@ function birdImgError(el) {
 // ============================================================
 // PANEL 1: 전체 관찰 가능 (top 페어)
 // ============================================================
+// ============================================================
+// 분류군(조류/곤충) 전환
+// ============================================================
+let currentTaxon = 'bird';
+let insectMarkersAll = [];
+let insectMarkersLoc = [];
+
+function calcInsectScore(sp) {
+  const max = Math.max(...sp.activeMonths, 1);
+  const monthFactor = sp.activeMonths[CURRENT_MONTH_INDEX] / max; // 0~1
+  const commonness = Math.min(1, sp.recordCount / 25); // 0~1, 대략 정규화
+  return Math.min(0.97, 0.15 + 0.55 * monthFactor + 0.3 * commonness);
+}
+
+function insectIconHtml(name) {
+  // 사진이 없어 이니셜 아이콘으로 대체
+  const ch = name ? name[0] : '?';
+  return `<div class="insect-icon">${ch}</div>`;
+}
+
+function setTaxon(taxon) {
+  if (taxon === currentTaxon) return;
+  currentTaxon = taxon;
+  document.querySelectorAll('.taxon-btn').forEach(b => b.classList.toggle('active', b.dataset.taxon === taxon));
+
+  const tideBoard = document.querySelector('.tide-board');
+  if (tideBoard) tideBoard.style.display = taxon === 'insect' ? 'none' : '';
+
+  const tab3 = document.querySelector('.tab[data-tab="byspecies"]');
+  if (tab3) tab3.innerHTML = taxon === 'insect'
+    ? '곤충별 보기 <span class="badge">/ by species</span>'
+    : '조류별 보기 <span class="badge">/ by species</span>';
+
+  // 종 피커를 현재 분류군 데이터로 다시 채움
+  if (taxon === 'insect') fillInsectSpeciesOptions();
+  else fillSpeciesOptions();
+
+  // 현재 활성 탭 다시 렌더
+  const activeTab = document.querySelector('.tab.active');
+  const tabName = activeTab ? activeTab.dataset.tab : 'all';
+  if (tabName === 'all') renderAll();
+  else if (tabName === 'bylocation') {
+    const picker = document.getElementById('locationPicker');
+    renderByLocation(picker.value || locations[0]?.id);
+  } else if (tabName === 'byspecies') {
+    const picker = document.getElementById('speciesPicker');
+    const list = taxon === 'insect' ? insectSpecies : species;
+    renderBySpecies(picker.value || list[0]?.id);
+  }
+}
+
+function fillInsectSpeciesOptions(filter = '') {
+  const select = document.getElementById('speciesPicker');
+  if (!select) return;
+  const q = normalizeSearchText(filter);
+  const matches = insectSpecies.filter(sp => {
+    const hay = `${sp.name} ${sp.sci}`.toLowerCase();
+    return !q || hay.includes(q);
+  });
+  select.innerHTML = '';
+  matches.forEach(sp => {
+    const opt = document.createElement('option');
+    opt.value = sp.id;
+    opt.textContent = `${sp.name} (${sp.sci || '학명 미상'})`;
+    select.appendChild(opt);
+  });
+  select.disabled = matches.length === 0;
+  if (matches[0]) select.value = matches[0].id;
+}
+
+function renderInsectAll() {
+  if (!allMap) allMap = initMap('map');
+  insectMarkersAll.forEach(m => allMap.removeLayer(m));
+  insectMarkersAll = [];
+  Object.values(allMarkers).forEach(m => allMap.removeLayer(m));
+  allMarkers = {};
+
+  const sorted = [...insectSpecies].sort((a, b) => calcInsectScore(b) - calcInsectScore(a));
+  document.getElementById('allCount').textContent = sorted.length;
+  const resultsHeadLabel = document.querySelector('#panel-all .results-head span');
+  if (resultsHeadLabel) resultsHeadLabel.textContent = '적합도 순 (곤충 × 지점)';
+
+  const list = document.getElementById('allList');
+  list.innerHTML = '';
+  sorted.forEach((sp, i) => {
+    const score = calcInsectScore(sp);
+    const level = scoreLevel(score);
+    const card = document.createElement('div');
+    card.className = 'result-card';
+    card.innerHTML = `
+      <div class="result-photo insect">${insectIconHtml(sp.name)}<span>${String(i+1).padStart(2,'0')}</span></div>
+      <div class="result-body">
+        <h3>${sp.name}</h3>
+        <div class="sub">${sp.sci || '학명 미상'}</div>
+        <div class="where">${sp.locName}</div>
+        <div class="tags">
+          <span class="tag leaf">${sp.habitatName}</span>
+          <span class="tag">기록 ${sp.recordCount}건</span>
+        </div>
+      </div>
+      <div class="result-score">
+        <div class="score-pct">${Math.round(score * 100)}<small>%</small></div>
+        <div class="score-bar"><div class="fill" style="transform: scaleX(${score})"></div></div>
+        <div class="score-label">${level.label}</div>
+      </div>
+    `;
+    list.appendChild(card);
+  });
+
+  // 지점별 마커
+  const byLoc = {};
+  insectSpecies.forEach(sp => { (byLoc[sp.locId] = byLoc[sp.locId] || []).push(sp); });
+  Object.entries(byLoc).forEach(([locId, sps]) => {
+    const loc = findLoc(locId);
+    if (!loc) return;
+    const top = [...sps].sort((a,b)=>calcInsectScore(b)-calcInsectScore(a))[0];
+    const marker = makeMarker(loc, { fillColor: '#6a8a3a' }).addTo(allMap);
+    marker.bindPopup(`<strong>${loc.name}</strong><br>${top.name} 외 ${sps.length}종`);
+    insectMarkersAll.push(marker);
+  });
+}
+
+function renderInsectByLocation(locId) {
+  if (!locMap) {
+    locMap = initMap('locMap');
+    setTimeout(() => locMap.invalidateSize(), 0);
+  }
+  const loc = findLoc(locId);
+  if (!loc) return;
+  insectMarkersLoc.forEach(m => locMap.removeLayer(m));
+  insectMarkersLoc = [];
+  Object.values(locMarkers).forEach(m => locMap.removeLayer(m));
+  locMarkers = {};
+
+  document.getElementById('locMapTitle').textContent = `${loc.name} (${loc.area})`;
+  const distText = userLocation && loc.distanceKm != null ? ` · 내 위치에서 <strong>${formatDistance(loc.distanceKm)}</strong>` : '';
+  document.getElementById('locIntro').innerHTML = `<strong>${loc.name}</strong> (${loc.habitatName}) · 에코뱅크 곤충 관측 기록${distText}`;
+
+  const marker = makeMarker(loc, { fillColor: '#6a8a3a' }).addTo(locMap);
+  locMap.setView([loc.lat, loc.lon], 13);
+  insectMarkersLoc.push(marker);
+
+  const atLoc = insectSpecies.filter(sp => sp.locId === locId).sort((a,b) => calcInsectScore(b) - calcInsectScore(a));
+  document.getElementById('locResultCount').textContent = atLoc.length;
+  const list = document.getElementById('locList');
+  list.innerHTML = '';
+  if (!atLoc.length) {
+    list.innerHTML = '<div class="today-picks-empty">이 지점엔 기록된 곤충 데이터가 없어요.</div>';
+    return;
+  }
+  atLoc.forEach((sp, i) => {
+    const score = calcInsectScore(sp);
+    const level = scoreLevel(score);
+    const card = document.createElement('div');
+    card.className = 'result-card';
+    card.innerHTML = `
+      <div class="result-photo insect">${insectIconHtml(sp.name)}<span>${String(i+1).padStart(2,'0')}</span></div>
+      <div class="result-body">
+        <h3>${sp.name}</h3>
+        <div class="sub">${sp.sci || '학명 미상'}</div>
+        <div class="tags"><span class="tag">기록 ${sp.recordCount}건 · 개체 ${sp.individualCount}</span></div>
+      </div>
+      <div class="result-score">
+        <div class="score-pct">${Math.round(score * 100)}<small>%</small></div>
+        <div class="score-bar"><div class="fill" style="transform: scaleX(${score})"></div></div>
+        <div class="score-label">${level.label}</div>
+      </div>
+    `;
+    list.appendChild(card);
+  });
+}
+
+function renderInsectBySpecies(spId) {
+  if (!spMap) {
+    spMap = initMap('spMap');
+    setTimeout(() => spMap.invalidateSize(), 0);
+  }
+  const sp = insectSpecies.find(s => s.id === spId);
+  if (!sp) return;
+  const loc = findLoc(sp.locId);
+
+  document.getElementById('spResultCount').textContent = 1;
+  document.getElementById('spListCount').textContent = 1;
+  document.getElementById('spMapTitle').textContent = sp.name;
+  spMap.eachLayer(l => { if (l instanceof L.Marker || l instanceof L.CircleMarker) spMap.removeLayer(l); });
+  if (loc) {
+    const marker = makeMarker(loc, { fillColor: '#6a8a3a' }).addTo(spMap);
+    marker.bindPopup(`<strong>${sp.name}</strong><br>${loc.name}`).openPopup();
+    spMap.setView([loc.lat, loc.lon], 13);
+  }
+
+  const score = calcInsectScore(sp);
+  const level = scoreLevel(score);
+  const monthLabel = `${CURRENT_MONTH_NUM}월`;
+  const list = document.getElementById('spList');
+  list.innerHTML = `
+    <div class="result-card">
+      <div class="result-photo insect">${insectIconHtml(sp.name)}</div>
+      <div class="result-body">
+        <h3>${sp.name}</h3>
+        <div class="sub">${sp.sci || '학명 미상'}</div>
+        <div class="where">${loc ? loc.name : ''}</div>
+        <div class="tags">
+          <span class="tag leaf">${sp.habitatName}</span>
+          <span class="tag">기록 ${sp.recordCount}건 · 개체 ${sp.individualCount}</span>
+          <span class="tag">${monthLabel} 활동성 반영됨</span>
+        </div>
+      </div>
+      <div class="result-score">
+        <div class="score-pct">${Math.round(score * 100)}<small>%</small></div>
+        <div class="score-bar"><div class="fill" style="transform: scaleX(${score})"></div></div>
+        <div class="score-label">${level.label}</div>
+      </div>
+    </div>
+  `;
+}
+
 function renderAll() {
+  if (currentTaxon === 'insect') { renderInsectAll(); return; }
   if (!allMap) {
     allMap = initMap('map');
     if (userLocation) {
@@ -25310,6 +27079,8 @@ function renderAll() {
   // 마커 클리어
   Object.values(allMarkers).forEach(m => allMap.removeLayer(m));
   allMarkers = {};
+  insectMarkersAll.forEach(m => allMap.removeLayer(m));
+  insectMarkersAll = [];
 
   Object.values(bestPerLoc).forEach(o => {
     const level = scoreLevel(o.score);
@@ -25479,6 +27250,7 @@ function setupLocationPicker() {
 }
 
 function renderByLocation(locId) {
+  if (currentTaxon === 'insect') { renderInsectByLocation(locId); return; }
   if (!locMap) {
     locMap = initMap('locMap');
     // 숨겨진 상태에서 생성됐을 수 있으므로 사이즈 강제 재계산
@@ -25496,6 +27268,8 @@ function renderByLocation(locId) {
   // 마커 갱신
   Object.values(locMarkers).forEach(m => locMap.removeLayer(m));
   locMarkers = {};
+  insectMarkersLoc.forEach(m => locMap.removeLayer(m));
+  insectMarkersLoc = [];
 
   // 모든 관찰지 이름을 지도에 표시하고, 선택 지점은 큰 마커로 강조
   locations.forEach(other => {
@@ -25581,6 +27355,7 @@ function setupSpeciesPicker() {
 }
 
 function renderBySpecies(spId) {
+  if (currentTaxon === 'insect') { renderInsectBySpecies(spId); return; }
   if (!spMap) {
     spMap = initMap('spMap');
     // 숨겨진 상태에서 생성됐을 수 있으므로 사이즈 강제 재계산
