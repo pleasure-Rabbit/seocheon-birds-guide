@@ -161,30 +161,33 @@
   /* TABS */
   .tabs {
     display: flex;
-    gap: 0;
+    gap: 8px;
     margin-bottom: 28px;
-    border-bottom: 2px solid var(--ink);
+    border-bottom: none;
+    background: var(--paper-deep);
+    border: 1px solid var(--rule);
+    padding: 6px;
     flex-wrap: wrap;
   }
 
   .tab {
-    background: none;
-    border: none;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
     padding: 14px 22px;
     font-family: 'Noto Serif KR', serif;
     font-size: 15px;
     font-weight: 500;
     color: var(--ink-soft);
     cursor: pointer;
-    border-bottom: 3px solid transparent;
-    margin-bottom: -2px;
     transition: all 0.2s;
   }
 
-  .tab:hover { color: var(--ink); }
+  .tab:hover { color: var(--ink); border-color: var(--accent); }
   .tab.active {
-    color: var(--ink);
-    border-bottom-color: var(--accent);
+    background: var(--accent);
+    color: var(--paper);
+    border-color: var(--accent);
     font-weight: 700;
   }
   .tab .badge {
@@ -193,6 +196,7 @@
     color: var(--ink-faint);
     margin-left: 6px;
   }
+  .tab.active .badge { color: rgba(244,237,224,0.75); }
 
   .panel { display: none; }
   .panel.active { display: block; animation: fade 0.3s ease; }
@@ -1170,6 +1174,55 @@
   }
   .tide-tip strong { color: var(--accent); font-family: 'Noto Serif KR', serif; }
 
+  /* 오늘의 추천 종 */
+  .today-picks {
+    border: 1px solid var(--ink);
+    background: rgba(255,255,255,0.42);
+    box-shadow: 4px 4px 0 var(--rule);
+    margin-bottom: 28px;
+    padding: 18px 22px;
+  }
+  .today-picks-head { margin-bottom: 14px; }
+  .today-picks-head .k {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+    text-transform: uppercase;
+    font-weight: 700;
+    display: block;
+  }
+  .today-picks-head .sub {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+    display: block;
+  }
+  .today-picks-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 14px;
+  }
+  .pick-card {
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .pick-card:hover { transform: translateY(-2px); box-shadow: 3px 3px 0 var(--rule); }
+  .pick-card .pick-photo {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--paper-deep);
+  }
+  .pick-card .pick-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .pick-card .pick-body { padding: 10px 12px; }
+  .pick-card h4 { font-family: 'Noto Serif KR', serif; font-size: 14px; margin-bottom: 2px; }
+  .pick-card .pick-sci { font-size: 10px; color: var(--ink-faint); font-style: italic; margin-bottom: 6px; }
+  .pick-card .pick-reason { font-size: 11px; color: var(--leaf-bright); line-height: 1.4; }
+  .today-picks-empty { font-size: 12px; color: var(--ink-faint); padding: 8px 0; }
+
   .result-photo {
     width: 58px;
     aspect-ratio: 1 / 1;
@@ -1228,16 +1281,6 @@
     .brand-meta { font-size: 9px; margin-bottom: 4px; }
     .brand-title { font-size: 26px; }
     .brand-sub { font-size: 12px; margin-top: 6px; line-height: 1.4; }
-    .header-stamp {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      text-align: left;
-      padding: 6px 10px;
-      font-size: 9px;
-    }
-    .header-stamp br { display: none; }
-    .header-stamp .num { font-size: 13px; margin-top: 0; }
 
     /* 현재 조건: 컴팩트하게 + 부차 항목 숨김 */
     .status {
@@ -1294,6 +1337,16 @@
       overflow: hidden;
     }
 
+    /* 오늘의 추천 종: 모바일 컴팩트 */
+    .today-picks { padding: 12px 14px; margin-bottom: 10px; }
+    .today-picks-head .k { font-size: 9px; }
+    .today-picks-head .sub { font-size: 10.5px; margin-top: 2px; }
+    .today-picks-list { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .pick-card .pick-body { padding: 6px 7px; }
+    .pick-card h4 { font-size: 11.5px; }
+    .pick-card .pick-sci { font-size: 8.5px; margin-bottom: 3px; }
+    .pick-card .pick-reason { font-size: 9px; }
+
     /* 탭: 가로 배열 + 가시성 강화 */
     .tabs {
       flex-wrap: nowrap;
@@ -1339,11 +1392,6 @@
       <h1 class="brand-title">생물관찰 <span class="accent">예측 가이드</span></h1>
       <p class="brand-sub">에코뱅크 조류 조사기록과 기상·조석 조건을 기반으로, 지금 서천에서 관찰 가능성이 높은 새를 추천합니다.</p>
     </div>
-    <div class="header-stamp">
-      서천 SEOCHEON<br>
-      36.0780° N, 126.6920° E<br>
-      <span class="num" id="headerDate">07.01</span>
-    </div>
   </header>
 
   <!-- 현재 조건 -->
@@ -1386,6 +1434,15 @@
     <div class="head">오늘의 추천<br>관찰 시간대</div>
     <div class="big">09:30 — 12:00 · 17:30 — 19:40</div>
     <div class="small">오늘은 10:59 간조 전후에 갯벌 먹이터가 열리고, 16:11 만조 이후 해질녘에는 하구·습지 이동성이 좋아집니다. 산림성 조류는 06~10시가 가장 안정적입니다.</div>
+  </div>
+
+  <!-- 오늘의 추천 종 -->
+  <div class="today-picks">
+    <div class="today-picks-head">
+      <span class="k">오늘의 관찰 추천종</span>
+      <span class="sub">평소엔 흔치 않지만 오늘 조건(계절·기온·습도)에서 특히 가능성이 높아진 종 위주로 골랐습니다.</span>
+    </div>
+    <div class="today-picks-list" id="todayPicksList"></div>
   </div>
 
   <!-- TABS -->
@@ -24934,6 +24991,7 @@ function recomputeScores() {
     const picker = document.getElementById('speciesPicker');
     renderBySpecies(picker && picker.value ? picker.value : species[0]?.id);
   }
+  renderTodayPicks();
 }
 
 // 종별 실제 현재 월 기준 계절성 보정 (activeMonths: 12개월 기록빈도 0~4)
@@ -24955,6 +25013,61 @@ function calcScore(obs) {
   const weatherFactor = weatherFactorFor(sp);
   const monthFactor = monthFactorFor(sp);
   return Math.min(0.98, sp.nowScore * obs.habitatFit * obs.frequency * weatherFactor * monthFactor);
+}
+
+// ============================================================
+// 오늘의 관찰 추천종
+// "평소엔 흔치 않지만(recordCount가 낮은 편) 오늘 계절·기상 조건에서
+// 유독 조건이 좋아진(monthFactor×weatherFactor가 높은) 종"을 골라낸다.
+// recordCount가 항상 높은(=원래 흔한) 종은 상위 25%를 기준으로 제외한다.
+// ============================================================
+function renderTodayPicks() {
+  const listEl = document.getElementById('todayPicksList');
+  if (!listEl || !species.length) return;
+
+  const counts = species.map(s => s.recordCount || 0).sort((a, b) => a - b);
+  const commonThreshold = counts[Math.floor(counts.length * 0.75)];
+
+  const scored = species.map(sp => {
+    const monthFactor = monthFactorFor(sp);
+    const weatherFactor = weatherFactorFor(sp);
+    return { sp, todayFactor: monthFactor * weatherFactor, monthFactor, weatherFactor };
+  });
+
+  const pool = scored
+    .filter(x => (x.sp.recordCount || 0) <= commonThreshold)
+    .sort((a, b) => b.todayFactor - a.todayFactor)
+    .slice(0, 6);
+
+  if (!pool.length) {
+    listEl.innerHTML = '<div class="today-picks-empty">오늘은 특별히 조건이 좋아진 희귀종이 없어요.</div>';
+    return;
+  }
+
+  listEl.innerHTML = '';
+  pool.forEach(({ sp, todayFactor, monthFactor, weatherFactor }) => {
+    const rare = (sp.recordCount || 0) <= counts[Math.floor(counts.length * 0.25)];
+    let reason;
+    if (rare) {
+      reason = '원래 관찰 기록이 드문 종인데, 오늘 조건이 잘 맞아요';
+    } else if (monthFactor > weatherFactor) {
+      reason = '평소보다 지금 이 시기에 관찰 가능성이 높아졌어요';
+    } else {
+      reason = '오늘 기온·습도 조건이 이 종에 잘 맞아요';
+    }
+    const card = document.createElement('div');
+    card.className = 'pick-card';
+    card.innerHTML = `
+      <div class="pick-photo"><img src="${sp.image}" alt="${sp.name}" loading="lazy" onerror="birdImgError(this)"></div>
+      <div class="pick-body">
+        <h4>${sp.name}</h4>
+        <div class="pick-sci">${sp.sci || ''}</div>
+        <div class="pick-reason">${reason}</div>
+      </div>
+    `;
+    card.addEventListener('click', () => openSpeciesDetail(sp));
+    listEl.appendChild(card);
+  });
 }
 
 function scoreLevel(score) {
@@ -25563,6 +25676,7 @@ window.addEventListener('load', () => {
     // picker 기본값만 설정 (renderBySpecies/Location은 탭 열릴 때 실행)
     document.getElementById('locationPicker').value = locations[0]?.id || '';
     document.getElementById('speciesPicker').value = species[0]?.id || '';
+    renderTodayPicks();
   }, 100);
 
   // 실시간 기상 최초 조회 + 주기적 갱신
