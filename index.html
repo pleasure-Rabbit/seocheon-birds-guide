@@ -1115,27 +1115,29 @@
     background: var(--paper-deep);
     border-right: 1px solid var(--rule);
     padding: 16px 24px;
+    text-align: center;
   }
   .tide-head .k {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
+    font-size: 13px;
     letter-spacing: 0.18em;
     color: var(--ink-faint);
     text-transform: uppercase;
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
   }
   .tide-head .v {
     font-family: 'Noto Serif KR', serif;
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 900;
     line-height: 1;
     color: var(--accent);
   }
   .tide-head .sub {
     margin-top: 6px;
-    font-size: 12px;
-    color: var(--ink-soft);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
   }
   .tide-slots {
     display: grid;
@@ -1144,20 +1146,21 @@
   .tide-slot {
     padding: 14px 16px;
     border-right: 1px dashed var(--rule-soft);
+    text-align: center;
   }
   .tide-slot:last-child { border-right: none; }
   .tide-slot .type {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 16px;
+    font-weight: 700;
     color: var(--ink-faint);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+    letter-spacing: 0.06em;
   }
   .tide-slot.high .type { color: var(--accent); }
   .tide-slot.low .type { color: var(--leaf); }
   .tide-slot .time {
     font-family: 'Noto Serif KR', serif;
-    font-size: 19px;
+    font-size: 20px;
     font-weight: 700;
     margin-top: 4px;
   }
