@@ -24905,6 +24905,43 @@ function applyTideToUI() {
   if (firstLow && lowEl) lowEl.textContent = firstLow.label;
 
   window.TIDE_TODAY = extrema; // 다른 로직(추천 시간대 등)에서 재사용 가능하도록 노출
+  applyTimeSuggestToUI(extrema);
+}
+
+// "HH:MM" 문자열에 분을 더하고 24시간 범위로 wrap
+function addMinutesToLabel(label, deltaMin) {
+  const [h, m] = label.split(':').map(Number);
+  let mins = (h * 60 + m + deltaMin + 24 * 60) % (24 * 60);
+  const hh = Math.floor(mins / 60);
+  const mm = mins % 60;
+  return `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`;
+}
+
+// 오늘의 추천 관찰 시간대: 실제 계산된 조석(간조/만조) 시각을 기준으로 산출
+// - 1구간: 오늘 첫 간조 전후(갯벌 먹이터 노출 구간)
+// - 2구간: 오늘 마지막 만조부터 일몰 직후까지(하구·습지 귀소 이동 구간)
+function applyTimeSuggestToUI(extrema) {
+  const lows = extrema.filter(e => e.type === 'LOW');
+  const highs = extrema.filter(e => e.type === 'HIGH');
+  if (!lows.length || !highs.length) return;
+
+  const firstLow = lows[0];
+  const lastHigh = highs[highs.length - 1];
+  const sunsetEl = document.getElementById('statSunset');
+  const sunset = sunsetEl && sunsetEl.textContent !== '19:54' ? sunsetEl.textContent : null;
+
+  const window1Start = addMinutesToLabel(firstLow.label, -90);
+  const window1End = addMinutesToLabel(firstLow.label, 60);
+  const window2Start = lastHigh.label;
+  const window2End = sunset ? addMinutesToLabel(sunset, 10) : addMinutesToLabel(lastHigh.label, 150);
+
+  const bigEl = document.querySelector('.time-suggest .big');
+  if (bigEl) bigEl.textContent = `${window1Start} — ${window1End} · ${window2Start} — ${window2End}`;
+
+  const smallEl = document.querySelector('.time-suggest .small');
+  if (smallEl) {
+    smallEl.innerHTML = `오늘은 ${firstLow.label} 간조 전후에 갯벌 먹이터가 열리고, ${lastHigh.label} 만조 이후 해질녘에는 하구·습지 이동성이 좋아집니다.<br>산림성 조류는 06~10시가 가장 안정적입니다.`;
+  }
 }
 
 // ============================================================
@@ -24979,6 +25016,7 @@ function requestUserLocation() {
       // 현재 조건(기온·습도·일출·일몰)도 내 위치 기준으로 갱신
       fetchWeather(userLocation.lat, userLocation.lon);
       applySunTimesToUI(userLocation.lat, userLocation.lon);
+      if (window.TIDE_TODAY) applyTimeSuggestToUI(window.TIDE_TODAY);
       const label = document.querySelector('.status-label');
       if (label) label.innerHTML = '현재 조건<br>내 위치 기준';
 
@@ -25761,8 +25799,8 @@ setupSpeciesPicker();
 // DOM이 완전히 그려진 후 지도 초기화 (display:none 이슈 방지)
 window.addEventListener('load', () => {
   applyCurrentDateToUI();
-  applyTideToUI();
   applySunTimesToUI();
+  applyTideToUI();
   setTimeout(() => {
     renderAll();
     // picker 기본값만 설정 (renderBySpecies/Location은 탭 열릴 때 실행)
