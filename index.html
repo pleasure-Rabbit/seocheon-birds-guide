@@ -1219,15 +1219,69 @@
     .wrap { padding: 24px 16px 40px; }
     header { grid-template-columns: 1fr; }
     .brand-title { font-size: 34px; }
-    .status { grid-template-columns: 1fr; gap: 16px; }
+
+    /* 현재 조건: 컴팩트하게 */
+    .status {
+      grid-template-columns: 1fr;
+      gap: 6px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+    }
+    .status-label { font-size: 8px; }
+    .status-data { gap: 12px 18px; }
+    .status-item .k { font-size: 8px; }
+    .status-item .v { font-size: 13px; }
+    .status-item .v small { font-size: 10px; }
+    .status-update { font-size: 8px; }
+
     .picker-bar { grid-template-columns: 1fr; gap: 12px; }
     .main-layout { grid-template-columns: 1fr; }
     .map-wrap, .results { height: 420px; }
     .time-suggest { grid-template-columns: 1fr; gap: 16px; }
-    .tide-board { grid-template-columns: 1fr; }
+
+    /* 조석: 컴팩트하게 */
+    .tide-board { grid-template-columns: 1fr; min-height: auto; margin-bottom: 14px; }
     .tide-head, .tide-slots { border-right: none; border-bottom: 1px solid var(--rule); }
-    .tide-slots { grid-template-columns: repeat(2, 1fr); }
+    .tide-head { padding: 10px 14px; }
+    .tide-head .v { font-size: 18px; }
+    .tide-head .sub { font-size: 10px; margin-top: 4px; }
+    .tide-slots { grid-template-columns: repeat(4, 1fr); }
+    .tide-slot { padding: 8px 4px; text-align: center; }
+    .tide-slot .type { font-size: 9px; }
+    .tide-slot .time { font-size: 14px; margin-top: 3px; }
+    .tide-slot .height { font-size: 9px; }
+    .tide-tip { padding: 10px 14px; font-size: 11px; }
+
     .time-suggest .small { text-align: left; }
+
+    /* 탭: 가로 배열 + 가시성 강화 */
+    .tabs {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      gap: 6px;
+      border-bottom: none;
+      background: var(--paper-deep);
+      padding: 6px;
+      margin-bottom: 20px;
+    }
+    .tab {
+      flex: 1 1 0;
+      padding: 12px 6px;
+      font-size: 12.5px;
+      text-align: center;
+      white-space: nowrap;
+      border-bottom: none;
+      border-radius: 2px;
+      margin-bottom: 0;
+    }
+    .tab.active {
+      background: var(--accent);
+      color: var(--paper);
+      border-bottom-color: transparent;
+    }
+    .tab .badge { display: none; }
+
     .detail-head { grid-template-columns: 1fr; padding: 32px 24px 20px; }
     .detail-body { grid-template-columns: 1fr; padding: 24px; gap: 28px; }
     .detail-title { font-size: 30px; }
@@ -1287,18 +1341,18 @@
       <strong>09:30–12:00</strong> 간조 전후에는 갯벌 먹이터 확인, <strong>17:30–19:40</strong>에는 하구·습지 귀소 이동 관찰을 우선 추천합니다.
     </div>
   </div>
-  <!-- TABS -->
-  <div class="tabs">
-    <button class="tab active" data-tab="all">전체 관찰 가능 <span class="badge">/ all</span></button>
-    <button class="tab" data-tab="bylocation">지역별 보기 <span class="badge">/ by location</span></button>
-    <button class="tab" data-tab="byspecies">조류별 보기 <span class="badge">/ by species</span></button>
-  </div>
-
   <!-- 추천 시간대 -->
   <div class="time-suggest">
     <div class="head">오늘의 추천<br>관찰 시간대</div>
     <div class="big">09:30 — 12:00 · 17:30 — 19:40</div>
     <div class="small">오늘은 10:59 간조 전후에 갯벌 먹이터가 열리고, 16:11 만조 이후 해질녘에는 하구·습지 이동성이 좋아집니다. 산림성 조류는 06~10시가 가장 안정적입니다.</div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" data-tab="all">전체 관찰 가능 <span class="badge">/ all</span></button>
+    <button class="tab" data-tab="bylocation">지역별 보기 <span class="badge">/ by location</span></button>
+    <button class="tab" data-tab="byspecies">조류별 보기 <span class="badge">/ by species</span></button>
   </div>
 
   <!-- PANEL 1: 전체 -->
