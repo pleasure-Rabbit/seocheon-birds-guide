@@ -1416,9 +1416,9 @@
   <!-- 조석 정보 -->
   <div class="tide-board">
     <div class="tide-head">
-      <span class="k">TIDE · JANGHANG</span>
+      <span class="k">조석정보</span>
       <div class="v" id="tideDate">07.01</div>
-      <div class="sub">장항 기준 조석 · 일출 <span id="tideSunrise">05:20</span> · 일몰 <span id="tideSunset">19:54</span></div>
+      <div class="sub">장항항 기준</div>
     </div>
     <div class="tide-slots">
       <div class="tide-slot high"><div class="type">HIGH</div><div class="time">04:10</div><div class="height">679cm</div></div>
@@ -24870,8 +24870,6 @@ function applySunTimesToUI() {
   const sunset = sunEventKst(y, m, d, lat, lon, +1);
   const statSunset = document.getElementById('statSunset'); if (statSunset) statSunset.textContent = sunset;
   const statSunrise = document.getElementById('statSunrise'); if (statSunrise) statSunrise.textContent = sunrise;
-  const tsr = document.getElementById('tideSunrise'); if (tsr) tsr.textContent = sunrise;
-  const tss = document.getElementById('tideSunset'); if (tss) tss.textContent = sunset;
 }
 
 function applyTideToUI() {
