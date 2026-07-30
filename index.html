@@ -1315,6 +1315,8 @@
     object-fit: cover;
     display: block;
   }
+  .detail-photo.insect { display: flex; align-items: center; justify-content: center; }
+  .detail-photo.insect .insect-icon { width: 100%; height: 138px; font-size: 40px; }
   .detail-photo .credit {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 9px;
@@ -16485,6 +16487,7 @@ const species = [
 // 관찰지점 (12곳) - 서천 주요 조류 관찰 거점
 // 곤충 데이터: 에코뱅크 자연환경조사_곤충_점 + 생태정밀조사_곤충_점 병합, 서천 권역 전체 1164종
 // 곤충 데이터: 에코뱅크 자연환경조사_곤충_점 + 생태정밀조사_곤충_점 병합, 서천 권역 전체 1164종 (학명 매칭 이미지 334건, Wikipedia)
+// 곤충 데이터: 에코뱅크 자연환경조사_곤충_점 + 생태정밀조사_곤충_점 병합, 서천 권역 전체 1164종 (학명 매칭 이미지 331건, Wikipedia, 오검색 3건 제외)
 const insectSpecies = [
   {
     "id": "ins-0001",
@@ -21580,8 +21583,7 @@ const insectSpecies = [
     "locId": "eco-loc-40",
     "locName": "장항·금강하구권 40",
     "habitat": "wetland",
-    "habitatName": "습지·하천",
-    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Megacopta_cribraria.jpg/330px-Megacopta_cribraria.jpg"
+    "habitatName": "습지·하천"
   },
   {
     "id": "ins-0202",
@@ -32681,8 +32683,7 @@ const insectSpecies = [
     "locId": "eco-loc-14",
     "locName": "장항·금강하구권 14",
     "habitat": "wetland",
-    "habitatName": "습지·하천",
-    "image": "https://upload.wikimedia.org/wikipedia/commons/4/4f/Acronicta_maxima.JPG"
+    "habitatName": "습지·하천"
   },
   {
     "id": "ins-0641",
@@ -41557,8 +41558,7 @@ const insectSpecies = [
     "locId": "eco-loc-25",
     "locName": "문산·판교 산림권 25",
     "habitat": "forest",
-    "habitatName": "산림·구릉",
-    "image": "https://upload.wikimedia.org/wikipedia/commons/8/88/Spilosoma_doerriesi.png"
+    "habitatName": "산림·구릉"
   },
   {
     "id": "ins-0992",
@@ -45921,6 +45921,8 @@ const insectSpecies = [
     "habitatName": "하구·갯벌·해안"
   }
 ];
+
+
 
 
 
@@ -54758,13 +54760,7 @@ function renderTodayPicksInsect() {
         <div class="pick-reason">${reason}</div>
       </div>
     `;
-    card.addEventListener('click', () => {
-      document.querySelector('.tab[data-tab="byspecies"]').click();
-      setTimeout(() => {
-        const picker = document.getElementById('speciesPicker');
-        if (picker) { picker.value = sp.id; renderBySpecies(sp.id); }
-      }, 200);
-    });
+    card.addEventListener('click', () => openInsectDetail(sp));
     listEl.appendChild(card);
   });
 }
@@ -54961,6 +54957,7 @@ function renderInsectAll() {
         <div class="score-label">${level.label}</div>
       </div>
     `;
+    card.addEventListener('click', () => openInsectDetail(sp));
     list.appendChild(card);
   });
 
@@ -55023,6 +55020,7 @@ function renderInsectByLocation(locId) {
         <div class="score-label">${level.label}</div>
       </div>
     `;
+    card.addEventListener('click', () => openInsectDetail(sp));
     list.appendChild(card);
   });
 }
@@ -55070,6 +55068,8 @@ function renderInsectBySpecies(spId) {
       </div>
     </div>
   `;
+  const spCard = list.querySelector('.result-card');
+  if (spCard) spCard.addEventListener('click', () => openInsectDetail(sp));
 }
 
 function renderAll() {
@@ -55551,7 +55551,91 @@ function openSpeciesDetail(sp, contextLoc) {
   }, 100);
 }
 
-function closeDetail() { mask.classList.remove('open'); }
+function openInsectDetail(sp) {
+  const monthNames = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+  const activeMonths = Array.isArray(sp.activeMonths) && sp.activeMonths.length ? sp.activeMonths : Array(12).fill(0);
+  const maxM = Math.max(...activeMonths, 1);
+  const currentMonth = CURRENT_MONTH_INDEX;
+  const score = calcInsectScore(sp);
+  const loc = findLoc(sp.locId);
+  const activeMonthNums = activeMonths
+    .map((v, i) => (v > 0 ? i : -1))
+    .filter(i => i >= 0)
+    .map(i => monthNames[i]);
+
+  content.innerHTML = `
+    <button class="detail-close" onclick="closeDetail()">×</button>
+    <div class="detail-head">
+      <div>
+        <div class="detail-num">ECOBANK INSECT PROFILE</div>
+        <h2 class="detail-title">${sp.name}</h2>
+        <div class="detail-sci">${sp.sci || '학명 정보 없음'}</div>
+      </div>
+      <div>
+        <div class="detail-photo insect">${insectPhotoHtml(sp)}</div>
+        <div class="detail-stamp" style="margin-top: 10px;">
+          <strong>에코뱅크 곤충 기록</strong><br>
+          자연환경조사·생태정밀조사 곤충 점 자료 기반<br>
+          일반 공개 조사기록
+        </div>
+      </div>
+    </div>
+    <div class="detail-body">
+      <div class="detail-col">
+        <h4>요약</h4>
+        <p>서천 권역에서 ${(sp.recordCount || 0).toLocaleString('ko-KR')}건 관측, 개체수 합계 ${(sp.individualCount || 0).toLocaleString('ko-KR')}개체 기록된 종입니다. 주로 <strong>${sp.locName}</strong>(${sp.habitatName}) 인근에서 관찰됐습니다.</p>
+        <h4 style="margin-top: 20px;">에코뱅크 기록 정보</h4>
+        <div class="data-row"><span class="k">기록 건수</span><span class="v">${(sp.recordCount || 0).toLocaleString('ko-KR')}건</span></div>
+        <div class="data-row"><span class="k">개체수 합계</span><span class="v">${(sp.individualCount || 0).toLocaleString('ko-KR')}개체</span></div>
+        <div class="data-row"><span class="k">주요 기록월</span><span class="v">${activeMonthNums.length ? activeMonthNums.join(', ') : '기록 없음'}</span></div>
+        <div class="data-row"><span class="k">자료 출처</span><span class="v">에코뱅크 WFS (곤충)</span></div>
+        <h4 style="margin-top: 20px;">현재 추천 해석</h4>
+        <div class="data-row"><span class="k">주요 환경</span><span class="v">${sp.habitatName}</span></div>
+        <div class="data-row"><span class="k">추천 시간</span><span class="v">기온이 오르는 낮 시간대(10:00~16:00)</span></div>
+        <div class="data-row"><span class="k">이번 달 적합도</span><span class="v">${Math.round(score * 100)}%</span></div>
+        <p style="font-size: 13px; margin-top: 12px;">곤충은 조류와 달리 조석의 영향을 받지 않으며, 기온·계절에 따라 활동성이 달라집니다.</p>
+      </div>
+      <div class="detail-col">
+        <h4>월별 기록 빈도</h4>
+        <div class="months">
+          ${activeMonths.map((v, i) => `<div class="month ${i === currentMonth ? 'current' : ''}"><div class="bar" style="height: ${maxM ? (v/maxM)*100 : 0}%"></div></div>`).join('')}
+        </div>
+        <div class="month-labels">${monthNames.map(m => `<div>${m}</div>`).join('')}</div>
+        <h4 style="margin-top: 24px;">주요 기록 지점</h4>
+        <div class="data-row"><span class="k">${sp.locName}</span><span class="v">${(sp.recordCount || 0).toLocaleString('ko-KR')}건</span></div>
+      </div>
+      <div class="loc-list">
+        <h4>서천 내 관찰 추천 지점</h4>
+        <div class="loc-item">
+          <div class="loc-num">01</div>
+          <div><div class="loc-name">${sp.locName}<span class="area">${loc ? loc.area : ''} · ${sp.habitatName} · 기록 ${(sp.recordCount || 0).toLocaleString('ko-KR')}건</span></div></div>
+          <div class="loc-habitat">조사권역</div>
+          <div class="loc-score">${Math.round(score * 100)}<small>%</small></div>
+        </div>
+      </div>
+      <div id="detailMap-container" class="detail-map"></div>
+      <div class="data-source">
+        <strong>산출 방식 · </strong>에코뱅크 곤충 조사기록 빈도 × 실제 현재월 활동빈도를 반영했습니다.<br>
+        <strong>주의 · </strong>예측 점수는 실제 출현 보장이 아니라 관찰 우선순위입니다.
+      </div>
+    </div>`;
+  mask.classList.add('open');
+  setTimeout(() => {
+    const dMap = L.map('detailMap-container', { zoomControl: true, attributionControl: false });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(dMap);
+    if (loc) {
+      const marker = makeMarker(loc, { cls: scoreLevel(score).cls, label: 1, size: 'large' });
+      marker.addTo(dMap);
+      marker.bindTooltip(`${loc.name} · ${Math.round(score * 100)}%`);
+      marker.bindPopup(`<h4>${sp.name}</h4><div class="pop-sci">${sp.sci || ''}</div><div>${loc.name} · ${loc.area}</div><span class="pop-score">${Math.round(score * 100)}%</span>`);
+      dMap.setView([loc.lat, loc.lon], 13);
+    } else {
+      dMap.setView([36.075, 126.72], 11);
+    }
+  }, 100);
+}
+
+
 window.closeDetail = closeDetail;
 
 mask.addEventListener('click', e => {
