@@ -55689,16 +55689,14 @@ setupSpeciesPicker();
 
 // 첫 탭(전체)만 즉시 렌더, 나머지는 탭 전환 시 lazy init
 // DOM이 완전히 그려진 후 지도 초기화 (display:none 이슈 방지)
-window.addEventListener('load', () => {
+function initAppOnLoad() {
   window.__loadFired = true;
-  console.log('[DIAG] load handler fired');
   try {
     applyCurrentDateToUI();
     applySunTimesToUI();
     applyTideToUI();
   } catch (e) {
-    console.error('[DIAG] sync block error:', e);
-    window.__diagError = String(e) + ' | ' + e.stack;
+    console.error('[init] sync block error:', e);
   }
   setTimeout(() => {
     try {
@@ -55708,8 +55706,7 @@ window.addEventListener('load', () => {
       document.getElementById('speciesPicker').value = species[0]?.id || '';
       renderTodayPicks();
     } catch (e) {
-      console.error('[DIAG] setTimeout block error:', e);
-      window.__diagError2 = String(e) + ' | ' + e.stack;
+      console.error('[init] setTimeout block error:', e);
     }
   }, 100);
 
@@ -55719,7 +55716,15 @@ window.addEventListener('load', () => {
     fetchWeather(userLocation?.lat, userLocation?.lon);
     applySunTimesToUI(userLocation?.lat, userLocation?.lon);
   }, WEATHER_CONFIG.refreshMs);
-});
+}
+
+// 'load' 이벤트가 리스너 등록 전에 이미 발생했을 경우(타이밍 경합)를 대비해
+// readyState를 먼저 확인하고, 이미 완료됐으면 바로 실행한다.
+if (document.readyState === 'complete') {
+  initAppOnLoad();
+} else {
+  window.addEventListener('load', initAppOnLoad);
+}
 
 </script>
 </body>
