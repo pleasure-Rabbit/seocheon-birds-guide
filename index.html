@@ -1256,6 +1256,8 @@
     background: var(--paper-deep);
   }
   .pick-card .pick-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .pick-card .pick-photo.insect { display: flex; }
+  .pick-card .pick-photo.insect .insect-icon { font-size: 26px; }
   .pick-card .pick-body { padding: 10px 12px; }
   .pick-card h4 { font-family: 'Noto Serif KR', serif; font-size: 14px; margin-bottom: 2px; }
   .pick-card .pick-sci { font-size: 10px; color: var(--ink-faint); font-style: italic; margin-bottom: 6px; }
@@ -1464,9 +1466,9 @@
   <header>
     <img class="nie-logo" src="nie-logo.png" alt="국립생태원">
     <div class="brand">
-      <div class="brand-meta">충남 서천 · 조류 시범 서비스 · v0.3 prototype</div>
+      <div class="brand-meta">충남 서천 · 생물관찰 예측 시범서비스 · v0.3 prototype</div>
       <h1 class="brand-title">생물관찰 <span class="accent">예측 가이드</span></h1>
-      <p class="brand-sub">에코뱅크 조류 조사기록과 기상·조석 조건을 기반으로, 지금 서천에서 관찰 가능성이 높은 새를 추천합니다.</p>
+      <p class="brand-sub">에코뱅크 조류·곤충 조사기록과 기상·계절 조건을 기반으로, 지금 서천에서 관찰 가능성이 높은 생물을 추천합니다.</p>
     </div>
   </header>
 
@@ -1635,11 +1637,11 @@
   <footer>
     <div>
       <h5>데이터 출처</h5>
-      <p>에코뱅크 GeoServer WFS: 자연환경조사_조류_점, 생태계정밀조사_조류_점<br>Open-Meteo 실시간 기온·습도<br>국립해양조사원(KHOA) 기준항 조화상수(장항, M2·S2·K1·O1) 기반 자체 조석 계산<br>브라우저 GPS 기반 내 위치·거리 정렬<br>새 대표 사진: Wikimedia/Wikipedia, GBIF, iNaturalist 공개 이미지</p>
+      <p>에코뱅크 GeoServer WFS: 자연환경조사_조류_점, 생태계정밀조사_조류_점, 자연환경조사_곤충_점, 생태정밀조사_곤충_점 (곤충 1,164종)<br>Open-Meteo 실시간 기온·습도<br>국립해양조사원(KHOA) 기준항 조화상수(장항, M2·S2·K1·O1) 기반 자체 조석 계산<br>브라우저 GPS 기반 내 위치·거리 정렬<br>새 대표 사진: Wikimedia/Wikipedia, GBIF, iNaturalist 공개 이미지</p>
     </div>
     <div>
       <h5>적합도 산출</h5>
-      <p>적합도 = 에코뱅크 과거 조사기록 빈도 × 실제 현재월 계절성 × 조석·서식환경 적합도 × 실시간 기온·습도 보정. 0~100% 척도로 표시하며 실제 출현을 보장하지 않습니다.</p>
+      <p>조류: 에코뱅크 과거 조사기록 빈도 × 실제 현재월 계절성 × 조석·서식환경 적합도 × 실시간 기온·습도 보정. 곤충: 에코뱅크 조사기록 빈도 × 실제 현재월 활동빈도. 0~100% 척도로 표시하며 실제 출현을 보장하지 않습니다.</p>
     </div>
     <div>
       <h5>주의</h5>
@@ -54112,6 +54114,20 @@ function applyTimeSuggestToUI(extrema) {
   }
 }
 
+// 곤충용 추천 관찰시간대: 변온동물 특성상 기온이 오르는 낮 시간대에 활동이
+// 활발해짐. 조석과는 무관하므로 일출/일몰·기온 기준으로 별도 산출.
+function applyInsectTimeSuggestToUI() {
+  const bigEl = document.querySelector('.time-suggest .big');
+  const smallEl = document.querySelector('.time-suggest .small');
+  if (bigEl) bigEl.textContent = '10:00 — 16:00';
+  if (smallEl) {
+    const tempNote = currentWeather.ok && currentWeather.temp >= 28
+      ? ' 오늘처럼 기온이 높은 날은 한낮보다 오전·늦은 오후가 관찰하기 더 좋습니다.'
+      : '';
+    smallEl.innerHTML = `기온이 오르는 낮 시간대에 곤충 활동이 가장 활발합니다. 나비·벌류는 맑고 따뜻한 정오 전후, 딱정벌레·노린재류는 이른 아침 이슬이 마른 직후에 관찰하기 좋습니다.${tempNote}`;
+  }
+}
+
 // ============================================================
 // 위치기반: 내 위치 ↔ 관찰지점 거리 계산 및 가까운 순 정렬
 // 모바일 브라우저 GPS(Geolocation API)만 사용 — 지도 API(Google/네이버)
@@ -54319,6 +54335,7 @@ function calcScore(obs) {
 // recordCount가 항상 높은(=원래 흔한) 종은 상위 25%를 기준으로 제외한다.
 // ============================================================
 function renderTodayPicks() {
+  if (currentTaxon === 'insect') { renderTodayPicksInsect(); return; }
   const listEl = document.getElementById('todayPicksList');
   if (!listEl || !species.length) return;
 
@@ -54363,6 +54380,54 @@ function renderTodayPicks() {
       </div>
     `;
     card.addEventListener('click', () => openSpeciesDetail(sp));
+    listEl.appendChild(card);
+  });
+}
+
+// 곤충용 "오늘의 관찰 추천종": 기록빈도 상위 25%(흔한 종)는 제외하고,
+// 이번 달 활동빈도(activeMonths)가 평소 대비 높은 종 위주로 추천
+function renderTodayPicksInsect() {
+  const listEl = document.getElementById('todayPicksList');
+  if (!listEl || !insectSpecies.length) return;
+
+  const counts = insectSpecies.map(s => s.recordCount || 0).sort((a, b) => a - b);
+  const commonThreshold = counts[Math.floor(counts.length * 0.75)];
+  const rareThreshold = counts[Math.floor(counts.length * 0.25)];
+
+  const pool = insectSpecies
+    .filter(sp => (sp.recordCount || 0) <= commonThreshold)
+    .map(sp => ({ sp, todayFactor: calcInsectScore(sp) }))
+    .sort((a, b) => b.todayFactor - a.todayFactor)
+    .slice(0, 6);
+
+  if (!pool.length) {
+    listEl.innerHTML = '<div class="today-picks-empty">오늘은 특별히 조건이 좋아진 곤충이 없어요.</div>';
+    return;
+  }
+
+  listEl.innerHTML = '';
+  pool.forEach(({ sp }) => {
+    const rare = (sp.recordCount || 0) <= rareThreshold;
+    const reason = rare
+      ? '원래 관찰 기록이 드문 종인데, 이맘때 활동성이 높아요'
+      : '평소보다 이번 달에 관찰 가능성이 높아졌어요';
+    const card = document.createElement('div');
+    card.className = 'pick-card';
+    card.innerHTML = `
+      <div class="pick-photo insect">${insectIconHtml(sp.name)}</div>
+      <div class="pick-body">
+        <h4>${sp.name}</h4>
+        <div class="pick-sci">${sp.sci || '학명 미상'}</div>
+        <div class="pick-reason">${reason}</div>
+      </div>
+    `;
+    card.addEventListener('click', () => {
+      document.querySelector('.tab[data-tab="byspecies"]').click();
+      setTimeout(() => {
+        const picker = document.getElementById('speciesPicker');
+        if (picker) { picker.value = sp.id; renderBySpecies(sp.id); }
+      }, 200);
+    });
     listEl.appendChild(card);
   });
 }
@@ -54478,6 +54543,14 @@ function setTaxon(taxon) {
   // 종 피커를 현재 분류군 데이터로 다시 채움
   if (taxon === 'insect') fillInsectSpeciesOptions();
   else fillSpeciesOptions();
+
+  // 오늘의 추천 시간대 / 추천종을 분류군에 맞게 갱신
+  if (taxon === 'insect') {
+    applyInsectTimeSuggestToUI();
+  } else if (window.TIDE_TODAY) {
+    applyTimeSuggestToUI(window.TIDE_TODAY);
+  }
+  renderTodayPicks();
 
   // 보고 있지 않은 탭도 오래된 데이터로 남지 않도록 3개 패널 전부 다시 렌더
   renderAll();
