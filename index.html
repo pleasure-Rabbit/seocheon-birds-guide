@@ -1664,6 +1664,11 @@
 </div>
 
 <script>
+window.onerror = function(msg, src, line, col, err) {
+  window.__topLevelError = String(msg) + ' | line ' + line + ':' + col + ' | ' + (err && err.stack ? err.stack.split('\n').slice(0,4).join(' >> ') : '');
+  try { document.title = '[ERR] ' + String(msg).slice(0, 60); } catch(e) {}
+};
+
 // ============================================================
 // 데이터 모델 — 3개 테이블 (다대다 관계)
 // ============================================================
