@@ -55690,15 +55690,27 @@ setupSpeciesPicker();
 // 첫 탭(전체)만 즉시 렌더, 나머지는 탭 전환 시 lazy init
 // DOM이 완전히 그려진 후 지도 초기화 (display:none 이슈 방지)
 window.addEventListener('load', () => {
-  applyCurrentDateToUI();
-  applySunTimesToUI();
-  applyTideToUI();
+  window.__loadFired = true;
+  console.log('[DIAG] load handler fired');
+  try {
+    applyCurrentDateToUI();
+    applySunTimesToUI();
+    applyTideToUI();
+  } catch (e) {
+    console.error('[DIAG] sync block error:', e);
+    window.__diagError = String(e) + ' | ' + e.stack;
+  }
   setTimeout(() => {
-    renderAll();
-    // picker 기본값만 설정 (renderBySpecies/Location은 탭 열릴 때 실행)
-    document.getElementById('locationPicker').value = locations[0]?.id || '';
-    document.getElementById('speciesPicker').value = species[0]?.id || '';
-    renderTodayPicks();
+    try {
+      renderAll();
+      // picker 기본값만 설정 (renderBySpecies/Location은 탭 열릴 때 실행)
+      document.getElementById('locationPicker').value = locations[0]?.id || '';
+      document.getElementById('speciesPicker').value = species[0]?.id || '';
+      renderTodayPicks();
+    } catch (e) {
+      console.error('[DIAG] setTimeout block error:', e);
+      window.__diagError2 = String(e) + ' | ' + e.stack;
+    }
   }, 100);
 
   // 실시간 기상 최초 조회 + 주기적 갱신
