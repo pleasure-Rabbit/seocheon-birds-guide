@@ -1242,6 +1242,28 @@
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 14px;
   }
+  .pick-group-label {
+    grid-column: 1 / -1;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    margin-top: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px dashed var(--rule);
+  }
+  .pick-group-label:first-child { margin-top: 0; }
+  .insect-daynight-tag {
+    display: inline-block;
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 8px;
+    margin-left: 4px;
+    font-weight: 600;
+  }
+  .insect-daynight-tag.day { background: #fff3cd; color: #8a6d00; }
+  .insect-daynight-tag.night { background: #2c2a4a; color: #d8d4ff; }
   .pick-card {
     border: 1px solid var(--rule);
     background: var(--paper);
@@ -55677,12 +55699,14 @@ function applyTimeSuggestToUI(extrema) {
 function applyInsectTimeSuggestToUI() {
   const bigEl = document.querySelector('.time-suggest .big');
   const smallEl = document.querySelector('.time-suggest .small');
-  if (bigEl) bigEl.textContent = '10:00 — 16:00';
+  const sunsetEl = document.getElementById('statSunset');
+  const sunset = sunsetEl ? sunsetEl.textContent : '19:30';
+  if (bigEl) bigEl.innerHTML = `☀️ 주간 10:00 — 16:00 &nbsp;·&nbsp; 🌙 야간 ${sunset} — 23:00`;
   if (smallEl) {
     const tempNote = currentWeather.ok && currentWeather.temp >= 28
       ? ' 오늘처럼 기온이 높은 날은 한낮보다 오전·늦은 오후가 관찰하기 더 좋습니다.'
       : '';
-    smallEl.innerHTML = `기온이 오르는 낮 시간대에 곤충 활동이 가장 활발합니다. 나비·벌류는 맑고 따뜻한 정오 전후, 딱정벌레·노린재류는 이른 아침 이슬이 마른 직후에 관찰하기 좋습니다.${tempNote}`;
+    smallEl.innerHTML = `<strong>주간</strong>은 기온이 오르는 낮에 나비·벌·잠자리·딱정벌레류 활동이 활발합니다.${tempNote}<br><strong>야간</strong>은 해진 뒤부터 자정 전까지 나방·귀뚜라미·여치류가 불빛 주변에 많이 모입니다.`;
   }
 }
 
@@ -55952,19 +55976,20 @@ function renderTodayPicksInsect() {
   const commonThreshold = counts[Math.floor(counts.length * 0.75)];
   const rareThreshold = counts[Math.floor(counts.length * 0.25)];
 
-  const pool = insectSpecies
+  const scored = insectSpecies
     .filter(sp => (sp.recordCount || 0) <= commonThreshold)
-    .map(sp => ({ sp, todayFactor: calcInsectScore(sp) }))
-    .sort((a, b) => b.todayFactor - a.todayFactor)
-    .slice(0, 6);
+    .map(sp => ({ sp, todayFactor: calcInsectScore(sp), night: isNocturnalInsect(sp) }))
+    .sort((a, b) => b.todayFactor - a.todayFactor);
 
-  if (!pool.length) {
+  const dayPool = scored.filter(x => !x.night).slice(0, 4);
+  const nightPool = scored.filter(x => x.night).slice(0, 4);
+
+  if (!dayPool.length && !nightPool.length) {
     listEl.innerHTML = '<div class="today-picks-empty">오늘은 특별히 조건이 좋아진 곤충이 없어요.</div>';
     return;
   }
 
-  listEl.innerHTML = '';
-  pool.forEach(({ sp }) => {
+  function cardHtml(sp) {
     const rare = (sp.recordCount || 0) <= rareThreshold;
     const reason = rare
       ? '원래 관찰 기록이 드문 종인데, 이맘때 활동성이 높아요'
@@ -55980,8 +56005,24 @@ function renderTodayPicksInsect() {
       </div>
     `;
     card.addEventListener('click', () => openInsectDetail(sp));
-    listEl.appendChild(card);
-  });
+    return card;
+  }
+
+  listEl.innerHTML = '';
+  if (dayPool.length) {
+    const label = document.createElement('div');
+    label.className = 'pick-group-label';
+    label.textContent = '☀️ 주간 추천';
+    listEl.appendChild(label);
+    dayPool.forEach(({ sp }) => listEl.appendChild(cardHtml(sp)));
+  }
+  if (nightPool.length) {
+    const label = document.createElement('div');
+    label.className = 'pick-group-label';
+    label.textContent = '🌙 야간 추천';
+    listEl.appendChild(label);
+    nightPool.forEach(({ sp }) => listEl.appendChild(cardHtml(sp)));
+  }
 }
 
 function scoreLevel(score) {
@@ -56071,6 +56112,21 @@ function calcInsectScore(sp) {
   const monthFactor = sp.activeMonths[CURRENT_MONTH_INDEX] / max; // 0~1
   const commonness = Math.min(1, sp.recordCount / 25); // 0~1, 대략 정규화
   return Math.min(0.97, 0.15 + 0.55 * monthFactor + 0.3 * commonness);
+}
+
+// 국명 패턴 기반 주행성/야행성 추정 (에코뱅크·NIBR 데이터엔 시간대 기록이 없어
+// 분류군 특성으로 근사함). 나방류(박각시 포함)·귀뚜라미·여치류·바퀴 등은 야행성으로,
+// 나비·잠자리·벌·파리·노린재·딱정벌레류 등 그 외 대부분은 주행성으로 간주.
+function isNocturnalInsect(sp) {
+  const name = sp.name || '';
+  if (/나비/.test(name)) return false; // '나방'과 헷갈리지 않도록 나비류 먼저 예외 처리
+  return /나방|박각시|귀뚜라미|여치|베짱이|꼽등이|방울벌레|풀종다리|바퀴|집게벌레/.test(name);
+}
+
+function daynightTagHtml(sp) {
+  return isNocturnalInsect(sp)
+    ? '<span class="insect-daynight-tag night">🌙 야간</span>'
+    : '<span class="insect-daynight-tag day">☀️ 주간</span>';
 }
 
 function insectIconHtml(name) {
@@ -56176,6 +56232,7 @@ function renderInsectAll() {
         <div class="tags">
           <span class="tag leaf">${sp.habitatName}</span>
           <span class="tag">기록 ${sp.recordCount}건</span>
+          ${daynightTagHtml(sp)}
         </div>
       </div>
       <div class="result-score">
@@ -56239,7 +56296,7 @@ function renderInsectByLocation(locId) {
       <div class="result-body">
         <h3>${sp.name}</h3>
         <div class="sub">${sp.sci || '학명 미상'}</div>
-        <div class="tags"><span class="tag">기록 ${sp.recordCount}건 · 개체 ${sp.individualCount}</span></div>
+        <div class="tags"><span class="tag">기록 ${sp.recordCount}건 · 개체 ${sp.individualCount}</span>${daynightTagHtml(sp)}</div>
       </div>
       <div class="result-score">
         <div class="score-pct">${Math.round(score * 100)}<small>%</small></div>
@@ -56286,6 +56343,7 @@ function renderInsectBySpecies(spId) {
           <span class="tag leaf">${sp.habitatName}</span>
           <span class="tag">기록 ${sp.recordCount}건 · 개체 ${sp.individualCount}</span>
           <span class="tag">${monthLabel} 활동성 반영됨</span>
+          ${daynightTagHtml(sp)}
         </div>
       </div>
       <div class="result-score">
@@ -56583,7 +56641,8 @@ function setupSpeciesPicker() {
   select.addEventListener('change', () => renderBySpecies(select.value));
   if (search) {
     search.addEventListener('input', () => {
-      fillSpeciesOptions(search.value);
+      if (currentTaxon === 'insect') fillInsectSpeciesOptions(search.value);
+      else fillSpeciesOptions(search.value);
       if (select.value) renderBySpecies(select.value);
       else {
         document.getElementById('spResultCount').textContent = '0';
@@ -56795,7 +56854,7 @@ function openInsectDetail(sp) {
     <div class="detail-head">
       <div>
         <div class="detail-num">ECOBANK INSECT PROFILE</div>
-        <h2 class="detail-title">${sp.name}</h2>
+        <div class="detail-title" style="display:flex; align-items:center; gap:8px;">${sp.name}${daynightTagHtml(sp)}</div>
         <div class="detail-sci">${sp.sci || '학명 정보 없음'}</div>
       </div>
       <div>
@@ -56818,9 +56877,9 @@ function openInsectDetail(sp) {
         <div class="data-row"><span class="k">자료 출처</span><span class="v">에코뱅크 WFS (곤충)</span></div>
         <h4 style="margin-top: 20px;">현재 추천 해석</h4>
         <div class="data-row"><span class="k">주요 환경</span><span class="v">${sp.habitatName}</span></div>
-        <div class="data-row"><span class="k">추천 시간</span><span class="v">기온이 오르는 낮 시간대(10:00~16:00)</span></div>
+        <div class="data-row"><span class="k">추천 시간</span><span class="v">${isNocturnalInsect(sp) ? '해진 뒤 ~ 23:00 (야간, 불빛 주변)' : '기온이 오르는 낮 시간대(10:00~16:00)'}</span></div>
         <div class="data-row"><span class="k">이번 달 적합도</span><span class="v">${Math.round(score * 100)}%</span></div>
-        <p style="font-size: 13px; margin-top: 12px;">곤충은 조류와 달리 조석의 영향을 받지 않으며, 기온·계절에 따라 활동성이 달라집니다.</p>
+        <p style="font-size: 13px; margin-top: 12px;">곤충은 조류와 달리 조석의 영향을 받지 않으며, 기온·계절, 그리고 주·야간 활동 특성에 따라 관찰 시간대가 달라집니다.</p>
       </div>
       <div class="detail-col">
         <h4>월별 기록 빈도</h4>
