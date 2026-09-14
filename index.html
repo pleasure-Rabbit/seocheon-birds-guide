@@ -86786,6 +86786,12 @@ function currentTaxonLabel() {
   return TAXON_REGISTRY[currentTaxon]?.label || '종';
 }
 
+// 개체수 합계가 0이면("미기록"을 의미, 실제 0마리 관찰이 아님) 표시하지 않는다
+function recordStatText(sp) {
+  const rec = `기록 ${(sp.recordCount || 0).toLocaleString('ko-KR')}건`;
+  return sp.individualCount > 0 ? `${rec} · 개체 ${sp.individualCount.toLocaleString('ko-KR')}` : rec;
+}
+
 function calcInsectScore(sp) {
   const max = Math.max(...sp.activeMonths, 1);
   const monthFactor = sp.activeMonths[CURRENT_MONTH_INDEX] / max; // 0~1
@@ -86914,11 +86920,35 @@ function setTaxon(taxon) {
 }
 
 function applyGenericTimeSuggestToUI() {
-  const label = currentTaxonLabel();
   const bigEl = document.querySelector('.time-suggest .big');
   const smallEl = document.querySelector('.time-suggest .small');
-  if (bigEl) bigEl.innerHTML = `오전 9시 — 오후 4시`;
-  if (smallEl) smallEl.innerHTML = `${label}는 기온이 오르는 오전~오후에 관찰 기록이 많습니다. 종과 서식환경(수변·숲·초지 등)에 따라 실제 활동 시간은 달라질 수 있습니다.`;
+
+  const CONTENT = {
+    mammal: {
+      big: '🌅 새벽 — 오전 7시 &nbsp;·&nbsp; 🌆 해질녘 — 초저녁',
+      small: '고라니·너구리·오소리 등 중형 포유류는 사람 활동이 적은 <strong>새벽과 해질녘(박명 시간대)</strong>에 가장 활발합니다. 한낮엔 숲이나 굴에 숨어 쉬는 경우가 많아 직접 관찰보다 발자국·배설물 흔적이 더 잘 보입니다.',
+    },
+    herptile: {
+      big: '🐍 파충류: 맑은 날 오전 10시 — 오후 3시 &nbsp;·&nbsp; 🐸 양서류: 비 온 뒤 밤',
+      small: '뱀·도마뱀 등 <strong>파충류</strong>는 변온동물이라 햇볕이 잘 드는 낮에 몸을 데우러 나옵니다. 개구리 등 <strong>양서류</strong>는 반대로 습도가 높은 <strong>비 온 뒤 밤</strong>에 울음소리로 존재를 확인하기 가장 쉽습니다.',
+    },
+    fish: {
+      big: '하루 중 아무 때나 (수온·수질이 더 중요)',
+      small: '어류는 시간대보다 <strong>수온·수질·유량</strong>의 영향을 크게 받습니다. 비 온 직후 흙탕물보다 맑은 날 하천·저수지 가장자리에서 관찰이 잘 되며, 이른 아침엔 수면 위로 먹이활동하는 모습을 볼 수 있습니다.',
+    },
+    benthic: {
+      big: '🌊 오늘 간조 전후 (물 빠졌을 때)',
+      small: '갯벌·하천 바닥에 사는 저서무척추동물은 <strong>물이 빠지는 간조 전후</strong>에 갯벌·자갈 바닥이 드러나면서 관찰하기 좋아집니다. 조석정보 탭의 오늘 간조 시각을 참고하세요.',
+    },
+    plant: {
+      big: '☀️ 낮 시간 아무 때나 (밝을 때)',
+      small: '식물은 동물과 달리 특정 활동 시간이 없어 <strong>밝은 낮 시간이면 언제든</strong> 관찰할 수 있습니다. 다만 꽃이 피는 개화 시기는 종마다 달라 아래 "주요 기록월"을 참고하시면 좋습니다.',
+    },
+  };
+
+  const c = CONTENT[currentTaxon] || { big: '오전 9시 — 오후 4시', small: `${currentTaxonLabel()}는 기온이 오르는 오전~오후에 관찰 기록이 많습니다.` };
+  if (bigEl) bigEl.innerHTML = c.big;
+  if (smallEl) smallEl.innerHTML = c.small;
 }
 
 function fillInsectSpeciesOptions(filter = '') {
@@ -87032,7 +87062,7 @@ function renderInsectByLocation(locId) {
       <div class="result-body">
         <h3>${sp.name}</h3>
         <div class="sub">${sp.sci || '학명 미상'}</div>
-        <div class="tags"><span class="tag">기록 ${sp.recordCount}건 · 개체 ${sp.individualCount}</span>${daynightTagHtml(sp)}</div>
+        <div class="tags"><span class="tag">${recordStatText(sp)}</span>${daynightTagHtml(sp)}</div>
       </div>
       <div class="result-score">
         <div class="score-pct">${Math.round(score * 100)}<small>%</small></div>
@@ -87077,7 +87107,7 @@ function renderInsectBySpecies(spId) {
         <div class="where">${loc ? loc.name : ''}</div>
         <div class="tags">
           <span class="tag leaf">${sp.habitatName}</span>
-          <span class="tag">기록 ${sp.recordCount}건 · 개체 ${sp.individualCount}</span>
+          <span class="tag">${recordStatText(sp)}</span>
           <span class="tag">${monthLabel} 활동성 반영됨</span>
           ${daynightTagHtml(sp)}
         </div>
@@ -87606,11 +87636,11 @@ function openInsectDetail(sp) {
     <div class="detail-body">
       <div class="detail-col">
         <h4>${sp.desc ? '생태 · 형태 정보' : '요약'}</h4>
-        <p>${sp.desc ? sp.desc : `서천 권역에서 ${(sp.recordCount || 0).toLocaleString('ko-KR')}건 관측, 개체수 합계 ${(sp.individualCount || 0).toLocaleString('ko-KR')}개체 기록된 종입니다. 주로 <strong>${sp.locName}</strong>(${sp.habitatName}) 인근에서 관찰됐습니다.`}</p>
+        <p>${sp.desc ? sp.desc : `서천 권역에서 ${(sp.recordCount || 0).toLocaleString('ko-KR')}건 관측된 종입니다.${sp.individualCount > 0 ? ` 개체수 합계 ${sp.individualCount.toLocaleString('ko-KR')}개체.` : ''} 주로 <strong>${sp.locName}</strong>(${sp.habitatName}) 인근에서 관찰됐습니다.`}</p>
         ${sp.desc ? `<p style="font-size:13px; color:var(--ink-faint); margin-top:6px;">출처: 국립생물자원관 한반도의 생물다양성(species.nibr.go.kr)</p>` : ''}
         <h4 style="margin-top: 20px;">에코뱅크 기록 정보</h4>
         <div class="data-row"><span class="k">기록 건수</span><span class="v">${(sp.recordCount || 0).toLocaleString('ko-KR')}건</span></div>
-        <div class="data-row"><span class="k">개체수 합계</span><span class="v">${(sp.individualCount || 0).toLocaleString('ko-KR')}개체</span></div>
+        ${sp.individualCount > 0 ? `<div class="data-row"><span class="k">개체수 합계</span><span class="v">${sp.individualCount.toLocaleString('ko-KR')}개체</span></div>` : ''}
         <div class="data-row"><span class="k">주요 기록월</span><span class="v">${activeMonthNums.length ? activeMonthNums.join(', ') : '기록 없음'}</span></div>
         <div class="data-row"><span class="k">주요 관찰 지점</span><span class="v">${sp.locName}(${sp.habitatName})</span></div>
         <h4 style="margin-top: 20px;">현재 추천 해석</h4>
