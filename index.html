@@ -86560,7 +86560,7 @@ function calcScore(obs) {
 // recordCount가 항상 높은(=원래 흔한) 종은 상위 25%를 기준으로 제외한다.
 // ============================================================
 function renderTodayPicks() {
-  if (currentTaxon === 'insect') { renderTodayPicksInsect(); return; }
+if (currentTaxon !== 'bird') { renderTodayPicksInsect(); return; }
   const listEl = document.getElementById('todayPicksList');
   if (!listEl || !species.length) return;
 
@@ -87094,7 +87094,7 @@ function renderInsectBySpecies(spId) {
 }
 
 function renderAll() {
-  if (currentTaxon === 'insect') { renderInsectAll(); return; }
+if (currentTaxon !== 'bird') { renderInsectAll(); return; }
   if (!allMap) {
     allMap = initMap('map');
     if (userLocation) {
@@ -87284,7 +87284,7 @@ function setupLocationPicker() {
 }
 
 function renderByLocation(locId) {
-  if (currentTaxon === 'insect') { renderInsectByLocation(locId); return; }
+if (currentTaxon !== 'bird') { renderInsectByLocation(locId); return; }
   if (!locMap) {
     locMap = initMap('locMap');
     // 숨겨진 상태에서 생성됐을 수 있으므로 사이즈 강제 재계산
@@ -87377,7 +87377,7 @@ function setupSpeciesPicker() {
   select.addEventListener('change', () => renderBySpecies(select.value));
   if (search) {
     search.addEventListener('input', () => {
-      if (currentTaxon === 'insect') fillInsectSpeciesOptions(search.value);
+      if (currentTaxon !== 'bird') fillInsectSpeciesOptions(search.value);
       else fillSpeciesOptions(search.value);
       if (select.value) renderBySpecies(select.value);
       else {
@@ -87390,7 +87390,7 @@ function setupSpeciesPicker() {
 }
 
 function renderBySpecies(spId) {
-  if (currentTaxon === 'insect') { renderInsectBySpecies(spId); return; }
+  if (currentTaxon !== 'bird') { renderInsectBySpecies(spId); return; }
   if (!spMap) {
     spMap = initMap('spMap');
     // 숨겨진 상태에서 생성됐을 수 있으므로 사이즈 강제 재계산
