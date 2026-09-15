@@ -89496,8 +89496,8 @@ function applyGenericTimeSuggestToUI() {
       small: '어류는 시간대보다 <strong>수온·수질·유량</strong>의 영향을 크게 받습니다. 비 온 직후 흙탕물보다 맑은 날 하천·저수지 가장자리에서 관찰이 잘 되며, 이른 아침엔 수면 위로 먹이활동하는 모습을 볼 수 있습니다.',
     },
     benthic: {
-      big: '🌊 오늘 간조 전후 (물 빠졌을 때)',
-      small: '갯벌·하천 바닥에 사는 저서무척추동물은 <strong>물이 빠지는 간조 전후</strong>에 갯벌·자갈 바닥이 드러나면서 관찰하기 좋아집니다. 조석정보 탭의 오늘 간조 시각을 참고하세요.',
+      big: '하루 중 아무 때나 (수생태 조사 방식)',
+      small: '물달팽이·하루살이·날도래류 등 <strong>저서성 대형무척추동물</strong>은 하천·저수지 바닥의 돌이나 낙엽 밑에 붙어 삽니다. 시간대보다는 <strong>물이 맑고 유량이 안정적인 날</strong> 얕은 여울·바닥 자갈을 직접 들춰보는 게 관찰의 핵심입니다.',
     },
     plant: {
       big: '☀️ 낮 시간 아무 때나 (밝을 때)',
@@ -89635,10 +89635,6 @@ function renderInsectByLocation(locId) {
 }
 
 function renderInsectBySpecies(spId) {
-  if (!spMap) {
-    spMap = initMap('spMap');
-    setTimeout(() => spMap.invalidateSize(), 0);
-  }
   const sp = currentSpeciesList().find(s => s.id === spId);
   if (!sp) return;
   const loc = findLoc(sp.locId);
@@ -89646,11 +89642,13 @@ function renderInsectBySpecies(spId) {
   document.getElementById('spResultCount').textContent = 1;
   document.getElementById('spListCount').textContent = 1;
   document.getElementById('spMapTitle').textContent = sp.name;
-  spMap.eachLayer(l => { if (l instanceof L.Marker || l instanceof L.CircleMarker) spMap.removeLayer(l); });
-  if (loc) {
-    const marker = makeMarker(loc, { fillColor: '#6a8a3a' }).addTo(spMap);
-    marker.bindPopup(`<strong>${sp.name}</strong><br>${loc.name}`).openPopup();
-    spMap.setView([loc.lat, loc.lon], 13);
+
+  // 왼쪽 큰 사진 영역(조류 탭과 동일한 자리)에 현재 분류군 사진 표시
+  const photoBox = document.getElementById('spMapPhoto');
+  if (photoBox) {
+    photoBox.innerHTML = sp.image
+      ? `<img src="${sp.image}" alt="${sp.name}" onerror="this.parentElement.innerHTML = insectIconHtml('${sp.name.replace(/'/g, "\\\\'")}')"><div class="name">${sp.name}</div><div class="sci">${sp.sci || ''}</div>`
+      : `${insectIconHtml(sp.name)}<div class="name">${sp.name}</div><div class="sci">${sp.sci || ''}</div>`;
   }
 
   const score = calcInsectScore(sp);
