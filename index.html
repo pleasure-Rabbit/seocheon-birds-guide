@@ -94453,6 +94453,20 @@ function setTaxon(taxon) {
   const tideBoard = document.querySelector('.tide-board');
   if (tideBoard) tideBoard.style.display = taxon === 'bird' ? '' : 'none';
 
+  // 조류 외 분류군은 실측 GPS 좌표를 직접 쓰기 때문에 지역(zone)별 묶음이 의미가 없어
+  // "지역별 보기" 탭 자체를 숨김
+  const tab2 = document.querySelector('.tab[data-tab="bylocation"]');
+  if (tab2) {
+    tab2.style.display = taxon === 'bird' ? '' : 'none';
+    if (taxon !== 'bird' && tab2.classList.contains('active')) {
+      tab2.classList.remove('active');
+      document.getElementById('panel-bylocation')?.classList.remove('active');
+      const allTab = document.querySelector('.tab[data-tab="all"]');
+      allTab?.classList.add('active');
+      document.getElementById('panel-all')?.classList.add('active');
+    }
+  }
+
   const label = currentTaxonLabel();
   const tab3 = document.querySelector('.tab[data-tab="byspecies"]');
   if (tab3) tab3.innerHTML = `${label}별 보기 <span class="badge">/ by species</span>`;
