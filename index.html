@@ -40244,7 +40244,8 @@ async function renderBoard() {
       // 직접 로드가 안 돼서 이 방식으로 가져와야 함
       const imgMatch = html.match(/<img[^>]+src="(https:\/\/private-user-images\.githubusercontent\.com\/[^"]+)"/)
         || html.match(/href="(https:\/\/private-user-images\.githubusercontent\.com\/[^"]+)"/)
-        || rawBody.match(/!\[[^\]]*\]\((https:\/\/user-images\.githubusercontent\.com\/[^\s)]+)\)/);
+        || rawBody.match(/!\[[^\]]*\]\((https:\/\/user-images\.githubusercontent\.com\/[^\s)]+)\)/)
+        || rawBody.match(/!\[[^\]]*\]\((https:\/\/[^\s)]+)\)/); // 외부 이미지 URL을 직접 붙여넣은 경우
       let imgUrl = imgMatch ? imgMatch[1] : null;
       if (imgUrl && !/^https:\/\/[a-zA-Z0-9.-]+\//.test(imgUrl)) imgUrl = null; // 형식 이상하면 버림
       const snippet = rawBody
