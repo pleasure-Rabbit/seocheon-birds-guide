@@ -40646,11 +40646,11 @@ function speciesSeasonMatches(sp, months) {
 
 function speciesTimeMatches(sp, taxonKey, time) {
   if (taxonKey === 'bird') {
-    const hours = sp.activeHours;
-    if (!Array.isArray(hours) || !hours.some(h => h > 0)) return true; // 시간대 기록 없으면 배제하지 않음
-    const nightSum = [...hours.slice(20, 24), ...hours.slice(0, 5)].reduce((a, b) => a + b, 0);
-    const daySum = hours.slice(6, 19).reduce((a, b) => a + b, 0);
-    return time === 'night' ? nightSum >= daySum : daySum >= nightSum;
+    // activeHours는 종마다 실측된 값이 아니라 공통 템플릿이라(소쩍새 같은 야행성 올빼미류도
+    // 낮 활동으로 표시됨) 신뢰할 수 없음 — 이름 패턴으로 야행성 여부를 판별
+    const nocturnalPattern = /소쩍새|올빼미|부엉이|쏙독새|쑥독새|수리부엉이|칡부엉이/;
+    const isNocturnal = nocturnalPattern.test(sp.name);
+    return time === 'night' ? isNocturnal : !isNocturnal;
   }
   if (taxonKey === 'insect') {
     const info = insectActivityInfo(sp);
