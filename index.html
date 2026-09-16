@@ -700,6 +700,42 @@
     letter-spacing: 0;
   }
 
+  .board-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  .board-card {
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    box-shadow: 3px 3px 0 var(--rule);
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.1s;
+  }
+  .board-card:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--rule); }
+  .board-card .board-photo {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    background: var(--paper-deep);
+    border-bottom: 1px solid var(--rule);
+  }
+  .board-card .board-photo.placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    color: var(--ink-faint);
+  }
+  .board-card .board-body { padding: 12px 14px; }
+  .board-card h4 { font-size: 14px; margin-bottom: 4px; }
+  .board-card .board-meta { font-size: 11px; color: var(--ink-faint); margin-bottom: 6px; }
+  .board-card .board-snippet { font-size: 12px; color: var(--ink-soft); line-height: 1.5; }
+  .board-empty { grid-column: 1 / -1; padding: 40px 0; text-align: center; color: var(--ink-faint); font-size: 13px; }
+
   .result-card {
     padding: 16px 20px;
     border-bottom: 1px solid var(--rule-soft);
@@ -1588,6 +1624,7 @@
     <button class="tab active" data-tab="all">전체 관찰 가능 <span class="badge">/ all</span></button>
     <button class="tab" data-tab="bylocation">지역별 보기 <span class="badge">/ by location</span></button>
     <button class="tab" data-tab="byspecies">조류별 보기 <span class="badge">/ by species</span></button>
+    <button class="tab" data-tab="board">게시판 <span class="badge">/ board</span></button>
   </div>
 
   <!-- PANEL 1: 전체 -->
@@ -1692,6 +1729,24 @@
         </div>
         <div id="spList"></div>
       </div>
+    </div>
+  </div>
+
+  <!-- PANEL 4: 게시판 -->
+  <div class="panel" id="panel-board">
+    <p class="intro-text">
+      GitHub 계정으로 로그인해서 서천에서 직접 관찰한 생물 사진과 기록을 남겨보세요. 사진은 새 글 작성 화면에서 본문에 끌어다 놓으면 자동으로 올라가요.
+    </p>
+    <div class="geo-bar">
+      <button class="geo-btn" id="boardNewPostBtn" onclick="openNewBoardPost()">📷 새 글 작성</button>
+      <span class="geo-status" id="boardStatus"></span>
+    </div>
+    <div class="results" style="margin-top: 20px;">
+      <div class="results-head">
+        <span>사람들이 올린 관찰 기록</span>
+        <span class="count" id="boardCount">0</span>
+      </div>
+      <div id="boardList" class="board-list"></div>
     </div>
   </div>
 
@@ -40133,6 +40188,84 @@ mask.addEventListener('click', e => {
 // ============================================================
 // TAB 전환
 // ============================================================
+// ============================================================
+// 게시판: GitHub Issues 기반 (로그인 필요, 사진은 이슈 본문에 드래그 업로드)
+// ============================================================
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str == null ? '' : String(str);
+  return div.innerHTML;
+}
+
+function openNewBoardPost() {
+  const title = '[관찰기록] ';
+  const body = [
+    '## 관찰 기록',
+    '',
+    '**관찰 장소**: (예: 장항읍 습지 인근)',
+    '**관찰 일시**: ',
+    '**추정 종**: (모르면 비워두셔도 돼요)',
+    '',
+    '<!-- 아래 빈 줄에 사진을 끌어다 놓으면 자동으로 업로드돼요 -->',
+    '',
+    '',
+    '## 메모',
+    '',
+  ].join('\n');
+  const url = `https://github.com/pleasure-Rabbit/seocheon-birds-guide/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`;
+  window.open(url, '_blank', 'noopener');
+}
+
+async function renderBoard() {
+  const list = document.getElementById('boardList');
+  const countEl = document.getElementById('boardCount');
+  const statusEl = document.getElementById('boardStatus');
+  if (!list) return;
+  statusEl.textContent = '불러오는 중…';
+  try {
+    const res = await fetch('https://api.github.com/repos/pleasure-Rabbit/seocheon-birds-guide/issues?state=open&per_page=30&sort=created&direction=desc');
+    if (!res.ok) throw new Error('fetch failed');
+    const issues = await res.json();
+    const posts = Array.isArray(issues) ? issues.filter(i => !i.pull_request) : [];
+    countEl.textContent = posts.length;
+    statusEl.textContent = '';
+    list.innerHTML = '';
+    if (!posts.length) {
+      list.innerHTML = '<div class="board-empty">아직 등록된 관찰 기록이 없어요. 첫 번째로 올려보세요!</div>';
+      return;
+    }
+    posts.forEach(issue => {
+      const rawBody = issue.body || '';
+      const imgMatch = rawBody.match(/!\[[^\]]*\]\((https:\/\/[^\s)]+)\)/) || rawBody.match(/<img[^>]+src="(https:\/\/[^"]+)"/);
+      let imgUrl = imgMatch ? imgMatch[1] : null;
+      if (imgUrl && !/^https:\/\/[a-zA-Z0-9.-]+\//.test(imgUrl)) imgUrl = null; // 형식 이상하면 버림
+      const snippet = rawBody
+        .replace(/!\[[^\]]*\]\([^)]+\)/g, '')
+        .replace(/<img[^>]*>/g, '')
+        .replace(/[#*_>`-]/g, '')
+        .trim()
+        .slice(0, 80);
+      const dateStr = new Date(issue.created_at).toLocaleDateString('ko-KR');
+      const card = document.createElement('a');
+      card.className = 'board-card';
+      card.href = issue.html_url;
+      card.target = '_blank';
+      card.rel = 'noopener noreferrer';
+      card.innerHTML = `
+        ${imgUrl ? `<img class="board-photo" src="${imgUrl}" alt="${escapeHtml(issue.title)}" loading="lazy" onerror="this.outerHTML='<div class=&quot;board-photo placeholder&quot;>🌿</div>'">` : `<div class="board-photo placeholder">🌿</div>`}
+        <div class="board-body">
+          <h4>${escapeHtml(issue.title)}</h4>
+          <div class="board-meta">${escapeHtml(issue.user?.login || '익명')} · ${dateStr}</div>
+          <div class="board-snippet">${escapeHtml(snippet)}${snippet.length >= 80 ? '…' : ''}</div>
+        </div>
+      `;
+      list.appendChild(card);
+    });
+  } catch (e) {
+    statusEl.textContent = '불러오기에 실패했어요. 새로고침해보세요.';
+  }
+}
+
 document.querySelectorAll('.tab').forEach(t => {
   t.addEventListener('click', () => {
     document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
@@ -40161,6 +40294,9 @@ document.querySelectorAll('.tab').forEach(t => {
         }
         // lazy init이든 기존이든 항상 invalidateSize 보장
         setTimeout(() => spMap && spMap.invalidateSize(), 100);
+      }
+      if (t.dataset.tab === 'board') {
+        renderBoard();
       }
     }, 150);
   });
