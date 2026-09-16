@@ -312,6 +312,18 @@
   }
   .geo-btn:hover { background: var(--accent-bright); border-color: var(--accent-bright); }
   .geo-btn:disabled { opacity: 0.5; cursor: default; }
+  .sort-toggle {
+    background: var(--paper);
+    color: var(--ink-soft);
+    border: 1px solid var(--rule);
+  }
+  .sort-toggle:hover { background: var(--paper-deep); border-color: var(--ink-faint); color: var(--ink); }
+  .sort-toggle.active {
+    background: var(--accent);
+    color: var(--paper);
+    border-color: var(--accent);
+  }
+  .sort-toggle.active:hover { background: var(--accent-bright); border-color: var(--accent-bright); }
   .geo-status { font-size: 12px; color: var(--ink-faint); }
   .geo-status.active { color: var(--leaf); font-weight: 500; }
   .dist-tag {
@@ -1584,7 +1596,8 @@
       <span id="introDate">2026년 7월 1일</span> · 장항 조석 조건에서 서천 전체 관찰 가능성이 높은 <strong>조류 × 지점 조합</strong>을 적합도 순으로 정렬했습니다. 각 항목은 "어떤 새를 어디서 볼 수 있는가"를 함께 알려드립니다.
     </p>
     <div class="geo-bar">
-      <button class="geo-btn" id="geoBtnAll" onclick="requestUserLocation()">📍 내 위치로 가까운 순 정렬</button>
+      <button class="geo-btn sort-toggle active" id="sortScoreBtnAll" onclick="setSortMode('score')">🎯 관찰가능성 높은 순 정렬</button>
+      <button class="geo-btn sort-toggle" id="sortDistBtnAll" onclick="setSortMode('distance')">📍 내 위치에서 가까운 순 정렬</button>
       <span class="geo-status" id="geoStatusAll"></span>
     </div>
 
@@ -1622,7 +1635,7 @@
       <span class="picker-stat"><strong id="locResultCount">—</strong>종 관찰 가능</span>
     </div>
     <div class="geo-bar">
-      <button class="geo-btn" id="geoBtnLoc" onclick="requestUserLocation()">📍 내 위치로 가까운 순 정렬</button>
+      <button class="geo-btn" id="geoBtnLoc" onclick="requestUserLocation()">📍 내 위치에서 가까운 순 정렬</button>
       <span class="geo-status" id="geoStatusLoc"></span>
     </div>
 
@@ -37852,6 +37865,7 @@ function applyInsectTimeSuggestToUI() {
 // 불필요하다는 전제로 구현.
 // ============================================================
 let userLocation = null; // {lat, lon}
+let sortMode = 'score'; // 'score' | 'distance' — 전체 관찰 가능 탭 정렬 기준
 let userMarkerAll = null;
 let userMarkerLoc = null;
 
@@ -37898,6 +37912,19 @@ function requestUserLocation() {
       locations.forEach(loc => {
         loc.distanceKm = haversineKm(userLocation.lat, userLocation.lon, loc.lat, loc.lon);
       });
+      // 조류 외 분류군: 종 자신의 실측좌표 기준으로 거리 계산
+      ['insect','mammal','herptile','fish','benthic','plant'].forEach(tx => {
+        (TAXON_REGISTRY[tx]?.species || []).forEach(sp => {
+          if (sp.lat != null && sp.lon != null) {
+            sp.distanceKm = haversineKm(userLocation.lat, userLocation.lon, sp.lat, sp.lon);
+          }
+        });
+      });
+      Object.values(TAXON_ZONES).forEach(zoneList => {
+        zoneList.forEach(z => {
+          z.distanceKm = haversineKm(userLocation.lat, userLocation.lon, z.lat, z.lon);
+        });
+      });
       setGeoStatus(`내 위치 확인됨 · 가까운 순 정렬 중`, true);
 
       if (allMap) {
@@ -37931,6 +37958,17 @@ function requestUserLocation() {
     },
     { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
   );
+}
+
+// 전체 관찰 가능 탭: 적합도순 ↔ 내 위치 가까운순 토글
+function setSortMode(mode) {
+  if (mode === 'distance' && !userLocation) {
+    requestUserLocation(); // 콜백 안에서 renderAll() 호출됨; 모드는 아래에서 바로 반영
+  }
+  sortMode = mode;
+  document.getElementById('sortScoreBtnAll')?.classList.toggle('active', mode === 'score');
+  document.getElementById('sortDistBtnAll')?.classList.toggle('active', mode === 'distance');
+  renderAll();
 }
 
 // ============================================================
@@ -39308,10 +39346,18 @@ function renderInsectAll() {
   Object.values(allMarkers).forEach(m => allMap.removeLayer(m));
   allMarkers = {};
 
-  const sorted = [...currentSpeciesList()].sort((a, b) => calcInsectScore(b) - calcInsectScore(a));
+  const useDist = sortMode === 'distance' && userLocation;
+  const sorted = [...currentSpeciesList()].sort((a, b) => {
+    if (useDist) {
+      const da = a.distanceKm ?? Infinity;
+      const db = b.distanceKm ?? Infinity;
+      if (Math.abs(da - db) > 0.05) return da - db;
+    }
+    return calcInsectScore(b) - calcInsectScore(a);
+  });
   document.getElementById('allCount').textContent = sorted.length;
   const resultsHeadLabel = document.querySelector('#panel-all .results-head span');
-  if (resultsHeadLabel) resultsHeadLabel.textContent = `적합도 순 (${currentTaxonLabel()} × 지점)`;
+  if (resultsHeadLabel) resultsHeadLabel.textContent = useDist ? `가까운 순 (${currentTaxonLabel()} × 지점)` : `적합도 순 (${currentTaxonLabel()} × 지점)`;
 
   const list = document.getElementById('allList');
   list.innerHTML = '';
@@ -39330,6 +39376,7 @@ function renderInsectAll() {
           <span class="tag leaf">${sp.habitatName}</span>
           <span class="tag">기록 ${sp.recordCount}건</span>
           ${daynightTagHtml(sp)}
+          ${useDist && sp.distanceKm != null ? `<span class="dist-tag">📍${formatDistance(sp.distanceKm)}</span>` : ''}
         </div>
       </div>
       <div class="result-score">
@@ -39501,9 +39548,10 @@ if (currentTaxon !== 'bird') { renderInsectAll(); return; }
     allMarkers[o.locId] = marker;
   });
 
-  // 목록: 내 위치가 있으면 가까운 지점 우선 → 그 안에서 적합도 순, 없으면 적합도 순
+  // 목록: sortMode에 따라 가까운 순 또는 적합도 순
+  const useDist = sortMode === 'distance' && userLocation;
   const sorted = [...enrichedObs].sort((a, b) => {
-    if (userLocation) {
+    if (useDist) {
       const da = a.location.distanceKm ?? Infinity;
       const db = b.location.distanceKm ?? Infinity;
       if (Math.abs(da - db) > 0.05) return da - db; // 50m 이상 차이나면 거리 우선
@@ -39514,7 +39562,7 @@ if (currentTaxon !== 'bird') { renderInsectAll(); return; }
   list.innerHTML = '';
   document.getElementById('allCount').textContent = sorted.length;
   const resultsHeadLabel = document.querySelector('#panel-all .results-head span');
-  if (resultsHeadLabel) resultsHeadLabel.textContent = userLocation ? '가까운 순 (종 × 지점)' : '적합도 순 (종 × 지점)';
+  if (resultsHeadLabel) resultsHeadLabel.textContent = useDist ? '가까운 순 (종 × 지점)' : '적합도 순 (종 × 지점)';
 
   sorted.forEach((o, i) => {
     const level = scoreLevel(o.score);
