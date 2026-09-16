@@ -40477,7 +40477,7 @@ function generateNLAnswer(sp, taxonKey) {
 
   let statusSentence;
   if (isNowZero && !hasGenuineSeasonality && seasonality.pattern !== 'unknown') {
-    statusSentence = `지금(${monthNames[cur]})은 <strong>${sp.name}</strong>${iGa(sp.name)} 에코뱅크에 기록된 적이 없지만, ${label}는 계절에 따라 자리를 옮기지 않는 경우가 많아 실제로는 연중 서식하고 있을 가능성이 높아요. 다만 에코뱅크 조사 자체가 ${peakText}에 몰려있어서, 그 시기에 상대적으로 발견하기 더 쉬웠을 수는 있어요.`;
+    statusSentence = `지금(${monthNames[cur]})은 <strong>${sp.name}</strong>${iGa(sp.name)} 에코뱅크에 기록된 적이 없지만, ${label}${eunNeun(label)} 계절에 따라 자리를 옮기지 않는 경우가 많아 실제로는 연중 서식하고 있을 가능성이 높아요. 다만 에코뱅크 조사 자체가 ${peakText}에 몰려있어서, 그 시기에 상대적으로 발견하기 더 쉬웠을 수는 있어요.`;
   } else if (isNowZero) {
     if (seasonality.pattern === 'summer') {
       statusSentence = `<strong>${sp.name}</strong>${eunNeun(sp.name)} 에코뱅크 기록상 주로 여름(${peakText})에 관찰되는 <strong>${patternLabel.summer}</strong>이에요. 지금(${monthNames[cur]})은 기록이 거의 없어서, 내년 여름에 다시 찾아보시는 걸 추천드려요.`;
