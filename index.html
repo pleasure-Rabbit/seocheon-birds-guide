@@ -40434,10 +40434,13 @@ function findSpeciesInText(text) {
 
   // 3) 편집거리(오타 허용) 매칭 — 무관한 단어까지 잘못 붙잡지 않도록 임계값을 엄격하게 유지
   //    (예: "사슴벌레"와 "무당벌레"처럼 절반이 달라지면 절대 매칭되면 안 됨)
+  //    2글자 단어는 거리 1도 절반이 달라지는 셈이라("새는"↔"새삼", "갯벌"↔"말벌") 아예 제외
   let best = null, bestDist = Infinity;
   for (const tok of tokens) {
+    if (tok.length < 3) continue;
     for (const e of idx) {
       const name = e.sp.name;
+      if (name.length < 3) continue;
       if (Math.abs(name.length - tok.length) > 1) continue;
       const dist = levenshtein(tok, name);
       const threshold = Math.max(1, Math.floor(name.length / 5)); // 4~5자면 1, 10자 이상이면 2
