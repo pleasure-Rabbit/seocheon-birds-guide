@@ -40223,7 +40223,9 @@ async function renderBoard() {
   if (!list) return;
   statusEl.textContent = '불러오는 중…';
   try {
-    const res = await fetch('https://api.github.com/repos/pleasure-Rabbit/seocheon-birds-guide/issues?state=open&per_page=30&sort=created&direction=desc');
+    const res = await fetch('https://api.github.com/repos/pleasure-Rabbit/seocheon-birds-guide/issues?state=open&per_page=30&sort=created&direction=desc', {
+      headers: { 'Accept': 'application/vnd.github.html+json' },
+    });
     if (!res.ok) throw new Error('fetch failed');
     const issues = await res.json();
     const posts = Array.isArray(issues) ? issues.filter(i => !i.pull_request) : [];
@@ -40236,7 +40238,13 @@ async function renderBoard() {
     }
     posts.forEach(issue => {
       const rawBody = issue.body || '';
-      const imgMatch = rawBody.match(/!\[[^\]]*\]\((https:\/\/[^\s)]+)\)/) || rawBody.match(/<img[^>]+src="(https:\/\/[^"]+)"/);
+      const html = issue.body_html || '';
+      // GitHub이 업로드 이미지를 서명된 private-user-images URL로 렌더링해주는
+      // body_html에서 추출 — 원본 body의 user-attachments 링크는 외부 도메인에서
+      // 직접 로드가 안 돼서 이 방식으로 가져와야 함
+      const imgMatch = html.match(/<img[^>]+src="(https:\/\/private-user-images\.githubusercontent\.com\/[^"]+)"/)
+        || html.match(/href="(https:\/\/private-user-images\.githubusercontent\.com\/[^"]+)"/)
+        || rawBody.match(/!\[[^\]]*\]\((https:\/\/user-images\.githubusercontent\.com\/[^\s)]+)\)/);
       let imgUrl = imgMatch ? imgMatch[1] : null;
       if (imgUrl && !/^https:\/\/[a-zA-Z0-9.-]+\//.test(imgUrl)) imgUrl = null; // 형식 이상하면 버림
       const snippet = rawBody
