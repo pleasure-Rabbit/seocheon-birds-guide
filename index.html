@@ -311,6 +311,32 @@
     font-size: 13px;
     margin-left: 10px;
   }
+  .nl-result-list {
+    list-style: none;
+    margin: 10px 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .nl-result-list li {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .nl-result-list li:hover { border-color: var(--accent); background: var(--paper-deep); }
+  .nl-result-score {
+    background: var(--accent);
+    color: var(--paper);
+    font-size: 11px;
+    padding: 1px 6px;
+    border-radius: 2px;
+  }
   .taxon-switch {
     display: flex;
     flex-wrap: wrap;
@@ -40539,6 +40565,215 @@ function findGeneralKnowledge(query) {
   return null;
 }
 
+// ============================================================
+// 열린 질문 처리: 특정 종 이름 없이 "바닷새 어디가", "밤에 볼 수 있는 새" 같은
+// 질문을 서식지/시간대/계절/거리/희귀도 축으로 해석해서 목록으로 답변
+// ============================================================
+const HABITAT_KEYWORDS = {
+  sand: ['바다', '바닷새', '바닷가', '해안', '갯벌', '하구', '갯가'],
+  forest: ['숲', '산림', '산에', '수풀'],
+  field: ['논', '밭', '농경지', '농지', '마을'],
+  wetland: ['습지', '하천', '냇가', '물가', '저수지', '연못', '강가'],
+};
+const TIME_KEYWORDS = {
+  night: ['밤', '야간', '저녁', '어두울때', '한밤', '심야', '밤에'],
+  day: ['낮', '주간', '아침', '오전', '오후', '한낮', '낮에'],
+};
+const SEASON_KEYWORDS = {
+  spring: { months: [3, 4, 5], words: ['봄', '봄철', '봄에'] },
+  summer: { months: [6, 7, 8], words: ['여름', '여름철', '여름에'] },
+  fall: { months: [9, 10, 11], words: ['가을', '가을철', '가을에'] },
+  winter: { months: [12, 1, 2], words: ['겨울', '겨울철', '겨울에'] },
+};
+const RARITY_KEYWORDS = {
+  common: ['흔한', '자주보이는', '많이보이는'],
+  rare: ['희귀한', '드문', '보기힘든'],
+  endangered: ['멸종위기', '보호종', '천연기념물'],
+};
+const DISTANCE_KEYWORDS = ['가까운', '근처', '가까이', '가까운곳'];
+const OPEN_TAXON_KEYWORDS = {
+  bird: ['새', '조류', '철새'],
+  insect: ['곤충', '벌레', '나비', '잠자리'],
+  mammal: ['포유류', '포유동물'],
+  herptile: ['파충류', '양서류', '개구리', '뱀', '도마뱀'],
+  fish: ['물고기', '어류'],
+  benthic: ['저서무척추동물', '저서생물'],
+  plant: ['식물', '나무', '들꽃'],
+};
+
+function matchAnyKeyword(text, list) {
+  return list.some(k => text.includes(k));
+}
+
+function parseOpenQuery(text) {
+  const noSpace = text.replace(/\s+/g, '');
+  const filters = {};
+
+  for (const [taxonKey, words] of Object.entries(OPEN_TAXON_KEYWORDS)) {
+    if (matchAnyKeyword(noSpace, words)) { filters.taxon = taxonKey; break; }
+  }
+  for (const [habitat, words] of Object.entries(HABITAT_KEYWORDS)) {
+    if (matchAnyKeyword(noSpace, words)) { filters.habitat = habitat; break; }
+  }
+  for (const [time, words] of Object.entries(TIME_KEYWORDS)) {
+    if (matchAnyKeyword(noSpace, words)) { filters.time = time; break; }
+  }
+  for (const [season, def] of Object.entries(SEASON_KEYWORDS)) {
+    if (matchAnyKeyword(noSpace, def.words)) { filters.season = season; filters.seasonMonths = def.months; break; }
+  }
+  for (const [rarity, words] of Object.entries(RARITY_KEYWORDS)) {
+    if (matchAnyKeyword(noSpace, words)) { filters.rarity = rarity; break; }
+  }
+  if (matchAnyKeyword(noSpace, DISTANCE_KEYWORDS)) filters.wantDistance = true;
+
+  const hasAnyFilter = filters.habitat || filters.time || filters.season || filters.rarity || filters.wantDistance || filters.taxon;
+  return hasAnyFilter ? filters : null;
+}
+
+function speciesHabitatMatches(sp, taxonKey, habitat) {
+  if (taxonKey === 'bird') return Array.isArray(sp.habitatPref) && sp.habitatPref.includes(habitat);
+  return sp.habitat === habitat;
+}
+
+function speciesSeasonMatches(sp, months) {
+  const am = sp.activeMonths;
+  if (!Array.isArray(am)) return true;
+  return months.some(m => am[m - 1] > 0);
+}
+
+function speciesTimeMatches(sp, taxonKey, time) {
+  if (taxonKey === 'bird') {
+    const hours = sp.activeHours;
+    if (!Array.isArray(hours) || !hours.some(h => h > 0)) return true; // 시간대 기록 없으면 배제하지 않음
+    const nightSum = [...hours.slice(20, 24), ...hours.slice(0, 5)].reduce((a, b) => a + b, 0);
+    const daySum = hours.slice(6, 19).reduce((a, b) => a + b, 0);
+    return time === 'night' ? nightSum >= daySum : daySum >= nightSum;
+  }
+  if (taxonKey === 'insect') {
+    const info = insectActivityInfo(sp);
+    return time === 'night' ? info.nocturnal : !info.nocturnal;
+  }
+  return null; // 이 분류군엔 시간대 데이터 없음 — 필터 적용 불가를 알리기 위해 null 반환
+}
+
+function runOpenQuery(filters) {
+  const taxonKey = filters.taxon || currentTaxon;
+  const isBird = taxonKey === 'bird';
+  const label = isBird ? '조류' : (TAXON_REGISTRY[taxonKey]?.label || '생물');
+  let list = isBird ? [...species] : [...(TAXON_REGISTRY[taxonKey]?.species || [])];
+
+  const notes = [];
+  let timeUnsupported = false;
+
+  if (filters.habitat) {
+    list = list.filter(sp => speciesHabitatMatches(sp, taxonKey, filters.habitat));
+  }
+  if (filters.season) {
+    list = list.filter(sp => speciesSeasonMatches(sp, filters.seasonMonths));
+  }
+  if (filters.time) {
+    const filtered = [];
+    for (const sp of list) {
+      const m = speciesTimeMatches(sp, taxonKey, filters.time);
+      if (m === null) { timeUnsupported = true; filtered.push(sp); } // 데이터 없으면 걸러내지 않고 통과
+      else if (m) filtered.push(sp);
+    }
+    list = filtered;
+  }
+  if (filters.rarity === 'endangered') {
+    if (isBird) list = list.filter(sp => sp.redList);
+    else notes.push(`${label}는 멸종위기종 지정 정보를 갖고 있지 않아요.`);
+  }
+
+  // 정렬: 거리 요청 있으면 거리순(내 위치 필요), rarity면 기록건수순, 그 외엔 적합도순
+  if (filters.wantDistance) {
+    if (!userLocation) {
+      notes.push('가까운 순으로 보려면 "내 위치에서 가까운 순 정렬"을 먼저 켜주세요. 우선 적합도 순으로 보여드려요.');
+      list.sort((a, b) => (isBird ? scoreOf(b, taxonKey) - scoreOf(a, taxonKey) : calcInsectScore(b) - calcInsectScore(a)));
+    } else if (isBird) {
+      list.sort((a, b) => {
+        const da = bestObsFor(a.id)?.location?.distanceKm ?? Infinity;
+        const db = bestObsFor(b.id)?.location?.distanceKm ?? Infinity;
+        return da - db;
+      });
+    } else {
+      list.sort((a, b) => (a.distanceKm ?? Infinity) - (b.distanceKm ?? Infinity));
+    }
+  } else if (filters.rarity === 'common') {
+    list.sort((a, b) => (b.recordCount || 0) - (a.recordCount || 0));
+  } else if (filters.rarity === 'rare') {
+    list.sort((a, b) => (a.recordCount || 0) - (b.recordCount || 0));
+  } else {
+    list.sort((a, b) => (isBird ? scoreOf(b, taxonKey) - scoreOf(a, taxonKey) : calcInsectScore(b) - calcInsectScore(a)));
+  }
+
+  return { taxonKey, label, results: list.slice(0, 8), totalMatched: list.length, notes, timeUnsupported };
+}
+
+function bestObsFor(spId) {
+  return enrichedObs.filter(o => o.spId === spId).sort((a, b) => b.score - a.score)[0];
+}
+function scoreOf(sp, taxonKey) {
+  if (taxonKey === 'bird') return bestObsFor(sp.id)?.score || 0;
+  return calcInsectScore(sp);
+}
+
+function describeFilters(filters) {
+  const parts = [];
+  const habitatNames = { sand: '하구·갯벌·해안', forest: '숲·산림', field: '논·밭·농경지', wetland: '습지·하천' };
+  const seasonNames = { spring: '봄', summer: '여름', fall: '가을', winter: '겨울' };
+  const timeNames = { night: '밤', day: '낮' };
+  if (filters.habitat) parts.push(habitatNames[filters.habitat]);
+  if (filters.season) parts.push(seasonNames[filters.season]);
+  if (filters.time) parts.push(timeNames[filters.time] + ' 시간대');
+  if (filters.rarity === 'common') parts.push('흔하게');
+  if (filters.rarity === 'rare') parts.push('희귀하게');
+  if (filters.rarity === 'endangered') parts.push('멸종위기종 중');
+  if (filters.wantDistance) parts.push('가까운 곳 위주로');
+  return parts.join(' · ');
+}
+
+window.__nlOpenResults = [];
+function openNLResult(i) {
+  const item = window.__nlOpenResults[i];
+  if (!item) return;
+  const { sp, taxon } = item;
+  const switchNeeded = taxon !== currentTaxon;
+  if (switchNeeded) document.querySelector(`.taxon-btn[data-taxon="${taxon}"]`)?.click();
+  setTimeout(() => {
+    if (taxon === 'bird') openSpeciesDetail(sp);
+    else openInsectDetail(sp);
+  }, switchNeeded ? 300 : 0);
+}
+
+function renderOpenQueryAnswer(filters) {
+  const { taxonKey, label, results, totalMatched, notes, timeUnsupported } = runOpenQuery(filters);
+  const answerBox = document.getElementById('nlAnswer');
+  const desc = describeFilters(filters);
+  window.__nlOpenResults = results.map(sp => ({ sp, taxon: taxonKey }));
+
+  if (!results.length) {
+    answerBox.innerHTML = `<span class="nl-close" onclick="this.parentElement.style.display='none'">닫기 ✕</span>${desc ? `<strong>${escapeHtml(desc)}</strong> 조건에 맞는` : ''} ${label}를 서천 에코뱅크 기록에서 찾지 못했어요.`;
+    return;
+  }
+
+  let html = `<span class="nl-close" onclick="this.parentElement.style.display='none'">닫기 ✕</span>`;
+  html += `${desc ? `<strong>${escapeHtml(desc)}</strong> 조건에 맞는 ` : ''}${label} 기록을 찾아봤어요. 총 <strong>${totalMatched}종</strong> 중 상위 ${results.length}종이에요:`;
+  if (timeUnsupported) html += `<br><span style="font-size:12px; color:var(--ink-faint);">※ ${label}는 시간대별 기록이 없어서 시간대 조건은 적용하지 못했어요.</span>`;
+  notes.forEach(n => { html += `<br><span style="font-size:12px; color:var(--ink-faint);">※ ${escapeHtml(n)}</span>`; });
+  html += '<ul class="nl-result-list">';
+  results.forEach((sp, i) => {
+    const sc = Math.round(scoreOf(sp, taxonKey) * 100);
+    html += `<li onclick="openNLResult(${i})"><strong>${escapeHtml(sp.name)}</strong><span class="nl-result-score">${sc}%</span></li>`;
+  });
+  html += '</ul>';
+  answerBox.innerHTML = html;
+
+  if (taxonKey !== currentTaxon) {
+    document.querySelector(`.taxon-btn[data-taxon="${taxonKey}"]`)?.click();
+  }
+}
+
 function handleNLSearch() {
   const input = document.getElementById('nlSearchInput');
   const query = (input?.value || '').trim();
@@ -40548,12 +40783,17 @@ function handleNLSearch() {
 
   const found = findSpeciesInText(query);
   if (!found) {
-    const general = findGeneralKnowledge(query);
     answerBox.style.display = 'block';
+    const openFilters = parseOpenQuery(query);
+    if (openFilters) {
+      renderOpenQueryAnswer(openFilters);
+      return;
+    }
+    const general = findGeneralKnowledge(query);
     if (general) {
       answerBox.innerHTML = `<span class="nl-close" onclick="this.parentElement.style.display='none'">닫기 ✕</span>서천 에코뱅크에 <strong>${escapeHtml(general.name)}</strong> 조사 기록은 없어요. 다만 일반적으로 알려진 정보로는: ${escapeHtml(general.note)}<br><span style="font-size:12px; color:var(--ink-faint);">※ 이 내용은 서천 실측 데이터가 아니라 일반 생태 상식이에요.</span>`;
     } else {
-      answerBox.innerHTML = `<span class="nl-close" onclick="this.parentElement.style.display='none'">닫기 ✕</span>"${escapeHtml(query)}"에 해당하는 생물을 찾지 못했어요. 이름을 다르게 써보셨거나, 서천에서 실제로 기록된 적이 없는 종일 수 있어요 (이 앱은 에코뱅크에 실제로 기록된 종만 다뤄요).`;
+      answerBox.innerHTML = `<span class="nl-close" onclick="this.parentElement.style.display='none'">닫기 ✕</span>"${escapeHtml(query)}"을(를) 이해하지 못했어요. 종 이름을 정확히 써보시거나("후투티 보고싶어"), 서식지·시간대·계절 키워드를 넣어보세요("갯벌에서 볼 수 있는 새", "밤에 보기 좋은 곤충", "여름에 흔한 새").`;
     }
     return;
   }
