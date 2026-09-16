@@ -265,6 +265,52 @@
     background: var(--paper);
   }
   .picker-search::placeholder { color: var(--ink-faint); }
+  .nl-search-wrap {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .nl-search-input {
+    flex: 1;
+    background: var(--paper);
+    border: 2px solid var(--ink);
+    padding: 12px 16px;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 15px;
+    color: var(--ink);
+  }
+  .nl-search-input:focus { outline: none; border-color: var(--accent); }
+  .nl-search-input::placeholder { color: var(--ink-faint); }
+  .nl-search-btn {
+    background: var(--ink);
+    color: var(--paper);
+    border: 2px solid var(--ink);
+    padding: 0 20px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .nl-search-btn:hover { background: var(--accent); border-color: var(--accent); }
+  .nl-answer {
+    border: 1px solid var(--rule);
+    background: var(--paper-deep);
+    border-left: 4px solid var(--accent);
+    padding: 14px 18px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--ink);
+  }
+  .nl-answer strong { color: var(--accent); }
+  .nl-answer .nl-close {
+    float: right;
+    cursor: pointer;
+    color: var(--ink-faint);
+    font-size: 13px;
+    margin-left: 10px;
+  }
   .taxon-switch {
     display: flex;
     flex-wrap: wrap;
@@ -1563,6 +1609,13 @@
       <p class="brand-sub">에코뱅크 조류·곤충 조사기록과 기상·계절 조건을 기반으로, 지금 서천에서 관찰 가능성이 높은 생물을 추천합니다.</p>
     </div>
   </header>
+
+  <!-- 자연어 검색 -->
+  <div class="nl-search-wrap">
+    <input type="text" class="nl-search-input" id="nlSearchInput" placeholder="예) 지금 후투티를 보고싶어 / 꾀꼬리 볼 수 있어?" autocomplete="off">
+    <button class="nl-search-btn" id="nlSearchBtn" onclick="handleNLSearch()">🔍 검색</button>
+  </div>
+  <div class="nl-answer" id="nlAnswer" style="display:none;"></div>
 
   <!-- 분류군 선택 -->
   <div class="taxon-switch">
@@ -40274,6 +40327,160 @@ async function renderBoard() {
     statusEl.textContent = '불러오기에 실패했어요. 새로고침해보세요.';
   }
 }
+
+// ============================================================
+// 자연어 검색: AI 호출 없이 순수 텍스트 매칭 + activeMonths 패턴 추론으로
+// "지금 후투티를 보고싶어" 같은 문장에서 종을 찾아 현재 상태를 설명
+// ============================================================
+function levenshtein(a, b) {
+  const m = a.length, n = b.length;
+  const dp = [];
+  for (let i = 0; i <= m; i++) { dp.push([i]); }
+  for (let j = 1; j <= n; j++) { dp[0][j] = j; }
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      dp[i][j] = a[i-1] === b[j-1] ? dp[i-1][j-1] : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+    }
+  }
+  return dp[m][n];
+}
+
+let __speciesIndex = null;
+function speciesIndex() {
+  if (__speciesIndex) return __speciesIndex;
+  const idx = [];
+  species.forEach(s => idx.push({ sp: s, taxon: 'bird' }));
+  ['insect', 'mammal', 'herptile', 'fish', 'benthic', 'plant'].forEach(tx => {
+    (TAXON_REGISTRY[tx]?.species || []).forEach(s => idx.push({ sp: s, taxon: tx }));
+  });
+  __speciesIndex = idx;
+  return idx;
+}
+
+function findSpeciesInText(text) {
+  const clean = text.replace(/[?!.,~？！]/g, '').trim();
+  const idx = speciesIndex();
+  // 1) 문장에 종 이름이 그대로 포함된 경우 (가장 긴 이름 우선 — "쇠박새"가 "박새"보다 우선)
+  const exact = idx.filter(e => clean.includes(e.sp.name));
+  if (exact.length) {
+    exact.sort((a, b) => b.sp.name.length - a.sp.name.length);
+    return exact[0];
+  }
+  // 2) 조사 제거 후 토큰별 편집거리(오타 허용) 매칭
+  const particles = /(을|를|이|가|은|는|의|에서|에게|한테|이랑|랑|과|와|도|만|요|좀)$/;
+  const tokens = clean.split(/\s+/).map(t => t.replace(particles, '')).filter(t => t.length >= 2);
+  let best = null, bestDist = Infinity;
+  for (const tok of tokens) {
+    for (const e of idx) {
+      const name = e.sp.name;
+      if (Math.abs(name.length - tok.length) > 2) continue;
+      const dist = levenshtein(tok, name);
+      const threshold = name.length <= 3 ? 1 : 2;
+      if (dist <= threshold && dist < bestDist) { bestDist = dist; best = e; }
+    }
+  }
+  return best;
+}
+
+function classifySeasonality(activeMonths) {
+  const total = activeMonths.reduce((a, b) => a + b, 0);
+  if (total === 0) return { pattern: 'unknown', peakMonths: [] };
+  const summer = [5, 6, 7].reduce((s, i) => s + activeMonths[i], 0);
+  const winter = [11, 0, 1].reduce((s, i) => s + activeMonths[i], 0);
+  const spring = [2, 3, 4].reduce((s, i) => s + activeMonths[i], 0);
+  const fall = [8, 9, 10].reduce((s, i) => s + activeMonths[i], 0);
+  const max = Math.max(...activeMonths);
+  const peakMonths = activeMonths.map((v, i) => ({ v, i })).filter(x => x.v === max && x.v > 0).map(x => x.i + 1);
+  const nonzeroMonths = activeMonths.filter(v => v > 0).length;
+  let pattern;
+  if (nonzeroMonths >= 10) pattern = 'resident';
+  else if (summer / total > 0.6) pattern = 'summer';
+  else if (winter / total > 0.6) pattern = 'winter';
+  else if ((spring + fall) / total > 0.6 && summer / total < 0.2 && winter / total < 0.2) pattern = 'passage';
+  else pattern = 'irregular';
+  return { pattern, peakMonths, nonzeroMonths };
+}
+
+function generateNLAnswer(sp, taxonKey) {
+  const label = taxonKey === 'bird' ? '조류' : (TAXON_REGISTRY[taxonKey]?.label || '생물');
+  const monthNames = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+  const cur = CURRENT_MONTH_INDEX;
+  const activeMonths = Array.isArray(sp.activeMonths) && sp.activeMonths.length ? sp.activeMonths : Array(12).fill(0);
+  const seasonality = classifySeasonality(activeMonths);
+  const currentActivity = activeMonths[cur];
+  const maxActivity = Math.max(...activeMonths, 1);
+  const isNowPeak = currentActivity === maxActivity && currentActivity > 0;
+  const isNowZero = currentActivity === 0;
+  const peakText = seasonality.peakMonths.map(m => m + '월').join(', ');
+
+  let score = 0, whereText = '기록된 지점 없음';
+  if (taxonKey === 'bird') {
+    const obsForSp = enrichedObs.filter(o => o.spId === sp.id).sort((a, b) => b.score - a.score);
+    if (obsForSp[0]) { score = Math.round(obsForSp[0].score * 100); whereText = obsForSp[0].location.name; }
+  } else {
+    score = Math.round(calcInsectScore(sp) * 100);
+    whereText = sp.locName || findZone(sp.zoneId)?.name || whereText;
+  }
+
+  let statusSentence;
+  if (isNowZero) {
+    if (seasonality.pattern === 'summer') {
+      statusSentence = `<strong>${sp.name}</strong>은(는) 에코뱅크 기록상 주로 여름(${peakText})에 관찰되는 <strong>여름철새 패턴</strong>이에요. 지금(${monthNames[cur]})은 기록이 거의 없어서, 내년 여름에 다시 찾아보시는 걸 추천드려요.`;
+    } else if (seasonality.pattern === 'winter') {
+      statusSentence = `<strong>${sp.name}</strong>은(는) 에코뱅크 기록상 주로 겨울(${peakText})에 관찰되는 <strong>겨울철새 패턴</strong>이에요. 지금(${monthNames[cur]})은 관찰이 어려워 보여요. 겨울에 다시 찾아보세요.`;
+    } else if (seasonality.pattern === 'passage') {
+      statusSentence = `<strong>${sp.name}</strong>은(는) 봄·가을 이동 시기에 잠깐 지나가는 <strong>나그네새 패턴</strong>으로 보여요(주로 ${peakText}). 지금(${monthNames[cur]})은 기록이 없어요.`;
+    } else if (seasonality.pattern === 'unknown') {
+      statusSentence = `<strong>${sp.name}</strong>은(는) 서천 권역에서 에코뱅크 기록 자체가 없어요. 관찰이 어려운 종이거나 아직 조사되지 않았을 수 있어요.`;
+    } else {
+      statusSentence = `<strong>${sp.name}</strong>은(는) 지금(${monthNames[cur]}) 에코뱅크 기록이 없는 시기예요. 기록이 많은 달은 ${peakText}예요.`;
+    }
+  } else if (isNowPeak) {
+    statusSentence = `<strong>${sp.name}</strong>은(는) 지금(${monthNames[cur]})이 기록상 딱 관찰 적기예요!`;
+  } else if (seasonality.pattern === 'resident') {
+    statusSentence = `<strong>${sp.name}</strong>은(는) 연중 기록되는 <strong>텃새(또는 상주종) 패턴</strong>이라 지금(${monthNames[cur]})도 관찰 가능성이 있어요. 특히 ${peakText}에 기록이 가장 많아요.`;
+  } else {
+    statusSentence = `<strong>${sp.name}</strong>은(는) 지금(${monthNames[cur]})도 기록은 있지만, ${peakText}에 가장 많이 관찰됐어요.`;
+  }
+
+  const scoreSentence = score > 0
+    ? ` 현재 적합도는 <strong>${score}%</strong>이고, 주로 <strong>${whereText}</strong> 인근에서 기록됐어요.`
+    : '';
+
+  return `${statusSentence}${scoreSentence}`;
+}
+
+function handleNLSearch() {
+  const input = document.getElementById('nlSearchInput');
+  const query = (input?.value || '').trim();
+  const answerBox = document.getElementById('nlAnswer');
+  if (!answerBox) return;
+  if (!query) return;
+
+  const found = findSpeciesInText(query);
+  if (!found) {
+    answerBox.style.display = 'block';
+    answerBox.innerHTML = `<span class="nl-close" onclick="this.parentElement.style.display='none'">닫기 ✕</span>"${escapeHtml(query)}"에서 아는 생물 이름을 찾지 못했어요. 정확한 국명으로 다시 검색해보시겠어요? (예: 후투티, 꾀꼬리, 무당벌레)`;
+    return;
+  }
+
+  const { sp, taxon } = found;
+  answerBox.style.display = 'block';
+  answerBox.innerHTML = `<span class="nl-close" onclick="this.parentElement.style.display='none'">닫기 ✕</span>${generateNLAnswer(sp, taxon)}`;
+
+  const switchNeeded = taxon !== currentTaxon;
+  if (switchNeeded) {
+    document.querySelector(`.taxon-btn[data-taxon="${taxon}"]`)?.click();
+  }
+  setTimeout(() => {
+    if (taxon === 'bird') openSpeciesDetail(sp);
+    else openInsectDetail(sp);
+  }, switchNeeded ? 300 : 0);
+}
+
+document.getElementById('nlSearchInput')?.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') handleNLSearch();
+});
 
 document.querySelectorAll('.tab').forEach(t => {
   t.addEventListener('click', () => {
