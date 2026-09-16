@@ -40475,6 +40475,27 @@ function generateNLAnswer(sp, taxonKey) {
   return `${statusSentence}${scoreSentence}`;
 }
 
+// 서천 에코뱅크 기록엔 없지만 일반적으로 흔한 종들에 대한 참고 정보
+// (에코뱅크 실측 데이터가 아니라 일반 생태 상식이라는 점을 답변에서 항상 명시함)
+const GENERAL_KNOWLEDGE_FALLBACK = {
+  '사슴벌레': '사슴벌레류는 전국적으로 흔한 곤충이에요. 보통 6~8월 밤에 참나무 수액이나 가로등·편의점 불빛 주변에서 관찰할 수 있어요.',
+  '넓적사슴벌레': '넓적사슴벌레는 전국 어디서나 볼 수 있는 흔한 종이에요. 보통 6~8월 밤에 참나무 수액이나 가로등 불빛 근처에서 관찰돼요.',
+  '톱사슴벌레': '톱사슴벌레도 전국적으로 흔해요. 6~8월 밤에 참나무 수액이나 가로등 근처에서 볼 수 있어요.',
+  '참넓적사슴벌레': '참넓적사슴벌레도 전국적으로 흔한 편이에요. 6~8월 밤에 참나무 수액이나 가로등 불빛 근처에서 관찰할 수 있어요.',
+  '장수풍뎅이': '장수풍뎅이는 전국적으로 흔한 곤충이에요. 보통 7~8월 밤에 참나무 수액이나 가로등 불빛 근처에서 관찰돼요.',
+  '사마귀': '사마귀류는 전국 어디서나 볼 수 있어요. 8~10월 풀밭이나 숲 가장자리에서 낮에 관찰하기 좋아요.',
+  '왕사마귀': '왕사마귀는 전국적으로 흔한 편이에요. 8~10월 풀밭이나 숲 가장자리에서 낮에 관찰하기 좋아요.',
+  '방아깨비': '방아깨비는 전국 풀밭에서 흔히 볼 수 있어요. 8~10월 낮에 풀이 우거진 곳에서 관찰하기 좋아요.',
+};
+
+function findGeneralKnowledge(query) {
+  const clean = query.replace(/[?!.,~？！]/g, '').trim();
+  for (const name of Object.keys(GENERAL_KNOWLEDGE_FALLBACK)) {
+    if (clean.includes(name)) return { name, note: GENERAL_KNOWLEDGE_FALLBACK[name] };
+  }
+  return null;
+}
+
 function handleNLSearch() {
   const input = document.getElementById('nlSearchInput');
   const query = (input?.value || '').trim();
@@ -40484,8 +40505,13 @@ function handleNLSearch() {
 
   const found = findSpeciesInText(query);
   if (!found) {
+    const general = findGeneralKnowledge(query);
     answerBox.style.display = 'block';
-    answerBox.innerHTML = `<span class="nl-close" onclick="this.parentElement.style.display='none'">닫기 ✕</span>"${escapeHtml(query)}"에 해당하는 생물을 찾지 못했어요. 이름을 다르게 써보셨거나, 서천에서 실제로 기록된 적이 없는 종일 수 있어요 (이 앱은 에코뱅크에 실제로 기록된 종만 다뤄요).`;
+    if (general) {
+      answerBox.innerHTML = `<span class="nl-close" onclick="this.parentElement.style.display='none'">닫기 ✕</span>서천 에코뱅크에 <strong>${escapeHtml(general.name)}</strong> 조사 기록은 없어요. 다만 일반적으로 알려진 정보로는: ${escapeHtml(general.note)}<br><span style="font-size:12px; color:var(--ink-faint);">※ 이 내용은 서천 실측 데이터가 아니라 일반 생태 상식이에요.</span>`;
+    } else {
+      answerBox.innerHTML = `<span class="nl-close" onclick="this.parentElement.style.display='none'">닫기 ✕</span>"${escapeHtml(query)}"에 해당하는 생물을 찾지 못했어요. 이름을 다르게 써보셨거나, 서천에서 실제로 기록된 적이 없는 종일 수 있어요 (이 앱은 에코뱅크에 실제로 기록된 종만 다뤄요).`;
+    }
     return;
   }
 
