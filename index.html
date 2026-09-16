@@ -40366,16 +40366,30 @@ function findSpeciesInText(text) {
     exact.sort((a, b) => b.sp.name.length - a.sp.name.length);
     return exact[0];
   }
-  // 2) 조사 제거 후 토큰별 편집거리(오타 허용) 매칭
   const particles = /(을|를|이|가|은|는|의|에서|에게|한테|이랑|랑|과|와|도|만|요|좀)$/;
   const tokens = clean.split(/\s+/).map(t => t.replace(particles, '')).filter(t => t.length >= 2);
+
+  // 2) 반대로 종 이름 안에 검색어 토큰이 그대로 들어있는 경우
+  //    예: "사슴벌레"만 검색해도 실제로 "넓적사슴벌레"가 있으면 찾아줌 (진짜 부분일치라 안전함)
+  let contained = [];
+  for (const tok of tokens) {
+    if (tok.length < 2) continue;
+    contained = contained.concat(idx.filter(e => e.sp.name.includes(tok)));
+  }
+  if (contained.length) {
+    contained.sort((a, b) => a.sp.name.length - b.sp.name.length); // 더 짧고 가까운 이름 우선
+    return contained[0];
+  }
+
+  // 3) 편집거리(오타 허용) 매칭 — 무관한 단어까지 잘못 붙잡지 않도록 임계값을 엄격하게 유지
+  //    (예: "사슴벌레"와 "무당벌레"처럼 절반이 달라지면 절대 매칭되면 안 됨)
   let best = null, bestDist = Infinity;
   for (const tok of tokens) {
     for (const e of idx) {
       const name = e.sp.name;
-      if (Math.abs(name.length - tok.length) > 2) continue;
+      if (Math.abs(name.length - tok.length) > 1) continue;
       const dist = levenshtein(tok, name);
-      const threshold = name.length <= 3 ? 1 : 2;
+      const threshold = Math.max(1, Math.floor(name.length / 5)); // 4~5자면 1, 10자 이상이면 2
       if (dist <= threshold && dist < bestDist) { bestDist = dist; best = e; }
     }
   }
@@ -40471,7 +40485,7 @@ function handleNLSearch() {
   const found = findSpeciesInText(query);
   if (!found) {
     answerBox.style.display = 'block';
-    answerBox.innerHTML = `<span class="nl-close" onclick="this.parentElement.style.display='none'">닫기 ✕</span>"${escapeHtml(query)}"에서 아는 생물 이름을 찾지 못했어요. 정확한 국명으로 다시 검색해보시겠어요? (예: 후투티, 꾀꼬리, 무당벌레)`;
+    answerBox.innerHTML = `<span class="nl-close" onclick="this.parentElement.style.display='none'">닫기 ✕</span>"${escapeHtml(query)}"에 해당하는 생물을 찾지 못했어요. 이름을 다르게 써보셨거나, 서천에서 실제로 기록된 적이 없는 종일 수 있어요 (이 앱은 에코뱅크에 실제로 기록된 종만 다뤄요).`;
     return;
   }
 
