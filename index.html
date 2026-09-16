@@ -40463,6 +40463,11 @@ function generateNLAnswer(sp, taxonKey) {
   }
 
   const isBird = taxonKey === 'bird';
+  // 조류(진짜 철새 이동)·곤충(성충 활동기가 실제로 계절적)만 "이 시기엔 없다"는 식의
+  // 계절 추론이 타당함. 포유류/양서파충류/어류/저서무척추동물/식물은 계절 이동을 하지 않는
+  // 경우가 대부분이라, 기록이 특정 달에 몰린 건 실제 부재가 아니라 "조사 시기가 몰렸을 뿐"일
+  // 가능성이 커서 다르게 표현함
+  const hasGenuineSeasonality = taxonKey === 'bird' || taxonKey === 'insect';
   const patternLabel = {
     summer: isBird ? '여름철새 패턴' : '여름철 집중 출현 패턴',
     winter: isBird ? '겨울철새 패턴' : '겨울철 집중 출현 패턴',
@@ -40471,7 +40476,9 @@ function generateNLAnswer(sp, taxonKey) {
   };
 
   let statusSentence;
-  if (isNowZero) {
+  if (isNowZero && !hasGenuineSeasonality && seasonality.pattern !== 'unknown') {
+    statusSentence = `지금(${monthNames[cur]})은 <strong>${sp.name}</strong>${iGa(sp.name)} 에코뱅크에 기록된 적이 없지만, ${label}는 계절에 따라 자리를 옮기지 않는 경우가 많아 실제로는 연중 서식하고 있을 가능성이 높아요. 다만 에코뱅크 조사 자체가 ${peakText}에 몰려있어서, 그 시기에 상대적으로 발견하기 더 쉬웠을 수는 있어요.`;
+  } else if (isNowZero) {
     if (seasonality.pattern === 'summer') {
       statusSentence = `<strong>${sp.name}</strong>${eunNeun(sp.name)} 에코뱅크 기록상 주로 여름(${peakText})에 관찰되는 <strong>${patternLabel.summer}</strong>이에요. 지금(${monthNames[cur]})은 기록이 거의 없어서, 내년 여름에 다시 찾아보시는 걸 추천드려요.`;
     } else if (seasonality.pattern === 'winter') {
@@ -40485,8 +40492,8 @@ function generateNLAnswer(sp, taxonKey) {
     }
   } else if (isNowPeak) {
     statusSentence = `<strong>${sp.name}</strong>${eunNeun(sp.name)} 지금(${monthNames[cur]})이 기록상 딱 관찰 적기예요!`;
-  } else if (seasonality.pattern === 'resident') {
-    statusSentence = `<strong>${sp.name}</strong>${eunNeun(sp.name)} <strong>${patternLabel.resident}</strong>이라 지금(${monthNames[cur]})도 관찰 가능성이 있어요. 특히 ${peakText}에 기록이 가장 많아요.`;
+  } else if (seasonality.pattern === 'resident' || !hasGenuineSeasonality) {
+    statusSentence = `<strong>${sp.name}</strong>${eunNeun(sp.name)} 지금(${monthNames[cur]})도 관찰 가능성이 있어요. 에코뱅크 기록은 특히 ${peakText}에 많았어요.`;
   } else {
     statusSentence = `<strong>${sp.name}</strong>${eunNeun(sp.name)} 지금(${monthNames[cur]})도 기록은 있지만, ${peakText}에 가장 많이 관찰됐어요.`;
   }
