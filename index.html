@@ -39325,7 +39325,7 @@ function renderInsectAll() {
       <div class="result-body">
         <h3>${sp.name}</h3>
         <div class="sub">${sp.sci || '학명 미상'}</div>
-        <div class="where">${sp.locName}</div>
+        <div class="where">${findZone(sp.zoneId)?.name || sp.locName}</div>
         <div class="tags">
           <span class="tag leaf">${sp.habitatName}</span>
           <span class="tag">기록 ${sp.recordCount}건</span>
@@ -39342,24 +39342,17 @@ function renderInsectAll() {
     list.appendChild(card);
   });
 
-  // 지점별 마커: 실측좌표가 있는 종(어류/저서무척추)은 개별 마커로,
-  // 그 외(집계 데이터)는 zone별로 묶어서 표시
-  const byLoc = {};
+  // 지점별 마커: 지역별 보기와 동일한 zone 그룹으로 표시 (조류 방식과 통일)
+  const byZone = {};
   currentSpeciesList().forEach(sp => {
-    if (sp.lat != null && sp.lon != null) return; // 개별 처리는 아래에서
-    (byLoc[sp.locId] = byLoc[sp.locId] || []).push(sp);
+    (byZone[sp.zoneId] = byZone[sp.zoneId] || []).push(sp);
   });
-  Object.entries(byLoc).forEach(([locId, sps]) => {
-    const loc = findLoc(locId);
-    if (!loc) return;
+  Object.entries(byZone).forEach(([zoneId, sps]) => {
+    const zone = findZone(zoneId);
+    if (!zone) return;
     const top = [...sps].sort((a,b)=>calcInsectScore(b)-calcInsectScore(a))[0];
-    const marker = makeMarker(loc, { fillColor: '#6a8a3a' }).addTo(allMap);
-    marker.bindPopup(`<strong>${loc.name}</strong><br>${top.name} 외 ${sps.length}종`);
-    insectMarkersAll.push(marker);
-  });
-  currentSpeciesList().filter(sp => sp.lat != null && sp.lon != null).forEach(sp => {
-    const marker = makeMarker({ lat: sp.lat, lon: sp.lon }, { fillColor: '#3a6a8a' }).addTo(allMap);
-    marker.bindPopup(`<strong>${sp.name}</strong><br>${sp.locName || '실측 관찰지점'}`);
+    const marker = makeMarker(zone, { fillColor: '#6a8a3a', label: sps.length }).addTo(allMap);
+    marker.bindPopup(`<strong>${zone.name}</strong><br>관찰 가능한 ${currentTaxonLabel()} <strong>${sps.length}종</strong><br>최고 적합도 — ${top.name}`);
     insectMarkersAll.push(marker);
   });
 }
