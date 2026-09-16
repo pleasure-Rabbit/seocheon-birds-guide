@@ -40401,6 +40401,17 @@ function classifySeasonality(activeMonths) {
   return { pattern, peakMonths, nonzeroMonths };
 }
 
+// 한글 받침 유무로 은/는, 이/가 조사를 정확히 선택
+function josa(word, withBatchim, withoutBatchim) {
+  const last = word[word.length - 1];
+  const code = last.charCodeAt(0);
+  if (code < 0xAC00 || code > 0xD7A3) return withoutBatchim; // 한글 완성형이 아니면 기본값
+  const hasBatchim = (code - 0xAC00) % 28 !== 0;
+  return hasBatchim ? withBatchim : withoutBatchim;
+}
+function eunNeun(word) { return josa(word, '은', '는'); }
+function iGa(word) { return josa(word, '이', '가'); }
+
 function generateNLAnswer(sp, taxonKey) {
   const label = taxonKey === 'bird' ? '조류' : (TAXON_REGISTRY[taxonKey]?.label || '생물');
   const monthNames = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
@@ -40425,22 +40436,22 @@ function generateNLAnswer(sp, taxonKey) {
   let statusSentence;
   if (isNowZero) {
     if (seasonality.pattern === 'summer') {
-      statusSentence = `<strong>${sp.name}</strong>은(는) 에코뱅크 기록상 주로 여름(${peakText})에 관찰되는 <strong>여름철새 패턴</strong>이에요. 지금(${monthNames[cur]})은 기록이 거의 없어서, 내년 여름에 다시 찾아보시는 걸 추천드려요.`;
+      statusSentence = `<strong>${sp.name}</strong>${eunNeun(sp.name)} 에코뱅크 기록상 주로 여름(${peakText})에 관찰되는 <strong>여름철새 패턴</strong>이에요. 지금(${monthNames[cur]})은 기록이 거의 없어서, 내년 여름에 다시 찾아보시는 걸 추천드려요.`;
     } else if (seasonality.pattern === 'winter') {
-      statusSentence = `<strong>${sp.name}</strong>은(는) 에코뱅크 기록상 주로 겨울(${peakText})에 관찰되는 <strong>겨울철새 패턴</strong>이에요. 지금(${monthNames[cur]})은 관찰이 어려워 보여요. 겨울에 다시 찾아보세요.`;
+      statusSentence = `<strong>${sp.name}</strong>${eunNeun(sp.name)} 에코뱅크 기록상 주로 겨울(${peakText})에 관찰되는 <strong>겨울철새 패턴</strong>이에요. 지금(${monthNames[cur]})은 관찰이 어려워 보여요. 겨울에 다시 찾아보세요.`;
     } else if (seasonality.pattern === 'passage') {
-      statusSentence = `<strong>${sp.name}</strong>은(는) 봄·가을 이동 시기에 잠깐 지나가는 <strong>나그네새 패턴</strong>으로 보여요(주로 ${peakText}). 지금(${monthNames[cur]})은 기록이 없어요.`;
+      statusSentence = `<strong>${sp.name}</strong>${eunNeun(sp.name)} 봄·가을 이동 시기에 잠깐 지나가는 <strong>나그네새 패턴</strong>으로 보여요(주로 ${peakText}). 지금(${monthNames[cur]})은 기록이 없어요.`;
     } else if (seasonality.pattern === 'unknown') {
-      statusSentence = `<strong>${sp.name}</strong>은(는) 서천 권역에서 에코뱅크 기록 자체가 없어요. 관찰이 어려운 종이거나 아직 조사되지 않았을 수 있어요.`;
+      statusSentence = `<strong>${sp.name}</strong>${eunNeun(sp.name)} 서천 권역에서 에코뱅크 기록 자체가 없어요. 관찰이 어려운 종이거나 아직 조사되지 않았을 수 있어요.`;
     } else {
-      statusSentence = `<strong>${sp.name}</strong>은(는) 지금(${monthNames[cur]}) 에코뱅크 기록이 없는 시기예요. 기록이 많은 달은 ${peakText}예요.`;
+      statusSentence = `<strong>${sp.name}</strong>${eunNeun(sp.name)} 지금(${monthNames[cur]}) 에코뱅크 기록이 없는 시기예요. 기록이 많은 달은 ${peakText}예요.`;
     }
   } else if (isNowPeak) {
-    statusSentence = `<strong>${sp.name}</strong>은(는) 지금(${monthNames[cur]})이 기록상 딱 관찰 적기예요!`;
+    statusSentence = `<strong>${sp.name}</strong>${eunNeun(sp.name)} 지금(${monthNames[cur]})이 기록상 딱 관찰 적기예요!`;
   } else if (seasonality.pattern === 'resident') {
-    statusSentence = `<strong>${sp.name}</strong>은(는) 연중 기록되는 <strong>텃새(또는 상주종) 패턴</strong>이라 지금(${monthNames[cur]})도 관찰 가능성이 있어요. 특히 ${peakText}에 기록이 가장 많아요.`;
+    statusSentence = `<strong>${sp.name}</strong>${eunNeun(sp.name)} 연중 기록되는 <strong>텃새(또는 상주종) 패턴</strong>이라 지금(${monthNames[cur]})도 관찰 가능성이 있어요. 특히 ${peakText}에 기록이 가장 많아요.`;
   } else {
-    statusSentence = `<strong>${sp.name}</strong>은(는) 지금(${monthNames[cur]})도 기록은 있지만, ${peakText}에 가장 많이 관찰됐어요.`;
+    statusSentence = `<strong>${sp.name}</strong>${eunNeun(sp.name)} 지금(${monthNames[cur]})도 기록은 있지만, ${peakText}에 가장 많이 관찰됐어요.`;
   }
 
   const scoreSentence = score > 0
