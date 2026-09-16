@@ -1686,7 +1686,7 @@
   <footer>
     <div>
       <h5>데이터 출처</h5>
-      <p>에코뱅크 GeoServer WFS: 자연환경조사·생태정밀조사·식생조사 조류/곤충/포유류/양서파충류/어류/저서무척추동물/식물 점 자료. 서천군 실제 행정경계(통계청 2013) 안의 기록만 반영 (조류 관찰지점 18개, 곤충 238종, 포유류 8종, 양서파충류 10종, 어류 31종, 저서무척추동물 138종, 식물 279종)<br>Open-Meteo 실시간 기온·습도<br>국립해양조사원(KHOA) 기준항 조화상수(장항, M2·S2·K1·O1) 기반 자체 조석 계산<br>브라우저 GPS 기반 내 위치·거리 정렬<br>새 대표 사진: Wikimedia/Wikipedia, GBIF, iNaturalist 공개 이미지<br>곤충 대표 사진·생태설명: Wikipedia, 국립생물자원관 한반도의 생물다양성(species.nibr.go.kr)</p>
+      <p>에코뱅크 GeoServer WFS: 자연환경조사·생태정밀조사·식생조사 조류/곤충/포유류/양서파충류/어류/저서무척추동물/식물 점 자료. 서천군 실제 행정경계(통계청 2013) 안의 기록만 반영 (조류 관찰지점 18개·기록쌍 372건, 곤충 238종, 포유류 8종, 양서파충류 10종, 어류 31종, 저서무척추동물 138종, 식물 279종)<br>Open-Meteo 실시간 기온·습도<br>국립해양조사원(KHOA) 기준항 조화상수(장항, M2·S2·K1·O1) 기반 자체 조석 계산<br>브라우저 GPS 기반 내 위치·거리 정렬<br>새 대표 사진: Wikimedia/Wikipedia, GBIF, iNaturalist 공개 이미지<br>곤충 대표 사진·생태설명: Wikipedia, 국립생물자원관 한반도의 생물다양성(species.nibr.go.kr)</p>
     </div>
     <div>
       <h5>적합도 산출</h5>
@@ -45456,7 +45456,7 @@ function speciesCoord(sp) {
 
 
 // 모든 관찰 페어에 점수 추가
-const enrichedObs = observations.map(o => {
+const enrichedObs = observations.filter(o => findLoc(o.locId)).map(o => {
   const sp = findSp(o.spId);
   const loc = findLoc(o.locId);
   const score = calcScore(o);
