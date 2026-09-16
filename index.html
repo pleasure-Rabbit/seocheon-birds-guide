@@ -40357,16 +40357,31 @@ function speciesIndex() {
   return idx;
 }
 
+// 한글 음절 사이에 낀 부분일치를 막기 위한 단어경계 체크
+// (예: "장수풍뎅이" 안의 "풍뎅이"가 별개 단어로 오매칭되는 것 방지)
+function isWordBoundaryMatch(haystack, needle) {
+  const isKorean = (ch) => !!ch && /[가-힣]/.test(ch);
+  let idx = haystack.indexOf(needle);
+  while (idx !== -1) {
+    const before = idx === 0 ? '' : haystack[idx - 1];
+    const after = idx + needle.length >= haystack.length ? '' : haystack[idx + needle.length];
+    if (!isKorean(before) && !isKorean(after)) return true;
+    idx = haystack.indexOf(needle, idx + 1);
+  }
+  return false;
+}
+
 function findSpeciesInText(text) {
   const clean = text.replace(/[?!.,~？！]/g, '').trim();
   const idx = speciesIndex();
-  // 1) 문장에 종 이름이 그대로 포함된 경우 (가장 긴 이름 우선 — "쇠박새"가 "박새"보다 우선)
-  const exact = idx.filter(e => clean.includes(e.sp.name));
+  // 1) 문장에 종 이름이 "독립된 단어"로 포함된 경우 (가장 긴 이름 우선 — "쇠박새"가 "박새"보다 우선)
+  //    한글 음절 사이에 우연히 낀 부분일치(예: "장수풍뎅이" 속의 "풍뎅이")는 제외
+  const exact = idx.filter(e => isWordBoundaryMatch(clean, e.sp.name));
   if (exact.length) {
     exact.sort((a, b) => b.sp.name.length - a.sp.name.length);
     return exact[0];
   }
-  const particles = /(을|를|이|가|은|는|의|에서|에게|한테|이랑|랑|과|와|도|만|요|좀)$/;
+  const particles = /(을|를|에서|에게|한테|이랑|랑|과|와|도|만|요|좀)$/;
   const tokens = clean.split(/\s+/).map(t => t.replace(particles, '')).filter(t => t.length >= 2);
 
   // 2) 반대로 종 이름 안에 검색어 토큰이 그대로 들어있는 경우
@@ -40447,14 +40462,22 @@ function generateNLAnswer(sp, taxonKey) {
     whereText = sp.locName || findZone(sp.zoneId)?.name || whereText;
   }
 
+  const isBird = taxonKey === 'bird';
+  const patternLabel = {
+    summer: isBird ? '여름철새 패턴' : '여름철 집중 출현 패턴',
+    winter: isBird ? '겨울철새 패턴' : '겨울철 집중 출현 패턴',
+    passage: isBird ? '나그네새 패턴' : '봄·가을에만 잠깐 나타나는 패턴',
+    resident: isBird ? '텃새(또는 상주종) 패턴' : '연중 꾸준히 관찰되는 패턴',
+  };
+
   let statusSentence;
   if (isNowZero) {
     if (seasonality.pattern === 'summer') {
-      statusSentence = `<strong>${sp.name}</strong>${eunNeun(sp.name)} 에코뱅크 기록상 주로 여름(${peakText})에 관찰되는 <strong>여름철새 패턴</strong>이에요. 지금(${monthNames[cur]})은 기록이 거의 없어서, 내년 여름에 다시 찾아보시는 걸 추천드려요.`;
+      statusSentence = `<strong>${sp.name}</strong>${eunNeun(sp.name)} 에코뱅크 기록상 주로 여름(${peakText})에 관찰되는 <strong>${patternLabel.summer}</strong>이에요. 지금(${monthNames[cur]})은 기록이 거의 없어서, 내년 여름에 다시 찾아보시는 걸 추천드려요.`;
     } else if (seasonality.pattern === 'winter') {
-      statusSentence = `<strong>${sp.name}</strong>${eunNeun(sp.name)} 에코뱅크 기록상 주로 겨울(${peakText})에 관찰되는 <strong>겨울철새 패턴</strong>이에요. 지금(${monthNames[cur]})은 관찰이 어려워 보여요. 겨울에 다시 찾아보세요.`;
+      statusSentence = `<strong>${sp.name}</strong>${eunNeun(sp.name)} 에코뱅크 기록상 주로 겨울(${peakText})에 관찰되는 <strong>${patternLabel.winter}</strong>이에요. 지금(${monthNames[cur]})은 관찰이 어려워 보여요. 겨울에 다시 찾아보세요.`;
     } else if (seasonality.pattern === 'passage') {
-      statusSentence = `<strong>${sp.name}</strong>${eunNeun(sp.name)} 봄·가을 이동 시기에 잠깐 지나가는 <strong>나그네새 패턴</strong>으로 보여요(주로 ${peakText}). 지금(${monthNames[cur]})은 기록이 없어요.`;
+      statusSentence = `<strong>${sp.name}</strong>${eunNeun(sp.name)} <strong>${patternLabel.passage}</strong>으로 보여요(주로 ${peakText}). 지금(${monthNames[cur]})은 기록이 없어요.`;
     } else if (seasonality.pattern === 'unknown') {
       statusSentence = `<strong>${sp.name}</strong>${eunNeun(sp.name)} 서천 권역에서 에코뱅크 기록 자체가 없어요. 관찰이 어려운 종이거나 아직 조사되지 않았을 수 있어요.`;
     } else {
@@ -40463,7 +40486,7 @@ function generateNLAnswer(sp, taxonKey) {
   } else if (isNowPeak) {
     statusSentence = `<strong>${sp.name}</strong>${eunNeun(sp.name)} 지금(${monthNames[cur]})이 기록상 딱 관찰 적기예요!`;
   } else if (seasonality.pattern === 'resident') {
-    statusSentence = `<strong>${sp.name}</strong>${eunNeun(sp.name)} 연중 기록되는 <strong>텃새(또는 상주종) 패턴</strong>이라 지금(${monthNames[cur]})도 관찰 가능성이 있어요. 특히 ${peakText}에 기록이 가장 많아요.`;
+    statusSentence = `<strong>${sp.name}</strong>${eunNeun(sp.name)} <strong>${patternLabel.resident}</strong>이라 지금(${monthNames[cur]})도 관찰 가능성이 있어요. 특히 ${peakText}에 기록이 가장 많아요.`;
   } else {
     statusSentence = `<strong>${sp.name}</strong>${eunNeun(sp.name)} 지금(${monthNames[cur]})도 기록은 있지만, ${peakText}에 가장 많이 관찰됐어요.`;
   }
