@@ -1632,7 +1632,7 @@
       <h1 class="brand-title">생물관찰 <span class="accent">예측 가이드</span></h1>
     </div>
     <div class="brand">
-      <p class="brand-sub">에코뱅크 조류·곤충 조사기록과 기상·계절 조건을 기반으로, 지금 서천에서 관찰 가능성이 높은 생물을 추천합니다.</p>
+      <p class="brand-sub">서천의 자연환경조사 기록을 바탕으로 생물별 관찰 기록 지역과 계절 정보를 살펴보고, 현재 환경 조건을 참고해 관찰 후보를 확인할 수 있습니다.</p>
     </div>
   </header>
 
@@ -1838,11 +1838,11 @@
     </div>
     <div>
       <h5>적합도 산출</h5>
-      <p>조류: 에코뱅크 과거 조사기록 빈도 × 실제 현재월 계절성 × 조석·서식환경 적합도 × 실시간 기온·습도 보정.<br>그 외 분류군(곤충·포유류·양서파충류·어류·저서무척추동물·식물): 에코뱅크 조사기록 빈도 × 실제 현재월 활동빈도. 곤충만 추천 관찰시간(주간/야간)을 국명 패턴과 국립생물자원관 생태설명을 함께 반영해 별도로 산정하며, 적합도 점수 자체에는 반영하지 않습니다.<br>0~100% 척도로 표시하며 실제 출현을 보장하지 않습니다.</p>
+      <p>조류: 에코뱅크 과거 조사기록 빈도 × 실제 현재월 계절성 × 조석·서식환경 적합도 × 실시간 기온·습도 보정.<br>그 외 분류군(곤충·포유류·양서파충류·어류·저서무척추동물·식물): 에코뱅크 조사기록 빈도 × 실제 현재월 활동빈도. 곤충만 추천 관찰시간(주간/야간)을 국명 패턴과 국립생물자원관 생태설명을 함께 반영해 별도로 산정하며, 적합도 점수 자체에는 반영하지 않습니다.<br>0~100점 척도의 <strong>상대 순위 점수</strong>이며, 실제 관찰 성공률을 검증한 확률모형이 아닙니다.</p>
     </div>
     <div>
       <h5>주의</h5>
-      <p>본 서비스는 과거 관찰 기록과 환경 조건을 통계적으로 결합한 예측이며, 관찰을 보장하지 않습니다. 멸종위기 보호종은 정확한 좌표를 제공하지 않습니다.</p>
+      <p>이 점수는 과거 출현 빈도와 현재 환경조건을 결합해 지점·시기 간 우선순위를 매긴 <strong>상대 점수</strong>이며, 실제 관찰을 보장하는 예측치가 아닙니다. 멸종위기 야생생물 등급·지정종으로 분류된 종은 정확한 좌표 대신 일반화된 위치만 제공합니다.</p>
     </div>
     <div class="disclaimer">
       ─── prototype · 실시간 기상·조석 계산·위치기반 정렬 적용됨 ───
@@ -38243,7 +38243,7 @@ function applyWeatherUpdate() {
   if (updEl && currentWeather.updatedAt) {
     const t = currentWeather.updatedAt;
     const pad = n => String(n).padStart(2, '0');
-    updEl.textContent = `UPDATED ${t.getFullYear()}.${pad(t.getMonth() + 1)}.${pad(t.getDate())} ${pad(t.getHours())}:${pad(t.getMinutes())} · KMA 실황`;
+    updEl.textContent = `UPDATED ${t.getFullYear()}.${pad(t.getMonth() + 1)}.${pad(t.getDate())} ${pad(t.getHours())}:${pad(t.getMinutes())} · Open-Meteo`;
   }
   recomputeScores();
 }
@@ -40191,7 +40191,7 @@ function openSpeciesDetail(sp, contextLoc) {
       <div id="detailMap-container" class="detail-map"></div>
       <div class="data-source">
         <strong>산출 방식 · </strong>에코뱅크 조류 점 자료의 과거 기록 빈도, 7월 계절성, 서식환경, 장항 조석 조건을 함께 반영했습니다.<br>
-        <strong>주의 · </strong>예측 점수는 실제 출현 보장이 아니라 관찰 우선순위입니다. 민감종 좌표는 조사권역 단위로만 해석하세요.
+        <strong>주의 · </strong>적합도는 상대 점수이며 실제 출현을 보장하지 않습니다. 민감종 좌표는 조사권역 단위로만 해석하세요.
       </div>
     </div>`;
   mask.classList.add('open');
@@ -40276,7 +40276,7 @@ function openInsectDetail(sp) {
       <div id="detailMap-container" class="detail-map"></div>
       <div class="data-source">
         <strong>산출 방식 · </strong>에코뱅크 곤충 조사기록 빈도 × 실제 현재월 활동빈도를 반영했습니다.<br>
-        <strong>주의 · </strong>예측 점수는 실제 출현 보장이 아니라 관찰 우선순위입니다.
+        <strong>주의 · </strong>적합도는 상대 점수이며 실제 출현을 보장하지 않습니다.
       </div>
     </div>`;
   mask.classList.add('open');
