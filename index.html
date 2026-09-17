@@ -60775,10 +60775,11 @@ const GENERAL_KNOWLEDGE_FALLBACK = {
 
 function findGeneralKnowledge(query) {
   const clean = query.replace(/[?!.,~？！]/g, '').trim();
-  for (const name of Object.keys(GENERAL_KNOWLEDGE_FALLBACK)) {
-    if (clean.includes(name)) return { name, note: GENERAL_KNOWLEDGE_FALLBACK[name] };
-  }
-  return null;
+  const matches = Object.keys(GENERAL_KNOWLEDGE_FALLBACK).filter(name => clean.includes(name));
+  if (!matches.length) return null;
+  matches.sort((a, b) => b.length - a.length); // 가장 구체적인(긴) 이름 우선
+  const name = matches[0];
+  return { name, note: GENERAL_KNOWLEDGE_FALLBACK[name] };
 }
 
 // ============================================================
