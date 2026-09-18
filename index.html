@@ -60712,6 +60712,7 @@ function josa(word, withBatchim, withoutBatchim) {
 }
 function eunNeun(word) { return josa(word, '은', '는'); }
 function iGa(word) { return josa(word, '이', '가'); }
+function eulReul(word) { return josa(word, '을', '를'); }
 
 function generateNLAnswer(sp, taxonKey) {
   const label = taxonKey === 'bird' ? '조류' : (TAXON_REGISTRY[taxonKey]?.label || '생물');
@@ -60939,7 +60940,7 @@ function runOpenQuery(filters) {
   }
   if (filters.rarity === 'endangered') {
     if (isBird) list = list.filter(sp => sp.redList);
-    else notes.push(`${label}는 멸종위기종 지정 정보를 갖고 있지 않아요.`);
+    else notes.push(`${label}${eunNeun(label)} 멸종위기종 지정 정보를 갖고 있지 않아요.`);
   }
 
   // 정렬: 거리 요청 있으면 거리순(내 위치 필요), rarity면 기록건수순, 그 외엔 적합도순
@@ -61010,13 +61011,13 @@ function renderOpenQueryAnswer(filters) {
   window.__nlOpenResults = results.map(sp => ({ sp, taxon: taxonKey }));
 
   if (!results.length) {
-    answerBox.innerHTML = `<span class="nl-close" onclick="this.parentElement.style.display='none'">닫기 ✕</span>${desc ? `<strong>${escapeHtml(desc)}</strong> 조건에 맞는` : ''} ${label}를 서천 에코뱅크 기록에서 찾지 못했어요.`;
+    answerBox.innerHTML = `<span class="nl-close" onclick="this.parentElement.style.display='none'">닫기 ✕</span>${desc ? `<strong>${escapeHtml(desc)}</strong> 조건에 맞는` : ''} ${label}${eulReul(label)} 서천 에코뱅크 기록에서 찾지 못했어요.`;
     return;
   }
 
   let html = `<span class="nl-close" onclick="this.parentElement.style.display='none'">닫기 ✕</span>`;
   html += `${desc ? `<strong>${escapeHtml(desc)}</strong> 조건에 맞는 ` : ''}${label} 기록을 찾아봤어요. 총 <strong>${totalMatched}종</strong> 중 상위 ${results.length}종이에요:`;
-  if (timeUnsupported) html += `<br><span style="font-size:12px; color:var(--ink-faint);">※ ${label}는 시간대별 기록이 없어서 시간대 조건은 적용하지 못했어요.</span>`;
+  if (timeUnsupported) html += `<br><span style="font-size:12px; color:var(--ink-faint);">※ ${label}${eunNeun(label)} 시간대별 기록이 없어서 시간대 조건은 적용하지 못했어요.</span>`;
   notes.forEach(n => { html += `<br><span style="font-size:12px; color:var(--ink-faint);">※ ${escapeHtml(n)}</span>`; });
   html += '<ul class="nl-result-list">';
   results.forEach((sp, i) => {
