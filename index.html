@@ -60795,8 +60795,11 @@ function generateNLAnswer(sp, taxonKey) {
   const scoreSentence = score > 0
     ? ` 현재 적합도는 <strong>${score}점</strong>이고, 주로 <strong>${whereText}</strong> 인근에서 기록됐어요.`
     : '';
+  const sensitiveNote = isSensitiveSpecies(sp)
+    ? ' <br><span style="font-size:12px; color:var(--ink-faint);">※ 멸종위기 야생생물 등급·지정종으로 분류된 종이라, 정확한 좌표 대신 약 2km 격자로 일반화한 위치만 제공해요.</span>'
+    : '';
 
-  return `${statusSentence}${scoreSentence}`;
+  return `${statusSentence}${scoreSentence}${sensitiveNote}`;
 }
 
 // 서천 에코뱅크 기록엔 없지만 일반적으로 흔한 종들에 대한 참고 정보
@@ -60969,8 +60972,12 @@ function runOpenQuery(filters) {
     list = filtered;
   }
   if (filters.rarity === 'endangered') {
-    if (isBird) list = list.filter(sp => sp.redList);
-    else notes.push(`${label}${eunNeun(label)} 멸종위기종 지정 정보를 갖고 있지 않아요.`);
+    if (isBird) {
+      list = list.filter(sp => sp.redList);
+      notes.push('멸종위기 야생생물 등급·지정종으로 분류된 종은 정확한 좌표 대신 약 2km 격자로 일반화한 위치만 제공해요.');
+    } else {
+      notes.push(`${label}${eunNeun(label)} 멸종위기종 지정 정보를 갖고 있지 않아요.`);
+    }
   }
   if (filters.migration) {
     if (!isBird) {
