@@ -60860,29 +60860,31 @@ const OPEN_TAXON_KEYWORDS = {
 };
 
 function matchAnyKeyword(text, list) {
-  return list.some(k => text.includes(k));
+  return list.some(k => isWordBoundaryMatch(text, k));
 }
 
 function parseOpenQuery(text) {
-  const noSpace = text.replace(/\s+/g, '');
+  // 공백을 지우지 않고 유지해야 단어경계 체크가 의미있음
+  // (공백을 지우면 "벌레"가 "사슴벌레" 안에 낀 것도 구분 못 하게 됨)
+  const clean = text.replace(/[?!.,~？！]/g, '').trim();
   const filters = {};
 
   for (const [taxonKey, words] of Object.entries(OPEN_TAXON_KEYWORDS)) {
-    if (matchAnyKeyword(noSpace, words)) { filters.taxon = taxonKey; break; }
+    if (matchAnyKeyword(clean, words)) { filters.taxon = taxonKey; break; }
   }
   for (const [habitat, words] of Object.entries(HABITAT_KEYWORDS)) {
-    if (matchAnyKeyword(noSpace, words)) { filters.habitat = habitat; break; }
+    if (matchAnyKeyword(clean, words)) { filters.habitat = habitat; break; }
   }
   for (const [time, words] of Object.entries(TIME_KEYWORDS)) {
-    if (matchAnyKeyword(noSpace, words)) { filters.time = time; break; }
+    if (matchAnyKeyword(clean, words)) { filters.time = time; break; }
   }
   for (const [season, def] of Object.entries(SEASON_KEYWORDS)) {
-    if (matchAnyKeyword(noSpace, def.words)) { filters.season = season; filters.seasonMonths = def.months; break; }
+    if (matchAnyKeyword(clean, def.words)) { filters.season = season; filters.seasonMonths = def.months; break; }
   }
   for (const [rarity, words] of Object.entries(RARITY_KEYWORDS)) {
-    if (matchAnyKeyword(noSpace, words)) { filters.rarity = rarity; break; }
+    if (matchAnyKeyword(clean, words)) { filters.rarity = rarity; break; }
   }
-  if (matchAnyKeyword(noSpace, DISTANCE_KEYWORDS)) filters.wantDistance = true;
+  if (matchAnyKeyword(clean, DISTANCE_KEYWORDS)) filters.wantDistance = true;
 
   const hasAnyFilter = filters.habitat || filters.time || filters.season || filters.rarity || filters.wantDistance || filters.taxon;
   return hasAnyFilter ? filters : null;
