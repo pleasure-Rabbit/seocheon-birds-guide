@@ -1782,7 +1782,7 @@
   <!-- PANEL 3: 조류별 -->
   <div class="panel" id="panel-byspecies">
     <div class="picker-bar">
-      <span class="picker-label">조류 선택</span>
+      <span class="picker-label" id="spPickerLabel">조류 선택</span>
       <input class="picker-search" id="speciesSearch" type="search" placeholder="국명·학명·분류군 검색">
       <select class="picker-select" id="speciesPicker"></select>
       <span class="picker-stat"><strong id="spResultCount">—</strong>곳에서 관찰</span>
@@ -1795,7 +1795,7 @@
     <div class="main-layout">
       <div class="map-wrap species-photo-wrap">
         <div class="map-header" id="spMapHeader">
-          조류 사진<br>
+          <span id="spMapHeaderLabel">조류 사진</span><br>
           <strong id="spMapTitle">—</strong>
         </div>
         <div id="spMap"></div>
@@ -1804,7 +1804,7 @@
 
       <div class="results">
         <div class="results-head">
-          <span>이 조류의 관찰 추천 지점</span>
+          <span id="spResultsHeadLabel">이 조류의 관찰 추천 지점</span>
           <span class="count" id="spListCount">0</span>
         </div>
         <div id="spList"></div>
@@ -26946,7 +26946,8 @@ const mammalSpecies = [
     "habitat": "field",
     "habitatName": "농경지·마을",
     "zoneId": "mammalSpecies-z-2",
-    "image": "https://inaturalist-open-data.s3.amazonaws.com/photos/107562818/large.jpeg"
+    "image": "https://inaturalist-open-data.s3.amazonaws.com/photos/107562818/large.jpeg",
+    "desc": "설치목 청설모과에 속하는 포유류이다. 몸의 크기는 다람쥐보다 훨씬 크며, 털 색은 전체적으로 어두운 회색이며 배 쪽은 흰색이다. 털의 길이와 색깔은 계절에 따라 다르며 겨울철에는 귀에 털뭉치가 난다. 어린 새끼들은 눈을 감고 있으며 털이 하나도 없다. 잣나무, 가래나무, 가문비나무, 상수리나무, 밤나무 등의 열매와 나뭇잎, 나무껍질 등을 잘 먹는다. 때로는 야생 조류의 알이나 어미 새도 잡아먹는다. 늦가을에는 월동하기 위하여 도토리, 밤, 잣과 같은 견과류를 바위 구멍이나 땅속에 저장하여 두는 습성이 있다. 큰 나무줄기 또는 나뭇가지와 가지 사이에 마른 나뭇가지로 보금자리를 만든다. 까치의 둥지와 흡사하나 크기에 있어서 작다. 우리나라 북부 및 중부지방에 서식한다. 세계적으로는 일본, 중국, 몽골, 시베리아, 유럽 등지에 분포한다."
   },
   {
     "id": "mml-0003",
@@ -26975,7 +26976,8 @@ const mammalSpecies = [
     "habitat": "wetland",
     "habitatName": "습지·하천",
     "zoneId": "mammalSpecies-z-3",
-    "image": "https://inaturalist-open-data.s3.amazonaws.com/photos/198079073/large.jpg"
+    "image": "https://inaturalist-open-data.s3.amazonaws.com/photos/198079073/large.jpg",
+    "desc": "우제목 사슴과에 속하는 포유류이다. 몸통은 102-112cm, 꼬리는 8cm 정도이다. 수컷은 송곳니가 입 밖으로 튀어나온다. 암수 모두 뿔이 없다. 새끼 몸에는 흰색의 작고 둥근 무늬가 있다. 산기슭의 풀숲 등에 살며, 다양한 초본류를 먹는다. 12월에 짝짓기하고, 6월 초순에 2-6마리의 새끼를 낳는다. 산간지역에서는 농작물에 피해를 주기도 한다. 우리나라 전역에 분포하며, 중국 동북부에 분포한다."
   },
   {
     "id": "mml-0004",
@@ -27004,7 +27006,8 @@ const mammalSpecies = [
     "habitat": "wetland",
     "habitatName": "습지·하천",
     "zoneId": "mammalSpecies-z-1",
-    "image": "https://inaturalist-open-data.s3.amazonaws.com/photos/2802310/large.jpg"
+    "image": "https://inaturalist-open-data.s3.amazonaws.com/photos/2802310/large.jpg",
+    "desc": "식육목 개과에 속하는 포유류이다. 몸통의 길이는 52~66cm이며, 꼬리의 길이는 15~18cm이다. 대체로 흑색에 가깝고 배면 정중선의 띠, 눈 밑의 반점, 앞다리의 띠는 검은색이 더욱 짙다. 낮에는 굴속에서 잠을 자고 밤에 주로 활동한다. 다리가 짧고 몸이 비대해 빠르게 달리지는 못한다. 일정한 장소를 선택하여 배설하며, 개과 동물 중 유일하게 동면한다. 깊지 않은 산림이나 골짜기, 어류가 풍부한 습지나 개울이 많은 곳에서 서식한다. 11월 중순부터 3월까지 동면하지만, 기온이 높아지면 깨어나 먹이를 찾기도 한다. 5~6월에 4~5마리의 새끼를 낳는다. 전국의 산림에 서식하며, 세계적으로는 중국, 일본에 분포한다."
   },
   {
     "id": "mml-0005",
@@ -27122,7 +27125,8 @@ const mammalSpecies = [
     "habitat": "wetland",
     "habitatName": "습지·하천",
     "zoneId": "mammalSpecies-z-1",
-    "image": "https://static.inaturalist.org/photos/204205011/large.jpeg"
+    "image": "https://static.inaturalist.org/photos/204205011/large.jpeg",
+    "desc": "수컷의 경우 몸길이는 26~35cm이고 꼬리 길이는 10~20cm로 암컷보다 크다. 대륙족제비와 비슷하지만 털색의 차이로 구별할 수 있다. 겨울 털은 대륙족제비에 비해 약간 암색을 띤다. 몸 윗면, 네 다리, 꼬리는 황색을 띠며, 이마는 거무스레한 갈색, 뺨과 몸 아랫면은 짙은 황토색을 띤다. 입술과 아래턱 사이에 뚜렷한 백색 무늬가 있다. 주둥이는 뾰족하고 귀는 작으며 입 양쪽에 흰색 무늬가 있다. 인가에 가까운 농작물 경작지의 밭둑 또는 냇가의 큰 돌 같은 곳에 구멍을 파고 서식한다. 일반적으로 집쥐·들쥐·개구리를 잡아먹으므로 사람에게는 매우 유익한 동물이나 종종 민가에 침입하여 키우는 가금류를 물어가 피해를 주기도 한다. 한국, 만주, 우수리강 유역, 일본 대마도에도 분포한다."
   },
   {
     "id": "mml-0009",
@@ -27180,7 +27184,8 @@ const mammalSpecies = [
     "habitat": "field",
     "habitatName": "농경지·마을",
     "zoneId": "mammalSpecies-z-8",
-    "image": "https://static.inaturalist.org/photos/498545/large.jpg"
+    "image": "https://static.inaturalist.org/photos/498545/large.jpg",
+    "desc": "첨서목 두더지과에 속하는 포유류이다. 몸은 길이 12-18cm이고, 꼬리는 길이 2.4cm 정도이다. 몸 윗면은 부드러운 털로 덮여 있다. 털색은 윗면이 흑갈색이며 아랫면은 연한 흑갈색이다. 눈은 전혀 보지 못한다. 숲, 풀밭에서 굴을 파고 사는데 계절과 습도의 영향을 받아 굴 깊이가 달라지며, 땅의 진동에 매우 예민하다. 곤충의 유충이나 번데기, 양서류, 파충류 등을 잡아먹는다. 한국, 중국 만주, 러시아 연해주, 일본에 분포한다."
   },
   {
     "id": "mml-0011",
@@ -27238,7 +27243,8 @@ const mammalSpecies = [
     "habitat": "wetland",
     "habitatName": "습지·하천",
     "zoneId": "mammalSpecies-z-10",
-    "image": "https://inaturalist-open-data.s3.amazonaws.com/photos/112123484/large.jpeg"
+    "image": "https://inaturalist-open-data.s3.amazonaws.com/photos/112123484/large.jpeg",
+    "desc": "숲속이나 민가에 흔하게 서식하는 설치류이다. 꼬리 길이 140~167mm, 꼬리를 포함한 전체 길이 302~355mm, 몸무게 90~500g이다. 몸길이와 꼬리 길이가 비슷하지만, 몸길이가 조금 더 길다. 임신 기간은 26일이며, 1년에 4~5차례 8마리씩 새끼를 낳는다. 시력은 미약하고 색맹이나 후각, 미각, 청각, 촉각은 매우 발달하였다. 잡식성으로 과일, 견과류, 콩, 야채 등을 먹는다. 야생에서는 수명이 1~2년이지만, 사육하면 4년까지 산다. 암수 한 쌍이 1년에 새끼를 460마리까지 낳는다. 한반도 전역에 서식하며, 남극대륙과 북극해 연안, 그린란드를 제외한 전 세계에 분포한다."
   },
   {
     "id": "mml-0013",
@@ -27296,7 +27302,8 @@ const mammalSpecies = [
     "habitat": "field",
     "habitatName": "농경지·마을",
     "zoneId": "mammalSpecies-z-12",
-    "image": "https://inaturalist-open-data.s3.amazonaws.com/photos/40274907/large.jpg"
+    "image": "https://inaturalist-open-data.s3.amazonaws.com/photos/40274907/large.jpg",
+    "desc": "우제목 멧돼지과에 속하는 잡식성 포유류이다. 몸통은 길이 113-150cm이고, 꼬리는 길이 10-23cm이다. 주둥이는 긴 원통형이다. 날카로운 송곳니가 있다. 새끼는 적갈색 털에 검은 무늬가 세로로 나 있다. 12-1월에 짝짓기를 하고, 5월에 7-13개체의 새끼를 낳는다. 활엽수가 우거진 산지에 서식하며, 바람이 없고 햇볕이 잘 드는 따뜻한 남향을 좋아한다. 전국에 서식하며, 유라시아 중부와 남부에 분포한다."
   },
   {
     "id": "mml-0015",
@@ -27417,7 +27424,8 @@ const herptileSpecies = [
     "habitat": "wetland",
     "habitatName": "습지·하천",
     "zoneId": "herptileSpecies-z-1",
-    "image": "https://inaturalist-open-data.s3.amazonaws.com/photos/17832870/large.gif"
+    "image": "https://inaturalist-open-data.s3.amazonaws.com/photos/17832870/large.gif",
+    "desc": "무미목 청개구리과에 속하는 양서류이다. 몸길이 2.5~4cm로 작은 편이다. 등의 색깔은 변화가 많으며, 녹색이나 회색 바탕에 진한 녹색이나 회갈색의 불규칙한 무늬가 있다. 주변 상태에 따라 누런빛을 띤 녹색에서 회색을 띤 흰색, 어두운 갈색 등으로 변한다. 검은색에 가까운 얼룩무늬가 배면 또는 다리에 나타난다. 네 다리의 발가락 끝에는 흡반이 발달하였다. 산지나 평지의 풀이나 나무 위에서 산다. 산란기는 5~7월이며, 논이나 괸 물에 모여 작은 알덩어리를 산란한다. 수컷은 턱 밑에 큰 울음주머니를 가지고 있으며 산란기나 습도가 높은 날이면 큰 소리로 운다. 전국에서 관찰되며, 세계적으로는 일본, 러시아, 몽골, 중국에 분포한다."
   },
   {
     "id": "hrp-0002",
@@ -27446,7 +27454,8 @@ const herptileSpecies = [
     "habitat": "sand",
     "habitatName": "하구·갯벌·해안",
     "zoneId": "herptileSpecies-z-2",
-    "image": "https://inaturalist-open-data.s3.amazonaws.com/photos/15976548/large.jpeg"
+    "image": "https://inaturalist-open-data.s3.amazonaws.com/photos/15976548/large.jpeg",
+    "desc": "무미목 개구리과에 속하는 양서류로 몸길이는 6-9cm이다. 등면에 주둥이부터 항문에 이르는 중앙선 1개와 그 양옆에 눈 뒤부터 시작되는 2개의 융기선이 있다. 수컷의 등에는 금색 또는 녹색 바탕에 중앙으로 1줄의 황색이나 녹색 선이 있지만 암컷은 전체적으로 엷고, 흰 바탕색에 검은 반점이 흩어져 있다. 4-6월에 산란하며, 알은 물속에 잠긴 상태에서 부화된다. 한국, 중국, 티베트, 타이완, 러시아 동부, 일본에 분포한다."
   },
   {
     "id": "hrp-0003",
@@ -27475,7 +27484,8 @@ const herptileSpecies = [
     "habitat": "wetland",
     "habitatName": "습지·하천",
     "zoneId": "herptileSpecies-z-3",
-    "image": "https://inaturalist-open-data.s3.amazonaws.com/photos/735688275/medium.jpg"
+    "image": "https://inaturalist-open-data.s3.amazonaws.com/photos/735688275/medium.jpg",
+    "desc": "무미목 개구리과에 속하는 양서류이다. 북아메리카 원산의 외래종으로 성체의 크기가 14-46cm, 무게 0.5kg에 달하는 대형종이다. 등의 색깔은 녹색, 암갈색 및 회색 등으로 변이가 심하고 불규칙한 무늬가 퍼져 있고, 배면은 회백색 바탕에 암갈색 무늬가 산재해 있다. 물갈퀴가 잘 발달하여 있다. 등은 상어 피부와 같이 거칠거칠하나 눈에 띄는 돌기는 없다. 앞발에 비해 뒷발이 매우 길다. 수컷은 고막이 크고 앞다리 엄지발가락에 튀어나와 있는 돌기가 있다. 저수지, 댐, 강, 하천 등의 물이 고여 있는 곳에서 산다. 개구리, 뱀, 벌레, 지렁이, 도롱뇽 등을 포식한다. 강원도와 일부 산악지역을 제외한 우리나라 대부분의 지역으로 분포지가 확산되어 있다. 세계적으로는 원산지인 북아메리카를 비롯하여 아시아 많은 나라에도 분포한다. 울음소리가 황소 울음소리와 비슷하여 황소개구리라는 이름이 붙었다."
   },
   {
     "id": "hrp-0004",
@@ -27504,7 +27514,8 @@ const herptileSpecies = [
     "habitat": "sand",
     "habitatName": "하구·갯벌·해안",
     "zoneId": "herptileSpecies-z-4",
-    "image": "https://inaturalist-open-data.s3.amazonaws.com/photos/178107480/large.png"
+    "image": "https://inaturalist-open-data.s3.amazonaws.com/photos/178107480/large.png",
+    "desc": "유린목 뱀과에 속하는 파충류로 몸길이는 0.7-1.2m이며, 등에 붉은색과 검은색 가로무늬가 여러 개 있고, 옆구리에 검은색 얼룩무늬가 길게 늘어서 있다. 농경지, 민가 주변, 야산에 살며, 밤에 나와 두꺼비, 개구리, 쥐, 작은 새, 다른 뱀, 물고기 따위를 잡아먹는다. 난생으로 10개 정도의 알을 낳는다. 독은 없으나 성질이 사납다. 이빨이 작기 때문에 사람이나 큰 동물은 물려도 큰 상처를 입지 않는다. 우리나라 전역에 서식하며, 중국, 타이완, 일본 등지에 분포한다."
   },
   {
     "id": "hrp-0005",
@@ -27563,7 +27574,8 @@ const herptileSpecies = [
     "habitat": "field",
     "habitatName": "농경지·마을",
     "zoneId": "herptileSpecies-z-6",
-    "image": "https://static.inaturalist.org/photos/443718712/large.jpeg"
+    "image": "https://static.inaturalist.org/photos/443718712/large.jpeg",
+    "desc": "무미목 두꺼비과에 속하는 양서류이다. 몸은 15cm 정도로 크고, 몸 색은 변이가 심하지만 보통 등은 갈색이며, 피부 위쪽 부분은 흑색이다. 몸통과 네 다리의 등면에 불규칙한 흑갈색 무늬가 있다. 머리는 몸에 비하여 크며, 머리 길이보다 폭이 현저하게 넓고, 옆 가장자리는 약간 휘어들어 주둥이에 다다른다. 등면을 덮고 있는 피부의 융기는 보통 작으면서 수가 많지만 앞다리의 기부 근처의 것들은 비교적 크다. 네 다리는 보통 짧다. 암컷은 수컷에 비하여 몸길이가 더 크다. 습한 곳에서 생활한다. 알은 길게 두 줄로 낳으므로 다른 종과 구별된다. 3~4월경 수로의 고인 물에 알을 낳는다. 유체가 된 후 모두 산으로 올라가는데 비 오는 날에 집단으로 산에 가는 모습을 볼 수 있다. 주로 곤충류를 먹는다. 우리나라 전역에 서식하며, 세계적으로는 중국, 러시아에 분포한다."
   },
   {
     "id": "hrp-0007",
@@ -27592,7 +27604,8 @@ const herptileSpecies = [
     "habitat": "field",
     "habitatName": "농경지·마을",
     "zoneId": "herptileSpecies-z-7",
-    "image": "https://static.inaturalist.org/photos/533746505/large.jpg"
+    "image": "https://static.inaturalist.org/photos/533746505/large.jpg",
+    "desc": "몸길이는 약 60cm이다. 머리는 삼각형이고 혀의 색이 붉은색인 점이 다른 살모사와 구별된다. 몸 옆의 엽전 무늬는 검은 부분과 밝은 부분의 명암 차이가 더 나서 무늬가 더 깨끗하게 보이는 경향이 있고, 몸통에 비해 엽전 무늬가 더 커다랗게 박혀 있다. 저지대에서 고지대까지 계곡의 평지와 잡목림과 바위가 있는 곳에서 들쥐, 산개구리 등을 잡아먹으며 우리나라 전역과 중국, 러시아 등지에 분포한다."
   },
   {
     "id": "hrp-0008",
@@ -27711,7 +27724,8 @@ const herptileSpecies = [
     "habitat": "wetland",
     "habitatName": "습지·하천",
     "zoneId": "herptileSpecies-z-11",
-    "image": "https://inaturalist-open-data.s3.amazonaws.com/photos/735776008/medium.jpg"
+    "image": "https://inaturalist-open-data.s3.amazonaws.com/photos/735776008/medium.jpg",
+    "desc": "유린목 뱀과에 속하는 파충류이다. 몸길이는 1m 정도이다. 머리는 비교적 크고 긴 편이며, 주둥이는 폭이 넓고 둔하다. 등면의 바탕색은 녹색을 띤 갈색이며, 비늘의 1~1.5개 정도의 폭으로 된 불규칙한 색의 가로띠가 여러 개 산재하고 있다. 머리의 등면에는 4개의 흑색 줄이 있다. 등 쪽은 황색이며, 각 배판에는 불규칙한 흑색 점무늬가 있고, 대체로 외측의 것이 크다. 몸통에는 붉은색의 마름모무늬가 있다. 배 부분에는 흰색 또는 어두운색의 배비늘이 있다. 항문 근처에는 21줄이 있다. 평지의 물가나 숲속에 서식한다. 주로 개구리를 포식한다. 전국적으로 서식하고, 세계적으로는 중국, 시베리아 북부에 분포한다."
   },
   {
     "id": "hrp-0012",
@@ -27830,7 +27844,8 @@ const herptileSpecies = [
     "habitat": "field",
     "habitatName": "농경지·마을",
     "zoneId": "herptileSpecies-z-12",
-    "image": "https://inaturalist-open-data.s3.amazonaws.com/photos/23838215/large.jpg"
+    "image": "https://inaturalist-open-data.s3.amazonaws.com/photos/23838215/large.jpg",
+    "desc": "유린목 뱀과에 속하는 파충류로 몸길이는 50-120cm이며, 색깔 변이가 심하지만 보통 녹색 바탕에 붉은 점무늬가 산재한다. 과거에는 독이 없는 종으로 알려졌으나 턱 뒤쪽에 독니가 있는 독사이다. 위협을 느끼면 몸을 세우고 방어 자세를 취하거나 죽은 척하는 습성이 있다. 하천, 경작지, 초지, 산림지역에 살며, 개구리류나 설치류 등을 잡아먹는다. 9-10월에 짝짓기하고, 이듬해 6-7월에 10-30개의 알을 낳는다. 한국, 중국, 일본, 러시아 동부에 분포한다."
   },
   {
     "id": "hrp-0016",
@@ -27888,7 +27903,8 @@ const herptileSpecies = [
     "habitat": "wetland",
     "habitatName": "습지·하천",
     "zoneId": "herptileSpecies-z-14",
-    "image": "https://inaturalist-open-data.s3.amazonaws.com/photos/208438534/large.jpeg"
+    "image": "https://inaturalist-open-data.s3.amazonaws.com/photos/208438534/large.jpeg",
+    "desc": "유린목 살모사과에 속하는 파충류로 몸길이는 60-70cm이고, 등에 다양한 반문이 있다. 혀는 검은색, 꼬리는 노란색, 주둥이 끝판은 검은색이다. 난태생이며, 5-9월에 짝짓기하고 8-9월에 2-20마리의 새끼를 낳는다. 독이 있으며 성질이 사납다. 물고기, 개구리, 도마뱀, 뱀 등을 포식한다. 제주도를 제외한 전국의 하천, 경작지, 야산 등에 서식하며, 중국에도 분포한다."
   },
   {
     "id": "hrp-0018",
@@ -27917,7 +27933,8 @@ const herptileSpecies = [
     "habitat": "forest",
     "habitatName": "산림·구릉",
     "zoneId": "herptileSpecies-z-15",
-    "image": "https://inaturalist-open-data.s3.amazonaws.com/photos/25208956/large.jpg"
+    "image": "https://inaturalist-open-data.s3.amazonaws.com/photos/25208956/large.jpg",
+    "desc": "몸길이 약 46mm이다. 꼬리 길이가 몸길이의 2.5배쯤 된다. 주둥이는 뾰족하다. 등 부분의 비늘줄은 8줄이나 앞부분에는 9줄인 것도 있다. 몸 양옆 아래쪽의 3~4줄은 약한 돌기의 용골(龍骨)로 되어 있으며, 위쪽 비늘줄에는 강한 돌기의 용골이 있다. 녹갈색 바탕에 몸통 측면을 따라 흰색의 선이 있다. 배쪽은 누런빛이 도는 흰색 또는 녹색이 도는 흰색이다. 주로 하천변 등 저지대에 서식한다. 제주도를 포함 전국적으로 분포한다. 중국에도 분포하고 있다."
   },
   {
     "id": "hrp-0019",
@@ -27946,7 +27963,8 @@ const herptileSpecies = [
     "habitat": "field",
     "habitatName": "농경지·마을",
     "zoneId": "herptileSpecies-z-16",
-    "image": "https://inaturalist-open-data.s3.amazonaws.com/photos/394646812/large.jpeg"
+    "image": "https://inaturalist-open-data.s3.amazonaws.com/photos/394646812/large.jpeg",
+    "desc": "우리나라에 서식하는 산개구리류 중에서 가장 작은 종이며, 몸 전체의 색은 진한 갈색을 띤다. 주둥이 앞부터 콧구멍과 눈을 지나 주둥이 뒷부분까지 검은 무늬가 이어져 있다. 윗입술을 따라 주둥이 전체에 흰색의 가는 줄무늬가 있는 것이 특징이다. 등에는 밝은 갈색의 가는 융기선 한 쌍이 있다. 번식기에 수컷의 복부 쪽 색은 밝은 흰색을 띠고, 암컷은 오렌지색과 붉은색이 함께 나타난다. 눈 앞쪽으로 뚜렷한 흑색 반문이 없는 북방산개구리(<I>R. dybowskii</I>)나 계곡산개구리(<I>R. huanrenensis</I>)와 잘 구별된다. 주로 고산지대에서 서식하는 북방산개구리, 계곡산개구리에 비하여 한국산개구리는 낮은 산지와 저지대의 습지, 연못과 같은 곳에서 서식한다. 종전에는 ‘아무르산개구리(<I>Rana amurensis coreana</I> Okada)’로 불리었다. 한국 고유종이다."
   },
   {
     "id": "hrp-0020",
@@ -27975,7 +27993,8 @@ const herptileSpecies = [
     "habitat": "wetland",
     "habitatName": "습지·하천",
     "zoneId": "herptileSpecies-z-17",
-    "image": "https://inaturalist-open-data.s3.amazonaws.com/photos/2805933/large.jpg"
+    "image": "https://inaturalist-open-data.s3.amazonaws.com/photos/2805933/large.jpg",
+    "desc": "유린목 도마뱀과에 속하는 파충류이다. 산간 초원이나 묵은 밭에 산다. 몸길이는 47mm 정도, 꼬리 길이는 44mm 정도이다. 몸통은 가늘고 길며, 꼬리는 몸통보다 약간 길다. 등은 암갈색이고 측면에 점무늬가 산재한다. 적이 나타나면 꼬리를 자르고 도망을 친다. 잘린 꼬리는 다시 자라고 자기의 꼬리를 원할 때 다시 자를 수 있다. 그러나 처음 자른 후에 나는 꼬리는 원래 있던 뼈와는 달리 물렁뼈로 이루어진다. 주로 개구리, 거미, 물고기 등을 잡아먹는다. 소리를 잘 들을 수 있어서 먹이를 잘 잡아먹는다. 뱀과 달리 4개의 다리가 있어 빨리 먹이를 쫓아갈 수 있다. 전국적으로 분포하며 백두대간을 따라 산림지역에서 서식한다. 일본, 타이완, 중국에도 분포한다."
   },
   {
     "id": "hrp-0021",
@@ -28004,7 +28023,8 @@ const herptileSpecies = [
     "habitat": "forest",
     "habitatName": "산림·구릉",
     "zoneId": "herptileSpecies-z-18",
-    "image": "https://inaturalist-open-data.s3.amazonaws.com/photos/28808533/large.jpeg"
+    "image": "https://inaturalist-open-data.s3.amazonaws.com/photos/28808533/large.jpeg",
+    "desc": "거북목 늪거북과에 속하는 파충류이다. 수컷은 15cm가량이고, 암컷은 20cm 안팎이다. 등딱지는 완만하게 굽어 있다. 등딱지 빛깔은 진한 초록색 바탕에 노란색의 줄무늬가 있다. 눈의 바로 뒤쪽에 붉은색 띠가 있다. 아래턱은 둥글고, 뒷발가락은 막으로 연결되어 있다. 성숙한 수컷은 앞발톱이 자신의 뒷발톱이나 암컷의 발톱에 비해 2배 정도로 길게 자란다. 수컷은 꼬리에 위치한 항문이 등딱지의 끝을 벗어나 드러나 있으나, 암컷의 경우 벗어나지 못한다. 또 수컷의 꼬리는 굵고 길지만 암컷의 경우는 그렇지 않다. 물이 많고 비교적 흐름이 약한 호수나 큰 강, 작은 웅덩이에 살며 수생 동물로서 알을 낳을 때나 새로운 서식처를 찾아 나설 때가 아니면 물가를 떠나지 않는다. 어릴 때는 육식성이지만 나이를 먹으면서 초식성으로 변하고 어른이 되면 대부분 수생 식물만을 먹는다. 1년에 5~22개의 알을 낳는다. 성적으로 성숙하는 데에는 수컷은 1년, 암컷은 3년이 걸린다. 자연 상태에서 수명은 약 20년이다. 애완용으로 들여온 것이 전국에 서식하고 세계적으로는 미국에 분포한다."
   },
   {
     "id": "hrp-0022",
@@ -59844,6 +59864,19 @@ function renderInsectBySpecies(spId) {
   document.getElementById('spResultCount').textContent = 1;
   document.getElementById('spListCount').textContent = 1;
   document.getElementById('spMapTitle').textContent = sp.name;
+  const spLabel = currentTaxonLabel();
+  const pickerLabelEl = document.getElementById('spPickerLabel');
+  if (pickerLabelEl) pickerLabelEl.textContent = `${spLabel} 선택`;
+  const mapHeaderLabelEl = document.getElementById('spMapHeaderLabel');
+  if (mapHeaderLabelEl) mapHeaderLabelEl.textContent = `${spLabel} 사진`;
+  const resultsHeadLabelEl = document.getElementById('spResultsHeadLabel');
+  if (resultsHeadLabelEl) resultsHeadLabelEl.textContent = `이 ${spLabel}의 관찰 추천 지점`;
+  const introEl = document.getElementById('spIntro');
+  if (introEl) {
+    const activeMonthsList = (sp.activeMonths || []).map((v, i) => v > 0 ? i + 1 : null).filter(Boolean);
+    const periodText = activeMonthsList.length ? `${activeMonthsList[0]}~${activeMonthsList[activeMonthsList.length - 1]}월 기록` : '기록 시기 미상';
+    introEl.innerHTML = `<strong>${sp.name}</strong>${sp.sci ? ` (${sp.sci})` : ''} — 에코뱅크 서천권 실측 기록 ${sp.recordCount}건, ${periodText}된 ${spLabel}입니다.`;
+  }
 
   // 왼쪽 큰 사진 영역(조류 탭과 동일한 자리)에 현재 분류군 사진 표시
   const photoBox = document.getElementById('spMapPhoto');
@@ -60198,6 +60231,12 @@ function renderBySpecies(spId) {
   document.getElementById('spMapTitle').textContent = sp.name;
   document.getElementById('spIntro').innerHTML = `<strong>${sp.name}</strong> (${sp.sci}) — ${sp.summary}`;
   document.getElementById('spMapPhoto').innerHTML = `<img src="${sp.image}" alt="${sp.name}" onerror="birdImgError(this)"><div class="name">${sp.name}</div><div class="sci">${sp.sci}</div>`;
+  const pickerLabelEl = document.getElementById('spPickerLabel');
+  if (pickerLabelEl) pickerLabelEl.textContent = '조류 선택';
+  const mapHeaderLabelEl = document.getElementById('spMapHeaderLabel');
+  if (mapHeaderLabelEl) mapHeaderLabelEl.textContent = '조류 사진';
+  const resultsHeadLabelEl = document.getElementById('spResultsHeadLabel');
+  if (resultsHeadLabelEl) resultsHeadLabelEl.textContent = '이 조류의 관찰 추천 지점';
 
   // 마커 갱신
   Object.values(spMarkers).forEach(m => spMap.removeLayer(m));
