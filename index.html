@@ -60866,9 +60866,16 @@ const RARITY_KEYWORDS = {
   rare: ['희귀한', '드문', '보기힘든'],
   endangered: ['멸종위기', '보호종', '천연기념물'],
 };
+const MIGRATION_KEYWORDS = {
+  summer: ['여름철새', '여름새'],
+  winter: ['겨울철새', '겨울새'],
+  passage: ['나그네새'],
+  resident: ['텃새'],
+  migratory: ['철새'], // 위 구체적인 것들에 안 걸렸을 때만 쓰이는 포괄 키워드
+};
 const DISTANCE_KEYWORDS = ['가까운', '근처', '가까이', '가까운곳'];
 const OPEN_TAXON_KEYWORDS = {
-  bird: ['새', '조류', '철새', '바닷새', '물새', '들새', '겨울새', '여름새', '나그네새', '텃새', '맹금류', '맹금'],
+  bird: ['새', '조류', '바닷새', '물새', '들새', '맹금류', '맹금'],
   insect: ['곤충', '벌레', '나비', '잠자리'],
   mammal: ['포유류', '포유동물'],
   herptile: ['파충류', '양서류', '개구리', '뱀', '도마뱀'],
@@ -60902,9 +60909,12 @@ function parseOpenQuery(text) {
   for (const [rarity, words] of Object.entries(RARITY_KEYWORDS)) {
     if (matchAnyKeyword(clean, words)) { filters.rarity = rarity; break; }
   }
+  for (const [migration, words] of Object.entries(MIGRATION_KEYWORDS)) {
+    if (matchAnyKeyword(clean, words)) { filters.migration = migration; filters.taxon = 'bird'; break; }
+  }
   if (matchAnyKeyword(clean, DISTANCE_KEYWORDS)) filters.wantDistance = true;
 
-  const hasAnyFilter = filters.habitat || filters.time || filters.season || filters.rarity || filters.wantDistance || filters.taxon;
+  const hasAnyFilter = filters.habitat || filters.time || filters.season || filters.rarity || filters.wantDistance || filters.taxon || filters.migration;
   return hasAnyFilter ? filters : null;
 }
 
@@ -60962,6 +60972,21 @@ function runOpenQuery(filters) {
     if (isBird) list = list.filter(sp => sp.redList);
     else notes.push(`${label}${eunNeun(label)} 멸종위기종 지정 정보를 갖고 있지 않아요.`);
   }
+  if (filters.migration) {
+    if (!isBird) {
+      notes.push('철새·텃새 구분은 조류에만 적용돼요.');
+    } else {
+      list = list.filter(sp => {
+        const pattern = classifySeasonality(sp.activeMonths || []).pattern;
+        if (filters.migration === 'resident') return pattern === 'resident';
+        if (filters.migration === 'summer') return pattern === 'summer';
+        if (filters.migration === 'winter') return pattern === 'winter';
+        if (filters.migration === 'passage') return pattern === 'passage';
+        // 'migratory'(포괄 "철새"): 여름·겨울·나그네새 전부 포함, 텃새·불명확 패턴 제외
+        return pattern === 'summer' || pattern === 'winter' || pattern === 'passage';
+      });
+    }
+  }
 
   // 정렬: 거리 요청 있으면 거리순(내 위치 필요), rarity면 기록건수순, 그 외엔 적합도순
   if (filters.wantDistance) {
@@ -61007,6 +61032,10 @@ function describeFilters(filters) {
   if (filters.rarity === 'common') parts.push('흔하게');
   if (filters.rarity === 'rare') parts.push('희귀하게');
   if (filters.rarity === 'endangered') parts.push('멸종위기종 중');
+  if (filters.migration) {
+    const migrationNames = { summer: '여름철새', winter: '겨울철새', passage: '나그네새', resident: '텃새', migratory: '철새(여름·겨울·나그네새)' };
+    parts.push(migrationNames[filters.migration]);
+  }
   if (filters.wantDistance) parts.push('가까운 곳 위주로');
   return parts.join(' · ');
 }
