@@ -59874,7 +59874,8 @@ function renderInsectBySpecies(spId) {
   const introEl = document.getElementById('spIntro');
   if (introEl) {
     const activeMonthsList = (sp.activeMonths || []).map((v, i) => v > 0 ? i + 1 : null).filter(Boolean);
-    const periodText = activeMonthsList.length ? `${activeMonthsList[0]}~${activeMonthsList[activeMonthsList.length - 1]}월 기록` : '기록 시기 미상';
+    const firstM = activeMonthsList[0], lastM = activeMonthsList[activeMonthsList.length - 1];
+    const periodText = activeMonthsList.length ? (firstM === lastM ? `${firstM}월 기록` : `${firstM}~${lastM}월 기록`) : '기록 시기 미상';
     introEl.innerHTML = `<strong>${sp.name}</strong>${sp.sci ? ` (${sp.sci})` : ''} — 에코뱅크 서천권 실측 기록 ${sp.recordCount}건, ${periodText}된 ${spLabel}입니다.`;
   }
 
