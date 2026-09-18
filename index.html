@@ -60630,6 +60630,24 @@ function isWordBoundaryMatch(haystack, needle) {
   return false;
 }
 
+// 열린질문 키워드 매칭용: 뒤에 조사(는/은/이/가/을/를/도/만/와/과/로/에서 등)가 붙는 건
+// 정상적인 한 단어 사용이라 허용하되("새는"→"새" O), 다른 단어에 결합된 경우는
+// 계속 막음("사슴벌레"→"벌레" X, "슴"은 조사가 아니라서 여전히 거부됨)
+const TRAILING_PARTICLES = ['는','은','이','가','을','를','도','만','와','과','로','에','랑','요'];
+function isKeywordBoundaryMatch(haystack, needle) {
+  const isKorean = (ch) => !!ch && /[가-힣]/.test(ch);
+  let idx = haystack.indexOf(needle);
+  while (idx !== -1) {
+    const before = idx === 0 ? '' : haystack[idx - 1];
+    const after = idx + needle.length >= haystack.length ? '' : haystack[idx + needle.length];
+    const beforeOk = !isKorean(before);
+    const afterOk = !isKorean(after) || TRAILING_PARTICLES.includes(after);
+    if (beforeOk && afterOk) return true;
+    idx = haystack.indexOf(needle, idx + 1);
+  }
+  return false;
+}
+
 function findSpeciesInText(text) {
   const clean = text.replace(/[?!.,~？！]/g, '').trim();
   const idx = speciesIndex();
@@ -60850,7 +60868,7 @@ const RARITY_KEYWORDS = {
 };
 const DISTANCE_KEYWORDS = ['가까운', '근처', '가까이', '가까운곳'];
 const OPEN_TAXON_KEYWORDS = {
-  bird: ['새', '조류', '철새'],
+  bird: ['새', '조류', '철새', '바닷새', '물새', '들새', '겨울새', '여름새', '나그네새', '텃새', '맹금류', '맹금'],
   insect: ['곤충', '벌레', '나비', '잠자리'],
   mammal: ['포유류', '포유동물'],
   herptile: ['파충류', '양서류', '개구리', '뱀', '도마뱀'],
@@ -60860,7 +60878,7 @@ const OPEN_TAXON_KEYWORDS = {
 };
 
 function matchAnyKeyword(text, list) {
-  return list.some(k => isWordBoundaryMatch(text, k));
+  return list.some(k => isKeywordBoundaryMatch(text, k));
 }
 
 function parseOpenQuery(text) {
