@@ -58099,7 +58099,11 @@ function requestUserLocation() {
           z.distanceKm = haversineKm(userLocation.lat, userLocation.lon, z.lat, z.lon);
         });
       });
-      setGeoStatus(`내 위치 확인됨 · 가까운 순 정렬 중`, true);
+      const accKm = pos.coords.accuracy ? (pos.coords.accuracy / 1000) : null;
+      const accWarn = accKm != null && accKm > 20
+        ? ` · ⚠️ 위치 오차 약 ${accKm.toFixed(0)}km(GPS 대신 IP·와이파이 기반으로 추정됐을 수 있어요)`
+        : '';
+      setGeoStatus(`내 위치 확인됨(${userLocation.lat.toFixed(4)}, ${userLocation.lon.toFixed(4)}) · 가까운 순 정렬 중${accWarn}`, true);
 
       if (allMap) {
         if (userMarkerAll) allMap.removeLayer(userMarkerAll);
