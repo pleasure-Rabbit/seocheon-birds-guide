@@ -54758,14 +54758,15 @@ const locations = [
   }
 ];
 // 다대다 매칭 — 100종 조류의 서천 관찰지별 7월 적합도
-// habitatFit: 그 종의 서식지 선호도와 지점 환경의 적합도 (0~1)
+// habitatFit: 종의 서식지 선호(habitatPref)와 지점의 실제 서식환경(locations[].habitat)을
+//   직접 대조해서 산출. 일치하면 1.0, 불일치하면 0.5 (기존엔 실측 근거 없는 1/0.78 임의값이었음 — 수정됨)
 // frequency: 과거 조사 기록상 출현 빈도에 준한 시범 빈도 (0~1)
 // 실제 운영 시 자연환경조사·eBird·공공 모니터링 raw 데이터에서 자동 산출
 const observations = [
   {
     "spId": "podicepscristatus",
     "locId": "eco-loc-08",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 10,
     "source": "에코뱅크 WFS"
@@ -54773,7 +54774,7 @@ const observations = [
   {
     "spId": "alcedoatthis",
     "locId": "eco-loc-08",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 8,
     "source": "에코뱅크 WFS"
@@ -54781,7 +54782,7 @@ const observations = [
   {
     "spId": "falcotinnunculus",
     "locId": "eco-loc-09",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 7,
     "source": "에코뱅크 WFS"
@@ -54789,7 +54790,7 @@ const observations = [
   {
     "spId": "streptopeliaorientalis",
     "locId": "eco-loc-16",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.894,
     "recordCount": 6,
     "source": "에코뱅크 WFS"
@@ -54797,7 +54798,7 @@ const observations = [
   {
     "spId": "microscelisamaurotis",
     "locId": "eco-loc-06",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.894,
     "recordCount": 6,
     "source": "에코뱅크 WFS"
@@ -54805,7 +54806,7 @@ const observations = [
   {
     "spId": "ardeacinerea",
     "locId": "eco-loc-13",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.894,
     "recordCount": 6,
     "source": "에코뱅크 WFS"
@@ -54813,7 +54814,7 @@ const observations = [
   {
     "spId": "anaspoecilorhyncha",
     "locId": "eco-loc-13",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.894,
     "recordCount": 6,
     "source": "에코뱅크 WFS"
@@ -54821,7 +54822,7 @@ const observations = [
   {
     "spId": "laniusbucephalus",
     "locId": "eco-loc-18",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 6,
     "source": "에코뱅크 WFS"
@@ -54829,7 +54830,7 @@ const observations = [
   {
     "spId": "emberizaelegans",
     "locId": "eco-loc-18",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 6,
     "source": "에코뱅크 WFS"
@@ -54837,7 +54838,7 @@ const observations = [
   {
     "spId": "orioluschinensis",
     "locId": "eco-loc-30",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 6,
     "source": "에코뱅크 WFS"
@@ -54845,7 +54846,7 @@ const observations = [
   {
     "spId": "cuculusmicropterus",
     "locId": "eco-loc-08",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 6,
     "source": "에코뱅크 WFS"
@@ -54853,7 +54854,7 @@ const observations = [
   {
     "spId": "streptopeliaorientalis",
     "locId": "eco-loc-14",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.852,
     "recordCount": 5,
     "source": "에코뱅크 WFS"
@@ -54861,7 +54862,7 @@ const observations = [
   {
     "spId": "streptopeliaorientalis",
     "locId": "eco-loc-13",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.852,
     "recordCount": 5,
     "source": "에코뱅크 WFS"
@@ -54869,7 +54870,7 @@ const observations = [
   {
     "spId": "streptopeliaorientalis",
     "locId": "eco-loc-07",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.852,
     "recordCount": 5,
     "source": "에코뱅크 WFS"
@@ -54877,7 +54878,7 @@ const observations = [
   {
     "spId": "streptopeliaorientalis",
     "locId": "eco-loc-18",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.852,
     "recordCount": 5,
     "source": "에코뱅크 WFS"
@@ -54885,7 +54886,7 @@ const observations = [
   {
     "spId": "microscelisamaurotis",
     "locId": "eco-loc-14",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.852,
     "recordCount": 5,
     "source": "에코뱅크 WFS"
@@ -54893,7 +54894,7 @@ const observations = [
   {
     "spId": "microscelisamaurotis",
     "locId": "eco-loc-18",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.852,
     "recordCount": 5,
     "source": "에코뱅크 WFS"
@@ -54901,7 +54902,7 @@ const observations = [
   {
     "spId": "microscelisamaurotis",
     "locId": "eco-loc-16",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.852,
     "recordCount": 5,
     "source": "에코뱅크 WFS"
@@ -54909,7 +54910,7 @@ const observations = [
   {
     "spId": "picapica",
     "locId": "eco-loc-07",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.852,
     "recordCount": 5,
     "source": "에코뱅크 WFS"
@@ -54917,7 +54918,7 @@ const observations = [
   {
     "spId": "picapica",
     "locId": "eco-loc-06",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.852,
     "recordCount": 5,
     "source": "에코뱅크 WFS"
@@ -54925,7 +54926,7 @@ const observations = [
   {
     "spId": "parusmajor",
     "locId": "eco-loc-06",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.91,
     "recordCount": 5,
     "source": "에코뱅크 WFS"
@@ -54933,7 +54934,7 @@ const observations = [
   {
     "spId": "ardeacinerea",
     "locId": "eco-loc-07",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.852,
     "recordCount": 5,
     "source": "에코뱅크 WFS"
@@ -54941,7 +54942,7 @@ const observations = [
   {
     "spId": "passermontanus",
     "locId": "eco-loc-14",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.852,
     "recordCount": 5,
     "source": "에코뱅크 WFS"
@@ -54949,7 +54950,7 @@ const observations = [
   {
     "spId": "passermontanus",
     "locId": "eco-loc-07",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.852,
     "recordCount": 5,
     "source": "에코뱅크 WFS"
@@ -54957,7 +54958,7 @@ const observations = [
   {
     "spId": "passermontanus",
     "locId": "eco-loc-06",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.852,
     "recordCount": 5,
     "source": "에코뱅크 WFS"
@@ -54965,7 +54966,7 @@ const observations = [
   {
     "spId": "passermontanus",
     "locId": "eco-loc-16",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.852,
     "recordCount": 5,
     "source": "에코뱅크 WFS"
@@ -54973,7 +54974,7 @@ const observations = [
   {
     "spId": "anaspoecilorhyncha",
     "locId": "eco-loc-14",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.852,
     "recordCount": 5,
     "source": "에코뱅크 WFS"
@@ -54981,7 +54982,7 @@ const observations = [
   {
     "spId": "anaspoecilorhyncha",
     "locId": "eco-loc-06",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.852,
     "recordCount": 5,
     "source": "에코뱅크 WFS"
@@ -54989,7 +54990,7 @@ const observations = [
   {
     "spId": "ardeaalba",
     "locId": "eco-loc-07",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.852,
     "recordCount": 5,
     "source": "에코뱅크 WFS"
@@ -54997,7 +54998,7 @@ const observations = [
   {
     "spId": "laniusbucephalus",
     "locId": "eco-loc-16",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.949,
     "recordCount": 5,
     "source": "에코뱅크 WFS"
@@ -55005,7 +55006,7 @@ const observations = [
   {
     "spId": "emberizaelegans",
     "locId": "eco-loc-24",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.949,
     "recordCount": 5,
     "source": "에코뱅크 WFS"
@@ -55013,7 +55014,7 @@ const observations = [
   {
     "spId": "emberizaelegans",
     "locId": "eco-loc-16",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.949,
     "recordCount": 5,
     "source": "에코뱅크 WFS"
@@ -55021,7 +55022,7 @@ const observations = [
   {
     "spId": "phoenicurusauroreus",
     "locId": "eco-loc-18",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.879,
     "recordCount": 5,
     "source": "에코뱅크 WFS"
@@ -55029,7 +55030,7 @@ const observations = [
   {
     "spId": "orioluschinensis",
     "locId": "eco-loc-08",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.949,
     "recordCount": 5,
     "source": "에코뱅크 WFS"
@@ -55037,7 +55038,7 @@ const observations = [
   {
     "spId": "corvusmacrorhynchos",
     "locId": "eco-loc-07",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.91,
     "recordCount": 5,
     "source": "에코뱅크 WFS"
@@ -55045,7 +55046,7 @@ const observations = [
   {
     "spId": "corvusmacrorhynchos",
     "locId": "eco-loc-18",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.91,
     "recordCount": 5,
     "source": "에코뱅크 WFS"
@@ -55053,7 +55054,7 @@ const observations = [
   {
     "spId": "cyanopicacyanus",
     "locId": "eco-loc-16",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 5,
     "source": "에코뱅크 WFS"
@@ -55061,7 +55062,7 @@ const observations = [
   {
     "spId": "laruscrassirostris",
     "locId": "eco-loc-07",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.949,
     "recordCount": 5,
     "source": "에코뱅크 WFS"
@@ -55069,7 +55070,7 @@ const observations = [
   {
     "spId": "cuculuscanorus",
     "locId": "eco-loc-08",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 5,
     "source": "에코뱅크 WFS"
@@ -55077,7 +55078,7 @@ const observations = [
   {
     "spId": "parusater",
     "locId": "eco-loc-24",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 5,
     "source": "에코뱅크 WFS"
@@ -55085,7 +55086,7 @@ const observations = [
   {
     "spId": "picapica",
     "locId": "eco-loc-14",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.807,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55093,7 +55094,7 @@ const observations = [
   {
     "spId": "picapica",
     "locId": "eco-loc-13",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.807,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55101,7 +55102,7 @@ const observations = [
   {
     "spId": "parusmajor",
     "locId": "eco-loc-09",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.858,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55109,7 +55110,7 @@ const observations = [
   {
     "spId": "parusmajor",
     "locId": "eco-loc-24",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.858,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55117,7 +55118,7 @@ const observations = [
   {
     "spId": "passermontanus",
     "locId": "eco-loc-13",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.807,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55125,7 +55126,7 @@ const observations = [
   {
     "spId": "anaspoecilorhyncha",
     "locId": "eco-loc-09",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.807,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55133,7 +55134,7 @@ const observations = [
   {
     "spId": "ardeaalba",
     "locId": "eco-loc-14",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.807,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55141,7 +55142,7 @@ const observations = [
   {
     "spId": "ardeaalba",
     "locId": "eco-loc-13",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.807,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55149,7 +55150,7 @@ const observations = [
   {
     "spId": "ardeaalba",
     "locId": "eco-loc-10",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.807,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55157,7 +55158,7 @@ const observations = [
   {
     "spId": "ardeaalba",
     "locId": "eco-loc-08",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.807,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55165,7 +55166,7 @@ const observations = [
   {
     "spId": "laniusbucephalus",
     "locId": "eco-loc-07",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.894,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55173,7 +55174,7 @@ const observations = [
   {
     "spId": "laniusbucephalus",
     "locId": "eco-loc-24",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.894,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55181,7 +55182,7 @@ const observations = [
   {
     "spId": "laniusbucephalus",
     "locId": "eco-loc-06",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.894,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55189,7 +55190,7 @@ const observations = [
   {
     "spId": "laniusbucephalus",
     "locId": "eco-loc-10",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.894,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55197,7 +55198,7 @@ const observations = [
   {
     "spId": "phoenicurusauroreus",
     "locId": "eco-loc-09",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55205,7 +55206,7 @@ const observations = [
   {
     "spId": "phoenicurusauroreus",
     "locId": "eco-loc-10",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55213,7 +55214,7 @@ const observations = [
   {
     "spId": "phoenicurusauroreus",
     "locId": "eco-loc-08",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55221,7 +55222,7 @@ const observations = [
   {
     "spId": "orioluschinensis",
     "locId": "eco-loc-35",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.894,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55229,7 +55230,7 @@ const observations = [
   {
     "spId": "corvusmacrorhynchos",
     "locId": "eco-loc-09",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.858,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55237,7 +55238,7 @@ const observations = [
   {
     "spId": "corvusmacrorhynchos",
     "locId": "eco-loc-24",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.858,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55245,7 +55246,7 @@ const observations = [
   {
     "spId": "corvusmacrorhynchos",
     "locId": "eco-loc-06",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.858,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55253,7 +55254,7 @@ const observations = [
   {
     "spId": "corvusmacrorhynchos",
     "locId": "eco-loc-10",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.858,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55261,7 +55262,7 @@ const observations = [
   {
     "spId": "falcotinnunculus",
     "locId": "eco-loc-06",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.858,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55269,7 +55270,7 @@ const observations = [
   {
     "spId": "falcotinnunculus",
     "locId": "eco-loc-41",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.858,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55277,7 +55278,7 @@ const observations = [
   {
     "spId": "paradoxorniswebbianus",
     "locId": "eco-loc-09",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.939,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55285,7 +55286,7 @@ const observations = [
   {
     "spId": "paradoxorniswebbianus",
     "locId": "eco-loc-18",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.939,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55293,7 +55294,7 @@ const observations = [
   {
     "spId": "garrulusglandarius",
     "locId": "eco-loc-10",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.894,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55301,7 +55302,7 @@ const observations = [
   {
     "spId": "garrulusglandarius",
     "locId": "eco-loc-18",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.894,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55309,7 +55310,7 @@ const observations = [
   {
     "spId": "garrulusglandarius",
     "locId": "eco-loc-08",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.894,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55317,7 +55318,7 @@ const observations = [
   {
     "spId": "garrulusglandarius",
     "locId": "eco-loc-22",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.894,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55325,7 +55326,7 @@ const observations = [
   {
     "spId": "cyanopicacyanus",
     "locId": "eco-loc-08",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.939,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55333,7 +55334,7 @@ const observations = [
   {
     "spId": "laruscrassirostris",
     "locId": "eco-loc-09",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.894,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55341,7 +55342,7 @@ const observations = [
   {
     "spId": "phalacrocoraxcarbo",
     "locId": "eco-loc-09",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55349,7 +55350,7 @@ const observations = [
   {
     "spId": "phalacrocoraxcarbo",
     "locId": "eco-loc-08",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55357,7 +55358,7 @@ const observations = [
   {
     "spId": "paruspalustris",
     "locId": "eco-loc-24",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55365,7 +55366,7 @@ const observations = [
   {
     "spId": "paruspalustris",
     "locId": "eco-loc-18",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55373,7 +55374,7 @@ const observations = [
   {
     "spId": "paruspalustris",
     "locId": "eco-loc-16",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55381,7 +55382,7 @@ const observations = [
   {
     "spId": "buteobuteo",
     "locId": "eco-loc-09",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55389,7 +55390,7 @@ const observations = [
   {
     "spId": "podicepscristatus",
     "locId": "eco-loc-10",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.787,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55397,7 +55398,7 @@ const observations = [
   {
     "spId": "alcedoatthis",
     "locId": "eco-loc-09",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55405,7 +55406,7 @@ const observations = [
   {
     "spId": "parusater",
     "locId": "eco-loc-18",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.939,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55413,7 +55414,7 @@ const observations = [
   {
     "spId": "aegithaloscaudatus",
     "locId": "eco-loc-18",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55421,7 +55422,7 @@ const observations = [
   {
     "spId": "carduelissinica",
     "locId": "eco-loc-07",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55429,7 +55430,7 @@ const observations = [
   {
     "spId": "numeniusarquata",
     "locId": "eco-loc-07",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55437,7 +55438,7 @@ const observations = [
   {
     "spId": "columbaliviavardomestica",
     "locId": "eco-loc-13",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 4,
     "source": "에코뱅크 WFS"
@@ -55445,7 +55446,7 @@ const observations = [
   {
     "spId": "orioluschinensis",
     "locId": "eco-loc-16",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55453,7 +55454,7 @@ const observations = [
   {
     "spId": "dendrocoposmajor",
     "locId": "eco-loc-06",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55461,7 +55462,7 @@ const observations = [
   {
     "spId": "dendrocoposmajor",
     "locId": "eco-loc-08",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55469,7 +55470,7 @@ const observations = [
   {
     "spId": "dendrocoposmajor",
     "locId": "eco-loc-24",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55477,7 +55478,7 @@ const observations = [
   {
     "spId": "dendrocoposmajor",
     "locId": "eco-loc-16",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55485,7 +55486,7 @@ const observations = [
   {
     "spId": "falcotinnunculus",
     "locId": "eco-loc-46",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.8,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55493,7 +55494,7 @@ const observations = [
   {
     "spId": "falcotinnunculus",
     "locId": "eco-loc-16",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.8,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55501,7 +55502,7 @@ const observations = [
   {
     "spId": "paradoxorniswebbianus",
     "locId": "eco-loc-13",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.869,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55509,7 +55510,7 @@ const observations = [
   {
     "spId": "picuscanus",
     "locId": "eco-loc-08",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.869,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55517,7 +55518,7 @@ const observations = [
   {
     "spId": "garrulusglandarius",
     "locId": "eco-loc-09",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55525,7 +55526,7 @@ const observations = [
   {
     "spId": "cyanopicacyanus",
     "locId": "eco-loc-07",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.869,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55533,7 +55534,7 @@ const observations = [
   {
     "spId": "cyanopicacyanus",
     "locId": "eco-loc-09",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.869,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55541,7 +55542,7 @@ const observations = [
   {
     "spId": "cyanopicacyanus",
     "locId": "eco-loc-10",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.869,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55549,7 +55550,7 @@ const observations = [
   {
     "spId": "laruscrassirostris",
     "locId": "eco-loc-13",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55557,7 +55558,7 @@ const observations = [
   {
     "spId": "cuculuscanorus",
     "locId": "eco-loc-30",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.869,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55565,7 +55566,7 @@ const observations = [
   {
     "spId": "phasianuscolchicus",
     "locId": "eco-loc-07",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.922,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55573,7 +55574,7 @@ const observations = [
   {
     "spId": "phasianuscolchicus",
     "locId": "eco-loc-06",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.922,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55581,7 +55582,7 @@ const observations = [
   {
     "spId": "phasianuscolchicus",
     "locId": "eco-loc-22",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.922,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55589,7 +55590,7 @@ const observations = [
   {
     "spId": "turdushortulorum",
     "locId": "eco-loc-35",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.922,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55597,7 +55598,7 @@ const observations = [
   {
     "spId": "turdushortulorum",
     "locId": "eco-loc-08",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.922,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55605,7 +55606,7 @@ const observations = [
   {
     "spId": "dendrocoposkizuki",
     "locId": "eco-loc-18",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.922,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55613,7 +55614,7 @@ const observations = [
   {
     "spId": "dendrocoposkizuki",
     "locId": "eco-loc-16",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.922,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55621,7 +55622,7 @@ const observations = [
   {
     "spId": "dendrocoposkizuki",
     "locId": "eco-loc-22",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.922,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55629,7 +55630,7 @@ const observations = [
   {
     "spId": "eurystomusorientalis",
     "locId": "eco-loc-09",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.922,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55637,7 +55638,7 @@ const observations = [
   {
     "spId": "motacillaalba",
     "locId": "eco-loc-14",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.922,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55645,7 +55646,7 @@ const observations = [
   {
     "spId": "motacillaalba",
     "locId": "eco-loc-07",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.922,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55653,7 +55654,7 @@ const observations = [
   {
     "spId": "motacillaalba",
     "locId": "eco-loc-09",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.922,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55661,7 +55662,7 @@ const observations = [
   {
     "spId": "motacillaalba",
     "locId": "eco-loc-06",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.922,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55669,7 +55670,7 @@ const observations = [
   {
     "spId": "phalacrocoraxcarbo",
     "locId": "eco-loc-13",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.775,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55677,7 +55678,7 @@ const observations = [
   {
     "spId": "phalacrocoraxcarbo",
     "locId": "eco-loc-06",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.775,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55685,7 +55686,7 @@ const observations = [
   {
     "spId": "phalacrocoraxcarbo",
     "locId": "eco-loc-10",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.775,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55693,7 +55694,7 @@ const observations = [
   {
     "spId": "paruspalustris",
     "locId": "eco-loc-22",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.922,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55701,7 +55702,7 @@ const observations = [
   {
     "spId": "parusvarius",
     "locId": "eco-loc-10",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.869,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55709,7 +55710,7 @@ const observations = [
   {
     "spId": "egrettagarzetta",
     "locId": "eco-loc-07",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55717,7 +55718,7 @@ const observations = [
   {
     "spId": "egrettagarzetta",
     "locId": "eco-loc-10",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55725,7 +55726,7 @@ const observations = [
   {
     "spId": "hirundorustica",
     "locId": "eco-loc-07",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.922,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55733,7 +55734,7 @@ const observations = [
   {
     "spId": "hirundorustica",
     "locId": "eco-loc-16",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.922,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55741,7 +55742,7 @@ const observations = [
   {
     "spId": "parusater",
     "locId": "eco-loc-06",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.869,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55749,7 +55750,7 @@ const observations = [
   {
     "spId": "parusater",
     "locId": "eco-loc-22",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.869,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55757,7 +55758,7 @@ const observations = [
   {
     "spId": "aegithaloscaudatus",
     "locId": "eco-loc-07",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.922,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55765,7 +55766,7 @@ const observations = [
   {
     "spId": "aegithaloscaudatus",
     "locId": "eco-loc-22",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.922,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55773,7 +55774,7 @@ const observations = [
   {
     "spId": "sturnuscineraceus",
     "locId": "eco-loc-07",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.922,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55781,7 +55782,7 @@ const observations = [
   {
     "spId": "tringanebularia",
     "locId": "eco-loc-06",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55789,7 +55790,7 @@ const observations = [
   {
     "spId": "aixgalericulata",
     "locId": "eco-loc-30",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.922,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55797,7 +55798,7 @@ const observations = [
   {
     "spId": "aixgalericulata",
     "locId": "eco-loc-08",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.922,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55805,7 +55806,7 @@ const observations = [
   {
     "spId": "actitishypoleucos",
     "locId": "eco-loc-09",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55813,7 +55814,7 @@ const observations = [
   {
     "spId": "phalacrocoraxcapillatus",
     "locId": "eco-loc-06",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55821,7 +55822,7 @@ const observations = [
   {
     "spId": "pluvialissquatarola",
     "locId": "eco-loc-07",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 3,
     "source": "에코뱅크 WFS"
@@ -55829,7 +55830,7 @@ const observations = [
   {
     "spId": "picuscanus",
     "locId": "eco-loc-22",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.787,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -55837,7 +55838,7 @@ const observations = [
   {
     "spId": "picuscanus",
     "locId": "eco-loc-14",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.787,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -55845,7 +55846,7 @@ const observations = [
   {
     "spId": "cyanopicacyanus",
     "locId": "eco-loc-14",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.787,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -55853,7 +55854,7 @@ const observations = [
   {
     "spId": "cuculuscanorus",
     "locId": "eco-loc-35",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.787,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -55861,7 +55862,7 @@ const observations = [
   {
     "spId": "cuculuscanorus",
     "locId": "eco-loc-16",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.787,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -55869,7 +55870,7 @@ const observations = [
   {
     "spId": "phasianuscolchicus",
     "locId": "eco-loc-14",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -55877,7 +55878,7 @@ const observations = [
   {
     "spId": "turdushortulorum",
     "locId": "eco-loc-14",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -55885,7 +55886,7 @@ const observations = [
   {
     "spId": "turdushortulorum",
     "locId": "eco-loc-30",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -55893,7 +55894,7 @@ const observations = [
   {
     "spId": "eurystomusorientalis",
     "locId": "eco-loc-08",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -55901,7 +55902,7 @@ const observations = [
   {
     "spId": "eurystomusorientalis",
     "locId": "eco-loc-30",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -55909,7 +55910,7 @@ const observations = [
   {
     "spId": "paruspalustris",
     "locId": "eco-loc-06",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -55917,7 +55918,7 @@ const observations = [
   {
     "spId": "parusvarius",
     "locId": "eco-loc-09",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.787,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -55925,7 +55926,7 @@ const observations = [
   {
     "spId": "parusvarius",
     "locId": "eco-loc-24",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.787,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -55933,7 +55934,7 @@ const observations = [
   {
     "spId": "parusvarius",
     "locId": "eco-loc-18",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.787,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -55941,7 +55942,7 @@ const observations = [
   {
     "spId": "buteobuteo",
     "locId": "eco-loc-48",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -55949,7 +55950,7 @@ const observations = [
   {
     "spId": "buteobuteo",
     "locId": "eco-loc-16",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -55957,7 +55958,7 @@ const observations = [
   {
     "spId": "podicepscristatus",
     "locId": "eco-loc-46",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.679,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -55965,7 +55966,7 @@ const observations = [
   {
     "spId": "podicepscristatus",
     "locId": "eco-loc-18",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.679,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -55973,7 +55974,7 @@ const observations = [
   {
     "spId": "turduspallidus",
     "locId": "eco-loc-14",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.894,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -55981,7 +55982,7 @@ const observations = [
   {
     "spId": "turduspallidus",
     "locId": "eco-loc-09",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.894,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -55989,7 +55990,7 @@ const observations = [
   {
     "spId": "turduspallidus",
     "locId": "eco-loc-06",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.894,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -55997,7 +55998,7 @@ const observations = [
   {
     "spId": "turduspallidus",
     "locId": "eco-loc-24",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.894,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56005,7 +56006,7 @@ const observations = [
   {
     "spId": "turduspallidus",
     "locId": "eco-loc-18",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.894,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56013,7 +56014,7 @@ const observations = [
   {
     "spId": "turduspallidus",
     "locId": "eco-loc-16",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.894,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56021,7 +56022,7 @@ const observations = [
   {
     "spId": "alcedoatthis",
     "locId": "eco-loc-30",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.71,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56029,7 +56030,7 @@ const observations = [
   {
     "spId": "egrettagarzetta",
     "locId": "eco-loc-14",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.755,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56037,7 +56038,7 @@ const observations = [
   {
     "spId": "hirundorustica",
     "locId": "eco-loc-14",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56045,7 +56046,7 @@ const observations = [
   {
     "spId": "hirundorustica",
     "locId": "eco-loc-13",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56053,7 +56054,7 @@ const observations = [
   {
     "spId": "parusater",
     "locId": "eco-loc-16",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.787,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56061,7 +56062,7 @@ const observations = [
   {
     "spId": "aegithaloscaudatus",
     "locId": "eco-loc-24",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56069,7 +56070,7 @@ const observations = [
   {
     "spId": "aegithaloscaudatus",
     "locId": "eco-loc-06",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56077,7 +56078,7 @@ const observations = [
   {
     "spId": "aegithaloscaudatus",
     "locId": "eco-loc-16",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56085,7 +56086,7 @@ const observations = [
   {
     "spId": "cuculusmicropterus",
     "locId": "eco-loc-22",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.755,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56093,7 +56094,7 @@ const observations = [
   {
     "spId": "sturnuscineraceus",
     "locId": "eco-loc-14",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56101,7 +56102,7 @@ const observations = [
   {
     "spId": "sturnuscineraceus",
     "locId": "eco-loc-06",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56109,7 +56110,7 @@ const observations = [
   {
     "spId": "sturnuscineraceus",
     "locId": "eco-loc-16",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56117,7 +56118,7 @@ const observations = [
   {
     "spId": "numeniusarquata",
     "locId": "eco-loc-06",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56125,7 +56126,7 @@ const observations = [
   {
     "spId": "anasplatyrhynchos",
     "locId": "eco-loc-06",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.894,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56133,7 +56134,7 @@ const observations = [
   {
     "spId": "tachybaptusruficollis",
     "locId": "eco-loc-10",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.787,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56141,7 +56142,7 @@ const observations = [
   {
     "spId": "tachybaptusruficollis",
     "locId": "eco-loc-08",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.787,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56149,7 +56150,7 @@ const observations = [
   {
     "spId": "tringanebularia",
     "locId": "eco-loc-07",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.894,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56157,7 +56158,7 @@ const observations = [
   {
     "spId": "actitishypoleucos",
     "locId": "eco-loc-10",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.894,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56165,7 +56166,7 @@ const observations = [
   {
     "spId": "ardeaalbaalba",
     "locId": "eco-loc-14",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56173,7 +56174,7 @@ const observations = [
   {
     "spId": "ardeaalbaalba",
     "locId": "eco-loc-24",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56181,7 +56182,7 @@ const observations = [
   {
     "spId": "bubulcusibis",
     "locId": "eco-loc-09",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56189,7 +56190,7 @@ const observations = [
   {
     "spId": "bubulcusibis",
     "locId": "eco-loc-10",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56197,7 +56198,7 @@ const observations = [
   {
     "spId": "anthushodgsoni",
     "locId": "eco-loc-22",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.894,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56205,7 +56206,7 @@ const observations = [
   {
     "spId": "larusargentatus",
     "locId": "eco-loc-13",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.894,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56213,7 +56214,7 @@ const observations = [
   {
     "spId": "charadriusdubius",
     "locId": "eco-loc-13",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56221,7 +56222,7 @@ const observations = [
   {
     "spId": "charadriusdubius",
     "locId": "eco-loc-07",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56229,7 +56230,7 @@ const observations = [
   {
     "spId": "fulicaatra",
     "locId": "eco-loc-10",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56237,7 +56238,7 @@ const observations = [
   {
     "spId": "fulicaatra",
     "locId": "eco-loc-08",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56245,7 +56246,7 @@ const observations = [
   {
     "spId": "anseralbifrons",
     "locId": "eco-loc-14",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56253,7 +56254,7 @@ const observations = [
   {
     "spId": "pluvialissquatarola",
     "locId": "eco-loc-06",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.894,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56261,7 +56262,7 @@ const observations = [
   {
     "spId": "emberizarustica",
     "locId": "eco-loc-24",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56269,7 +56270,7 @@ const observations = [
   {
     "spId": "columbaliviavardomestica",
     "locId": "eco-loc-14",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56277,7 +56278,7 @@ const observations = [
   {
     "spId": "anascrecca",
     "locId": "eco-loc-06",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56285,7 +56286,7 @@ const observations = [
   {
     "spId": "butoridesstriata",
     "locId": "eco-loc-08",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56293,7 +56294,7 @@ const observations = [
   {
     "spId": "motacillaalbalugens",
     "locId": "eco-loc-13",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.894,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56301,7 +56302,7 @@ const observations = [
   {
     "spId": "egrettaintermedia",
     "locId": "eco-loc-14",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56309,7 +56310,7 @@ const observations = [
   {
     "spId": "cettiadiphone",
     "locId": "eco-loc-13",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56317,7 +56318,7 @@ const observations = [
   {
     "spId": "emberizacioides",
     "locId": "eco-loc-22",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56325,7 +56326,7 @@ const observations = [
   {
     "spId": "anasstrepera",
     "locId": "eco-loc-06",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56333,7 +56334,7 @@ const observations = [
   {
     "spId": "charadriusalexandrinus",
     "locId": "eco-loc-07",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56341,7 +56342,7 @@ const observations = [
   {
     "spId": "otusbakkamoena",
     "locId": "eco-loc-37",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 2,
     "source": "에코뱅크 WFS"
@@ -56349,7 +56350,7 @@ const observations = [
   {
     "spId": "alcedoatthis",
     "locId": "eco-loc-44",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.625,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56357,7 +56358,7 @@ const observations = [
   {
     "spId": "cuculusmicropterus",
     "locId": "eco-loc-44",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.657,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56365,7 +56366,7 @@ const observations = [
   {
     "spId": "carduelissinica",
     "locId": "eco-loc-14",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.71,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56373,7 +56374,7 @@ const observations = [
   {
     "spId": "carduelissinica",
     "locId": "eco-loc-13",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.71,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56381,7 +56382,7 @@ const observations = [
   {
     "spId": "numeniusarquata",
     "locId": "eco-loc-14",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.71,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56389,7 +56390,7 @@ const observations = [
   {
     "spId": "numeniusarquata",
     "locId": "eco-loc-13",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.71,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56397,7 +56398,7 @@ const observations = [
   {
     "spId": "anasplatyrhynchos",
     "locId": "eco-loc-14",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.755,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56405,7 +56406,7 @@ const observations = [
   {
     "spId": "anasplatyrhynchos",
     "locId": "eco-loc-13",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.755,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56413,7 +56414,7 @@ const observations = [
   {
     "spId": "anasplatyrhynchos",
     "locId": "eco-loc-07",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.755,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56421,7 +56422,7 @@ const observations = [
   {
     "spId": "tachybaptusruficollis",
     "locId": "eco-loc-13",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.679,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56429,7 +56430,7 @@ const observations = [
   {
     "spId": "tachybaptusruficollis",
     "locId": "eco-loc-06",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.679,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56437,7 +56438,7 @@ const observations = [
   {
     "spId": "tringanebularia",
     "locId": "eco-loc-14",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.755,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56445,7 +56446,7 @@ const observations = [
   {
     "spId": "tringanebularia",
     "locId": "eco-loc-13",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.755,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56453,7 +56454,7 @@ const observations = [
   {
     "spId": "aixgalericulata",
     "locId": "eco-loc-22",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.71,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56461,7 +56462,7 @@ const observations = [
   {
     "spId": "actitishypoleucos",
     "locId": "eco-loc-13",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.755,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56469,7 +56470,7 @@ const observations = [
   {
     "spId": "ardeaalbaalba",
     "locId": "eco-loc-13",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.71,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56477,7 +56478,7 @@ const observations = [
   {
     "spId": "ardeaalbaalba",
     "locId": "eco-loc-07",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.71,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56485,7 +56486,7 @@ const observations = [
   {
     "spId": "bubulcusibis",
     "locId": "eco-loc-13",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.71,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56493,7 +56494,7 @@ const observations = [
   {
     "spId": "bubulcusibis",
     "locId": "eco-loc-07",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.71,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56501,7 +56502,7 @@ const observations = [
   {
     "spId": "anthushodgsoni",
     "locId": "eco-loc-24",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.755,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56509,7 +56510,7 @@ const observations = [
   {
     "spId": "anthushodgsoni",
     "locId": "eco-loc-18",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.755,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56517,7 +56518,7 @@ const observations = [
   {
     "spId": "anthushodgsoni",
     "locId": "eco-loc-16",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.755,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56525,7 +56526,7 @@ const observations = [
   {
     "spId": "larusargentatus",
     "locId": "eco-loc-07",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.755,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56533,7 +56534,7 @@ const observations = [
   {
     "spId": "larusargentatus",
     "locId": "eco-loc-09",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.755,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56541,7 +56542,7 @@ const observations = [
   {
     "spId": "larusargentatus",
     "locId": "eco-loc-06",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.755,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56549,7 +56550,7 @@ const observations = [
   {
     "spId": "phalacrocoraxcapillatus",
     "locId": "eco-loc-14",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.755,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56557,7 +56558,7 @@ const observations = [
   {
     "spId": "phalacrocoraxcapillatus",
     "locId": "eco-loc-07",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.755,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56565,7 +56566,7 @@ const observations = [
   {
     "spId": "saxicolatorquatus",
     "locId": "eco-loc-06",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.755,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56573,7 +56574,7 @@ const observations = [
   {
     "spId": "saxicolatorquatus",
     "locId": "eco-loc-46",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.755,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56581,7 +56582,7 @@ const observations = [
   {
     "spId": "charadriusdubius",
     "locId": "eco-loc-14",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56589,7 +56590,7 @@ const observations = [
   {
     "spId": "charadriusdubius",
     "locId": "eco-loc-09",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56597,7 +56598,7 @@ const observations = [
   {
     "spId": "charadriusdubius",
     "locId": "eco-loc-06",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56605,7 +56606,7 @@ const observations = [
   {
     "spId": "fulicaatra",
     "locId": "eco-loc-16",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.71,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56613,7 +56614,7 @@ const observations = [
   {
     "spId": "otussunia",
     "locId": "eco-loc-41",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56621,7 +56622,7 @@ const observations = [
   {
     "spId": "otussunia",
     "locId": "eco-loc-35",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56629,7 +56630,7 @@ const observations = [
   {
     "spId": "otussunia",
     "locId": "eco-loc-22",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56637,7 +56638,7 @@ const observations = [
   {
     "spId": "otussunia",
     "locId": "eco-loc-13",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56645,7 +56646,7 @@ const observations = [
   {
     "spId": "otussunia",
     "locId": "eco-loc-37",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56653,7 +56654,7 @@ const observations = [
   {
     "spId": "anseralbifrons",
     "locId": "eco-loc-13",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56661,7 +56662,7 @@ const observations = [
   {
     "spId": "anseralbifrons",
     "locId": "eco-loc-06",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56669,7 +56670,7 @@ const observations = [
   {
     "spId": "anseralbifrons",
     "locId": "eco-loc-10",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56677,7 +56678,7 @@ const observations = [
   {
     "spId": "calidrisalpina",
     "locId": "eco-loc-13",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56685,7 +56686,7 @@ const observations = [
   {
     "spId": "calidrisalpina",
     "locId": "eco-loc-07",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56693,7 +56694,7 @@ const observations = [
   {
     "spId": "calidrisalpina",
     "locId": "eco-loc-06",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56701,7 +56702,7 @@ const observations = [
   {
     "spId": "pluvialissquatarola",
     "locId": "eco-loc-14",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.755,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56709,7 +56710,7 @@ const observations = [
   {
     "spId": "emberizarustica",
     "locId": "eco-loc-22",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56717,7 +56718,7 @@ const observations = [
   {
     "spId": "acrocephalusorientalis",
     "locId": "eco-loc-14",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56725,7 +56726,7 @@ const observations = [
   {
     "spId": "acrocephalusorientalis",
     "locId": "eco-loc-13",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56733,7 +56734,7 @@ const observations = [
   {
     "spId": "acrocephalusorientalis",
     "locId": "eco-loc-09",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56741,7 +56742,7 @@ const observations = [
   {
     "spId": "columbaliviavardomestica",
     "locId": "eco-loc-07",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.71,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56749,7 +56750,7 @@ const observations = [
   {
     "spId": "anascrecca",
     "locId": "eco-loc-10",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56757,7 +56758,7 @@ const observations = [
   {
     "spId": "anascrecca",
     "locId": "eco-loc-16",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56765,7 +56766,7 @@ const observations = [
   {
     "spId": "numeniusphaeopus",
     "locId": "eco-loc-13",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56773,7 +56774,7 @@ const observations = [
   {
     "spId": "numeniusphaeopus",
     "locId": "eco-loc-06",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56781,7 +56782,7 @@ const observations = [
   {
     "spId": "laruscachinans",
     "locId": "eco-loc-14",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.679,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56789,7 +56790,7 @@ const observations = [
   {
     "spId": "urosphenasquameiceps",
     "locId": "eco-loc-14",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56797,7 +56798,7 @@ const observations = [
   {
     "spId": "urosphenasquameiceps",
     "locId": "eco-loc-13",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56805,7 +56806,7 @@ const observations = [
   {
     "spId": "urosphenasquameiceps",
     "locId": "eco-loc-24",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56813,7 +56814,7 @@ const observations = [
   {
     "spId": "urosphenasquameiceps",
     "locId": "eco-loc-37",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56821,7 +56822,7 @@ const observations = [
   {
     "spId": "urosphenasquameiceps",
     "locId": "eco-loc-18",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56829,7 +56830,7 @@ const observations = [
   {
     "spId": "urosphenasquameiceps",
     "locId": "eco-loc-08",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56837,7 +56838,7 @@ const observations = [
   {
     "spId": "phylloscopusinornatus",
     "locId": "eco-loc-14",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56845,7 +56846,7 @@ const observations = [
   {
     "spId": "phylloscopusinornatus",
     "locId": "eco-loc-07",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56853,7 +56854,7 @@ const observations = [
   {
     "spId": "phylloscopusinornatus",
     "locId": "eco-loc-06",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56861,7 +56862,7 @@ const observations = [
   {
     "spId": "phylloscopusinornatus",
     "locId": "eco-loc-10",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56869,7 +56870,7 @@ const observations = [
   {
     "spId": "phylloscopusinornatus",
     "locId": "eco-loc-22",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56877,7 +56878,7 @@ const observations = [
   {
     "spId": "butoridesstriata",
     "locId": "eco-loc-13",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56885,7 +56886,7 @@ const observations = [
   {
     "spId": "butoridesstriata",
     "locId": "eco-loc-06",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56893,7 +56894,7 @@ const observations = [
   {
     "spId": "butoridesstriata",
     "locId": "eco-loc-37",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56901,7 +56902,7 @@ const observations = [
   {
     "spId": "emberizaspodocephala",
     "locId": "eco-loc-13",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.755,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56909,7 +56910,7 @@ const observations = [
   {
     "spId": "emberizaspodocephala",
     "locId": "eco-loc-24",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.755,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56917,7 +56918,7 @@ const observations = [
   {
     "spId": "motacillaalbalugens",
     "locId": "eco-loc-07",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.755,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56925,7 +56926,7 @@ const observations = [
   {
     "spId": "motacillaalbalugens",
     "locId": "eco-loc-10",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.755,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56933,7 +56934,7 @@ const observations = [
   {
     "spId": "motacillaalbalugens",
     "locId": "eco-loc-16",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.755,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56941,7 +56942,7 @@ const observations = [
   {
     "spId": "xenuscinereus",
     "locId": "eco-loc-14",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56949,7 +56950,7 @@ const observations = [
   {
     "spId": "xenuscinereus",
     "locId": "eco-loc-13",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56957,7 +56958,7 @@ const observations = [
   {
     "spId": "xenuscinereus",
     "locId": "eco-loc-07",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56965,7 +56966,7 @@ const observations = [
   {
     "spId": "zootheraaurea",
     "locId": "eco-loc-24",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56973,7 +56974,7 @@ const observations = [
   {
     "spId": "zootheraaurea",
     "locId": "eco-loc-37",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56981,7 +56982,7 @@ const observations = [
   {
     "spId": "zootheraaurea",
     "locId": "eco-loc-18",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56989,7 +56990,7 @@ const observations = [
   {
     "spId": "zootheraaurea",
     "locId": "eco-loc-16",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -56997,7 +56998,7 @@ const observations = [
   {
     "spId": "zootheraaurea",
     "locId": "eco-loc-22",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57005,7 +57006,7 @@ const observations = [
   {
     "spId": "tringaochropus",
     "locId": "eco-loc-09",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57013,7 +57014,7 @@ const observations = [
   {
     "spId": "tringaochropus",
     "locId": "eco-loc-06",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57021,7 +57022,7 @@ const observations = [
   {
     "spId": "tringaochropus",
     "locId": "eco-loc-22",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57029,7 +57030,7 @@ const observations = [
   {
     "spId": "caprimulgusindicus",
     "locId": "eco-loc-35",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57037,7 +57038,7 @@ const observations = [
   {
     "spId": "caprimulgusindicus",
     "locId": "eco-loc-07",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57045,7 +57046,7 @@ const observations = [
   {
     "spId": "caprimulgusindicus",
     "locId": "eco-loc-37",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57053,7 +57054,7 @@ const observations = [
   {
     "spId": "dendrocoposleucotos",
     "locId": "eco-loc-37",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57061,7 +57062,7 @@ const observations = [
   {
     "spId": "dendrocoposleucotos",
     "locId": "eco-loc-22",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57069,7 +57070,7 @@ const observations = [
   {
     "spId": "motacillacinerea",
     "locId": "eco-loc-14",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57077,7 +57078,7 @@ const observations = [
   {
     "spId": "motacillacinerea",
     "locId": "eco-loc-09",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57085,7 +57086,7 @@ const observations = [
   {
     "spId": "motacillacinerea",
     "locId": "eco-loc-18",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57093,7 +57094,7 @@ const observations = [
   {
     "spId": "egrettaintermedia",
     "locId": "eco-loc-22",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.71,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57101,7 +57102,7 @@ const observations = [
   {
     "spId": "phylloscopuscoronatus",
     "locId": "eco-loc-14",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57109,7 +57110,7 @@ const observations = [
   {
     "spId": "phylloscopuscoronatus",
     "locId": "eco-loc-24",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57117,7 +57118,7 @@ const observations = [
   {
     "spId": "phylloscopuscoronatus",
     "locId": "eco-loc-18",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57125,7 +57126,7 @@ const observations = [
   {
     "spId": "sittaeuropaea",
     "locId": "eco-loc-24",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57133,7 +57134,7 @@ const observations = [
   {
     "spId": "sittaeuropaea",
     "locId": "eco-loc-10",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57141,7 +57142,7 @@ const observations = [
   {
     "spId": "sittaeuropaea",
     "locId": "eco-loc-22",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57149,7 +57150,7 @@ const observations = [
   {
     "spId": "tringaglareola",
     "locId": "eco-loc-09",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57157,7 +57158,7 @@ const observations = [
   {
     "spId": "emberizacioides",
     "locId": "eco-loc-24",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57165,7 +57166,7 @@ const observations = [
   {
     "spId": "emberizacioides",
     "locId": "eco-loc-16",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57173,7 +57174,7 @@ const observations = [
   {
     "spId": "heteroscelusbrevipes",
     "locId": "eco-loc-14",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57181,7 +57182,7 @@ const observations = [
   {
     "spId": "heteroscelusbrevipes",
     "locId": "eco-loc-13",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57189,7 +57190,7 @@ const observations = [
   {
     "spId": "heteroscelusbrevipes",
     "locId": "eco-loc-06",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57197,7 +57198,7 @@ const observations = [
   {
     "spId": "alaudaarvensis",
     "locId": "eco-loc-07",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.755,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57205,7 +57206,7 @@ const observations = [
   {
     "spId": "gallinulachloropus",
     "locId": "eco-loc-10",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57213,7 +57214,7 @@ const observations = [
   {
     "spId": "cyanoptilacyanomelana",
     "locId": "eco-loc-24",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57221,7 +57222,7 @@ const observations = [
   {
     "spId": "cyanoptilacyanomelana",
     "locId": "eco-loc-37",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57229,7 +57230,7 @@ const observations = [
   {
     "spId": "cyanoptilacyanomelana",
     "locId": "eco-loc-18",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57237,7 +57238,7 @@ const observations = [
   {
     "spId": "cyanoptilacyanomelana",
     "locId": "eco-loc-22",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57245,7 +57246,7 @@ const observations = [
   {
     "spId": "ninoxscutulata",
     "locId": "eco-loc-13",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57253,7 +57254,7 @@ const observations = [
   {
     "spId": "ninoxscutulata",
     "locId": "eco-loc-37",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57261,7 +57262,7 @@ const observations = [
   {
     "spId": "ninoxscutulata",
     "locId": "eco-loc-08",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57269,7 +57270,7 @@ const observations = [
   {
     "spId": "eophonamigratoria",
     "locId": "eco-loc-10",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57277,7 +57278,7 @@ const observations = [
   {
     "spId": "eophonamigratoria",
     "locId": "eco-loc-22",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57285,7 +57286,7 @@ const observations = [
   {
     "spId": "gallinagogallinago",
     "locId": "eco-loc-13",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57293,7 +57294,7 @@ const observations = [
   {
     "spId": "anasstrepera",
     "locId": "eco-loc-14",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57301,7 +57302,7 @@ const observations = [
   {
     "spId": "fringillamontifringilla",
     "locId": "eco-loc-09",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57309,7 +57310,7 @@ const observations = [
   {
     "spId": "fringillamontifringilla",
     "locId": "eco-loc-22",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57317,7 +57318,7 @@ const observations = [
   {
     "spId": "upupaepops",
     "locId": "eco-loc-07",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57325,7 +57326,7 @@ const observations = [
   {
     "spId": "aythyaferina",
     "locId": "eco-loc-13",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57333,7 +57334,7 @@ const observations = [
   {
     "spId": "aythyaferina",
     "locId": "eco-loc-06",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57341,7 +57342,7 @@ const observations = [
   {
     "spId": "aythyaferina",
     "locId": "eco-loc-10",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57349,7 +57350,7 @@ const observations = [
   {
     "spId": "cuculussaturatus",
     "locId": "eco-loc-13",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57357,7 +57358,7 @@ const observations = [
   {
     "spId": "pericrocotusdivaricatus",
     "locId": "eco-loc-22",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57365,7 +57366,7 @@ const observations = [
   {
     "spId": "charadriusmongolus",
     "locId": "eco-loc-07",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57373,7 +57374,7 @@ const observations = [
   {
     "spId": "charadriusalexandrinus",
     "locId": "eco-loc-06",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57381,7 +57382,7 @@ const observations = [
   {
     "spId": "phylloscopusproregulus",
     "locId": "eco-loc-14",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57389,7 +57390,7 @@ const observations = [
   {
     "spId": "phylloscopusborealis",
     "locId": "eco-loc-14",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57397,7 +57398,7 @@ const observations = [
   {
     "spId": "lusciniacyanura",
     "locId": "eco-loc-14",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57405,7 +57406,7 @@ const observations = [
   {
     "spId": "troglodytestroglodytes",
     "locId": "eco-loc-06",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57413,7 +57414,7 @@ const observations = [
   {
     "spId": "carduelisspinus",
     "locId": "eco-loc-13",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57421,7 +57422,7 @@ const observations = [
   {
     "spId": "carduelisspinus",
     "locId": "eco-loc-07",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57429,7 +57430,7 @@ const observations = [
   {
     "spId": "carduelisspinus",
     "locId": "eco-loc-18",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57437,7 +57438,7 @@ const observations = [
   {
     "spId": "mergusmerganser",
     "locId": "eco-loc-13",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57445,7 +57446,7 @@ const observations = [
   {
     "spId": "mergusmerganser",
     "locId": "eco-loc-10",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57453,7 +57454,7 @@ const observations = [
   {
     "spId": "tadornatadorna",
     "locId": "eco-loc-13",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57461,7 +57462,7 @@ const observations = [
   {
     "spId": "tadornatadorna",
     "locId": "eco-loc-07",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57469,7 +57470,7 @@ const observations = [
   {
     "spId": "butasturindicus",
     "locId": "eco-loc-07",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57477,7 +57478,7 @@ const observations = [
   {
     "spId": "anaspenelope",
     "locId": "eco-loc-06",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57485,7 +57486,7 @@ const observations = [
   {
     "spId": "cisticolajuncidis",
     "locId": "eco-loc-46",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57493,7 +57494,7 @@ const observations = [
   {
     "spId": "anasacuta",
     "locId": "eco-loc-14",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57501,7 +57502,7 @@ const observations = [
   {
     "spId": "anasacuta",
     "locId": "eco-loc-13",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57509,7 +57510,7 @@ const observations = [
   {
     "spId": "larusridibundus",
     "locId": "eco-loc-13",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57517,7 +57518,7 @@ const observations = [
   {
     "spId": "anasclypeata",
     "locId": "eco-loc-13",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 0.83,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57525,7 +57526,7 @@ const observations = [
   {
     "spId": "corvuscorone",
     "locId": "eco-loc-06",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57533,7 +57534,7 @@ const observations = [
   {
     "spId": "corvuscorone",
     "locId": "eco-loc-08",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57541,7 +57542,7 @@ const observations = [
   {
     "spId": "corvuscorone",
     "locId": "eco-loc-16",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57549,7 +57550,7 @@ const observations = [
   {
     "spId": "nycticoraxnycticorax",
     "locId": "eco-loc-06",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57557,7 +57558,7 @@ const observations = [
   {
     "spId": "nycticoraxnycticorax",
     "locId": "eco-loc-10",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57565,7 +57566,7 @@ const observations = [
   {
     "spId": "anthusrubescens",
     "locId": "eco-loc-06",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57573,7 +57574,7 @@ const observations = [
   {
     "spId": "mergellusalbellus",
     "locId": "eco-loc-10",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57581,7 +57582,7 @@ const observations = [
   {
     "spId": "emberizatristrami",
     "locId": "eco-loc-18",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57589,7 +57590,7 @@ const observations = [
   {
     "spId": "emberizatristrami",
     "locId": "eco-loc-22",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57597,7 +57598,7 @@ const observations = [
   {
     "spId": "laniussphenocercus",
     "locId": "eco-loc-07",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57605,7 +57606,7 @@ const observations = [
   {
     "spId": "cecropisdaurica",
     "locId": "eco-loc-14",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57613,7 +57614,7 @@ const observations = [
   {
     "spId": "pycnonotussinensis",
     "locId": "eco-loc-14",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57621,7 +57622,7 @@ const observations = [
   {
     "spId": "pycnonotussinensis",
     "locId": "eco-loc-13",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57629,7 +57630,7 @@ const observations = [
   {
     "spId": "gallinagostenura",
     "locId": "eco-loc-13",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57637,7 +57638,7 @@ const observations = [
   {
     "spId": "sturnussericeus",
     "locId": "eco-loc-07",
-    "habitatFit": 0.78,
+    "habitatFit": 0.5,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57645,7 +57646,7 @@ const observations = [
   {
     "spId": "corvusfrugilegus",
     "locId": "eco-loc-07",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57653,7 +57654,7 @@ const observations = [
   {
     "spId": "pluvialisfulva",
     "locId": "eco-loc-07",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57661,7 +57662,7 @@ const observations = [
   {
     "spId": "laniustigrinus",
     "locId": "eco-loc-18",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57669,7 +57670,7 @@ const observations = [
   {
     "spId": "motacillaalbaocularis",
     "locId": "eco-loc-13",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57677,7 +57678,7 @@ const observations = [
   {
     "spId": "dicrurusmacrocercus",
     "locId": "eco-loc-13",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57685,7 +57686,7 @@ const observations = [
   {
     "spId": "loxiacurvirostra",
     "locId": "eco-loc-13",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57693,7 +57694,7 @@ const observations = [
   {
     "spId": "arenariainterpres",
     "locId": "eco-loc-07",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57701,7 +57702,7 @@ const observations = [
   {
     "spId": "acrocephalusbistrigiceps",
     "locId": "eco-loc-07",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57709,7 +57710,7 @@ const observations = [
   {
     "spId": "halcyoncoromanda",
     "locId": "eco-loc-37",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57717,7 +57718,7 @@ const observations = [
   {
     "spId": "turduschrysolaus",
     "locId": "eco-loc-18",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57725,7 +57726,7 @@ const observations = [
   {
     "spId": "laniuscristatus",
     "locId": "eco-loc-16",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
@@ -57733,7 +57734,7 @@ const observations = [
   {
     "spId": "pyrrhulapyrrhula",
     "locId": "eco-loc-22",
-    "habitatFit": 1,
+    "habitatFit": 1.0,
     "frequency": 1,
     "recordCount": 1,
     "source": "에코뱅크 WFS"
