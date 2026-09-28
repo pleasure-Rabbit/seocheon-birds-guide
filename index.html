@@ -109,6 +109,24 @@
     font-weight: 700;
   }
 
+  .pilot-badge {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 12px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0;
+    color: #9C4A2E;
+    background: #F6E7DE;
+    border: 1px solid #E8C9B8;
+    border-radius: 20px;
+    padding: 3px 12px;
+  }
+  @media (max-width: 640px) {
+    .pilot-badge { display: block; margin-left: 0; margin-top: 8px; width: fit-content; }
+  }
+
   .brand-sub {
     margin-top: 12px;
     font-size: 14px;
@@ -1629,10 +1647,10 @@
   <header>
     <div class="brand-row">
       <img class="nie-logo" src="nie-logo.png" alt="국립생태원">
-      <h1 class="brand-title">생물관찰 <span class="accent">예측 가이드</span></h1>
+      <h1 class="brand-title">생물관찰 <span class="accent">예측 가이드</span><span class="pilot-badge">시범 서비스</span></h1>
     </div>
     <div class="brand">
-      <p class="brand-sub">서천의 에코뱅크(자연환경조사·정밀조사 등) 기록을 바탕으로 생물별 관찰 기록 지역과 계절 정보를 살펴보고, 현재 환경 조건을 참고해 관찰 후보를 확인할 수 있습니다.</p>
+      <p class="brand-sub">서천의 에코뱅크(자연환경조사·정밀조사 등) 기록을 바탕으로 생물별 관찰 기록 지역과 계절 정보를 살펴보고, 현재 환경 조건을 참고해 관찰 후보를 확인할 수 있습니다. 아직 정식 서비스가 아닌 시범 단계로, 데이터·기능이 계속 바뀔 수 있습니다.</p>
     </div>
   </header>
 
